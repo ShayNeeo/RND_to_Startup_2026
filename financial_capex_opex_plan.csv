@@ -1,0 +1,70 @@
+﻿PHÂN HỆ,STT,DANH MỤC LỚN,HẠNG MỤC CHI PHÍ CHI TIẾT,ĐƠN VỊ TÍNH,SỐ LƯỢNG,ĐƠN GIÁ (VNĐ),THÀNH TIỀN (VNĐ),THÀNH TIỀN NĂM 2027 (VNĐ / NẾU CÓ),GHI CHÚ & CĂN CỨ TÍNH TOÁN
+CAPEX,1.1,1. Phát triển sản phẩm/công nghệ,Chi phí lập trình xây dựng nền tảng (web + app di động cho tài xế),Gói MVP,1,50000000,50000000,,Xây dựng Web Điều phối + App di động Flutter cho tài xế (Android/iOS) trong 3-4 tháng MVP
+CAPEX,1.2,1. Phát triển sản phẩm/công nghệ,Chi phí thiết kế UI/UX,Gói thiết kế,1,12000000,12000000,,"Hệ thống thiết kế Figma hoàn chỉnh: Web Portal Dispatcher, Mobile Driver App, Dashboard Báo cáo"
+CAPEX,1.3,1. Phát triển sản phẩm/công nghệ,Chi phí xây dựng thuật toán tối ưu tuyến (VRP) ban đầu,Module Core,1,25000000,25000000,,"Thuật toán tối ưu hóa tuyến đường đa điểm kết hợp ràng buộc tải trọng, khung giờ (VRPTW)"
+CAPEX,1.4,1. Phát triển sản phẩm/công nghệ,Chi phí tích hợp API bản đồ/GPS/giao thông lần đầu (setup fee nếu có),Lần tích hợp,1,5000000,5000000,,"Setup fee, SDK integration, Webhook kết nối dữ liệu GPS và bản đồ số"
+CAPEX,1.5,1. Phát triển sản phẩm/công nghệ,"Chi phí xây dựng dashboard phân tích, báo cáo CO₂",Module Dashboard,1,15000000,15000000,,"Dashboard phân tích phát thải theo chuẩn GLEC / GHG Protocol Scope 3, trực quan hóa biểu đồ"
+CAPEX,1.6,1. Phát triển sản phẩm/công nghệ,Chi phí kiểm thử (QA/testing) trước khi ra mắt,Gói QA/QC,1,8000000,8000000,,"Kiểm thử chức năng (Manual), kiểm thử tải (Load/Stress Testing 500 CCU tài xế)"
+CAPEX,T1,1. Phát triển sản phẩm/công nghệ,TỔNG NHÓM 1: PHÁT TRIỂN SẢN PHẨM / CÔNG NGHỆ,,,,115000000,,
+CAPEX,2.1,2. Hạ tầng kỹ thuật,Mua/thiết lập server (nếu không dùng cloud pay-as-you-go),Gói setup,1,4000000,4000000,,"Khởi tạo cụm Docker/K8s, cấu hình CI/CD pipeline, VPC mạng riêng an toàn"
+CAPEX,2.2,2. Hạ tầng kỹ thuật,Thiết lập cơ sở dữ liệu ban đầu,Gói CSDL,1,3000000,3000000,,Thiết lập PostgreSQL + PostGIS (xử lý GIS spatial queries) + Redis Cache
+CAPEX,2.3,2. Hạ tầng kỹ thuật,"Thiết lập hệ thống bảo mật, mã hóa dữ liệu",Gói bảo mật,1,5000000,5000000,,"Mã hóa dữ liệu cá nhân theo NĐ 13/2023/NĐ-CP, SSL EV Wildcard, Cloudflare WAF setup"
+CAPEX,T2,2. Hạ tầng kỹ thuật,TỔNG NHÓM 2: HẠ TẦNG KỸ THUẬT,,,,12000000,,
+CAPEX,3.1,3. Pháp lý & hành chính,Chi phí mở tài khoản ngân hàng doanh nghiệp,Tài khoản,1,0,0,,Mở tài khoản thanh toán doanh nghiệp tại ngân hàng thương mại
+CAPEX,3.2,3. Pháp lý & hành chính,Chi phí khởi tạo và cài đặt phần mềm hóa đơn điện tử,Lần,1,2000000,2000000,,Khởi tạo hệ thống hóa đơn điện tử MISA/Viettel
+CAPEX,3.3,3. Pháp lý & hành chính,Phí cung cấp thông tin doanh nghiệp,Lần,1,4810000,4810000,,"Phí dịch vụ đăng ký thành lập doanh nghiệp, khắc dấu và bố cáo điện tử"
+CAPEX,3.4,3. Pháp lý & hành chính,Chi phí mua chữ ký số khai thuế,Gói (3 năm),1,3608000,3608000,,Chữ ký số VINA-CA (Gói 3 năm) phục vụ kê khai thuế và BHXH
+CAPEX,3.5,3. Pháp lý & hành chính,Chi phí khắc con dấu và đăng cáo mẫu dấu,Bộ,1,450000,450000,,Khắc dấu tròn pháp nhân doanh nghiệp + dấu chức danh
+CAPEX,3.6,3. Pháp lý & hành chính,Chi phí làm biển hiệu,Cái,1,1000000,1000000,,Biển hiệu mica công ty theo quy định treo tại trụ sở
+CAPEX,3.7,3. Pháp lý & hành chính,Phí sử dụng hóa đơn điện tử,"Hóa đơn (1,000 số)",1000,1000,1000000,,"1,000 số hóa đơn điện tử MISA @ 1,000 đ/số"
+CAPEX,3.8,3. Pháp lý & hành chính,Chi phí soạn thảo hợp đồng với đối tác dữ liệu bản đồ/GPS,Hợp đồng/Lần,1,5000000,5000000,,"Tư vấn và soạn thảo hợp đồng thương mại dịch vụ API, cam kết SLA và bảo mật"
+CAPEX,3.9,3. Pháp lý & hành chính,"Phí dịch vụ đăng ký logo độc quyền, bản quyền thương hiệu, nhãn hiệu",Lần,1,1000000,1000000,,Phí dịch vụ đại diện sở hữu trí tuệ
+CAPEX,3.10,3. Pháp lý & hành chính,Lệ phí nộp nhà nước đăng ký độc quyền thương hiệu,Hồ sơ,1,1000000,1000000,,"Lệ phí nộp đơn (150k), công bố (120k), tra cứu (180k), thẩm định (550k)"
+CAPEX,3.11,3. Pháp lý & hành chính,Tư vấn pháp lý ban đầu,Gói tư vấn,1,1990000,1990000,,"Tư vấn Điều khoản sử dụng (Terms of Service), Chính sách bảo mật (Privacy Policy) cho SaaS"
+CAPEX,T3,3. Pháp lý & hành chính,TỔNG NHÓM 3: PHÁP LÝ & HÀNH CHÍNH,,,,21858000,,
+CAPEX,4.1,4. Thiết bị & tài sản cố định,"Laptop, thiết bị làm việc cho đội ngũ",Bộ thiết bị,2,12500000,25000000,,2 Laptop chuyên dụng dev/test phục vụ build môi trường và phân tích dữ liệu
+CAPEX,4.2,4. Thiết bị & tài sản cố định,Thiết bị demo (nếu cần trình diễn cho khách hàng pilot),Chiếc,2,4000000,8000000,,2 Smartphone/Tablet cấu hình chuẩn test app tài xế onsite tại bưu cục pilot
+CAPEX,T4,4. Thiết bị & tài sản cố định,TỔNG NHÓM 4: THIẾT BỊ & TÀI SẢN CỐ ĐỊNH,,,,33000000,,
+CAPEX,5.1,5. Nghiên cứu & phát triển ban đầu,"Chi phí khảo sát thị trường, phỏng vấn doanh nghiệp (trước khi build)",Đợt khảo sát,1,5000000,5000000,,"Chi phí đi lại, khảo sát thực tế và phỏng vấn 15-20 chủ bưu cục/quản lý vận tải TP.HCM"
+CAPEX,5.2,5. Nghiên cứu & phát triển ban đầu,Chi phí thuê chuyên gia tư vấn thiết kế hệ thống (one-time),Hợp đồng tư vấn,1,10000000,10000000,,Tư vấn từ chuyên gia Logistics VLA và chuyên gia giải thuật VRP
+CAPEX,T5,5. Nghiên cứu & phát triển ban đầu,TỔNG NHÓM 5: NGHIÊN CỨU & PHÁT TRIỂN BAN ĐẦU,,,,15000000,,
+CAPEX,TOTAL,TỔNG VỐN ĐẦU TƯ BAN ĐẦU (CAPEX),TỔNG CHI PHÍ ĐẦU TƯ BAN ĐẦU 1 LẦN (NĂM 0 / 2026),,,,196858000,,TỔNG CỘNG 5 NHÓM CAPEX
+,,,,,,,,,
+OPEX,1.1,1. Chi phí công nghệ vận hành,Phí API bản đồ (Google Maps/Mapbox/HERE...) theo lượt gọi,Tháng,1,5000000,5000000,60000000,"Dựa trên DAU TB 57-171 (User_acquisition_plan), ~100k-150k routing/matrix calls/tháng"
+OPEX,1.2,1. Chi phí công nghệ vận hành,Phí dữ liệu giao thông thời gian thực,Tháng,1,2500000,2500000,30000000,API dữ liệu giao thông thời gian thực (Traffic layer & congestion indexing)
+OPEX,1.3,1. Chi phí công nghệ vận hành,"Phí hosting/cloud server (AWS, GCP, Azure...)",Tháng,1,3500000,3500000,42000000,2 Cụm máy chủ ứng dụng (Web Dispatch + Driver API Backend + Load Balancer)
+OPEX,1.4,1. Chi phí công nghệ vận hành,Phí lưu trữ dữ liệu (storage),Tháng,1,1200000,1200000,14400000,Managed PostgreSQL/PostGIS Database + S3 Object Storage lưu trữ lịch sử chuyến
+OPEX,1.5,1. Chi phí công nghệ vận hành,"Phí duy trì bảo mật, SSL, backup định kỳ",Tháng,1,800000,800000,9600000,"Chứng chỉ SSL định kỳ, sao lưu CSDL tự động hàng ngày, Cloudflare Security Pro"
+OPEX,1.6,1. Chi phí công nghệ vận hành,"Phí bảo trì, sửa lỗi hệ thống",Tháng,1,1000000,1000000,12000000,"Giám sát lỗi tự động (Sentry), APM performance monitoring, bảo trì định kỳ"
+OPEX,T1,1. Chi phí công nghệ vận hành,TỔNG NHÓM 1: CÔNG NGHỆ VẬN HÀNH,,,,14000000,168000000,
+OPEX,2.1,2. Nhân sự,"Lương đội kỹ thuật (dev, duy trì hệ thống)",Tháng (2 người),2,12500000,25000000,300000000,"2 Lập trình viên Fullstack/Mobile kiêm vận hành hệ thống (25,000,000 VND/tháng)"
+OPEX,2.2,2. Nhân sự,Lương đội kinh doanh/sales,Tháng (1 người),1,10000000,10000000,120000000,1 Nhân viên Sales B2B tiếp cận các đơn vị vận chuyển và bưu cục logistics
+OPEX,2.3,2. Nhân sự,Lương đội chăm sóc khách hàng/hỗ trợ vận hành,Tháng (1 người),1,8000000,8000000,96000000,"1 Nhân viên Onboarding, hướng dẫn và hỗ trợ kỹ thuật trực tiếp cho bưu cục và tài xế"
+OPEX,2.4,2. Nhân sự,Lương/thù lao quản lý dự án,Tháng (1 người),1,12000000,12000000,144000000,Thù lao Quản lý dự án (Project Manager / Product Owner) điều phối chung
+OPEX,2.5,2. Nhân sự,"Chi phí thuê chuyên gia tư vấn dài hạn (logistics, đo lường CO₂, VRP) nếu có",Tháng,1,4000000,4000000,48000000,Thù lao cố vấn chuyên môn giải thuật VRP và phương pháp kiểm kê phát thải CO₂
+OPEX,2.6,2. Nhân sự,"Bảo hiểm xã hội, phúc lợi nhân viên (nếu tuyển chính thức)",Tháng,1,6500000,6500000,78000000,"Đóng BHXH, BHYT, BHTN theo quy định cho đội ngũ nhân sự cơ hữu"
+OPEX,T2,2. Nhân sự,TỔNG NHÓM 2: NHÂN SỰ,,,,65500000,786000000,
+OPEX,3.1,3. Vận hành pilot/khách hàng,Chi phí hỗ trợ kỹ thuật onsite/online cho DN thử nghiệm,Tháng,1,2500000,2500000,30000000,"Xăng xe, phụ cấp công tác trực tiếp tại các bưu cục thử nghiệm (2-4 bưu cục)"
+OPEX,3.2,3. Vận hành pilot/khách hàng,"Chi phí đào tạo, hướng dẫn sử dụng cho DN và tài xế",Tháng,1,1500000,1500000,18000000,"In ấn tài liệu hướng dẫn nhanh, tổ chức các buổi đào tạo thực địa cho tài xế"
+OPEX,3.3,3. Vận hành pilot/khách hàng,"Chi phí thu thập, làm sạch, hiệu chỉnh dữ liệu thực tế",Tháng,1,2000000,2000000,24000000,Xử lý chuẩn hóa địa chỉ đơn hàng và hiệu chỉnh thông số tiêu hao nhiên liệu xe
+OPEX,3.4,3. Vận hành pilot/khách hàng,"Chi phí chương trình dùng thử miễn phí (coi là chi phí ""customer acquisition"") ",Tháng,1,3000000,3000000,36000000,Chi phí hỗ trợ/trợ giá dùng thử trong 4-6 tuần đầu để thu thập dữ liệu pilot
+OPEX,T3,3. Vận hành pilot/khách hàng,TỔNG NHÓM 3: VẬN HÀNH PILOT / KHÁCH HÀNG,,,,9000000,108000000,
+OPEX,4.1,4. Marketing & bán hàng,"Quảng cáo online (Facebook, LinkedIn, Google Ads)",Tháng,1,4000000,4000000,48000000,Chạy chiến dịch digital marketing nhắm vào nhóm quản lý chuỗi cung ứng/logistics
+OPEX,4.2,4. Marketing & bán hàng,"Chi phí tham gia hội thảo, triển lãm logistics/ESG",Tháng (phân bổ),1,2500000,2500000,30000000,"Phân bổ chi phí tham dự các diễn đàn logistics xanh, triển lãm VLA, Green Expo"
+OPEX,4.3,4. Marketing & bán hàng,"Chi phí sản xuất nội dung truyền thông (video, bài viết, case study)",Tháng,1,2500000,2500000,30000000,"Sản xuất video giới thiệu tính năng, bài viết case study chứng minh hiệu quả tiết kiệm"
+OPEX,4.4,4. Marketing & bán hàng,Chi phí quà tặng/khuyến mãi cho khách hàng pilot,Tháng,1,1200000,1200000,14400000,"Quà lưu niệm, tài trợ vật phẩm cho các bưu cục và tài xế tham gia pilot"
+OPEX,T4,4. Marketing & bán hàng,TỔNG NHÓM 4: MARKETING & BÁN HÀNG,,,,10200000,122400000,
+OPEX,5.1,5. Chi phí văn phòng & hành chính,"Thuê văn phòng (nếu có), điện, nước, internet",Tháng,1,6000000,6000000,72000000,Thuê không gian làm việc Co-working Space / Vườn ươm khởi nghiệp
+OPEX,5.2,5. Chi phí văn phòng & hành chính,"Công cụ làm việc: Google Workspace, Slack, Zoom, phần mềm quản lý dự án",Tháng,1,1500000,1500000,18000000,"Bản quyền Google Workspace Business, Slack Pro, Notion, Jira cho 5-8 tài khoản"
+OPEX,5.3,5. Chi phí văn phòng & hành chính,Văn phòng phẩm,Tháng,1,600000,600000,7200000,"Giấy in, bút, vật dụng văn phòng thiết yếu"
+OPEX,T5,5. Chi phí văn phòng & hành chính,TỔNG NHÓM 5: VĂN PHÒNG & HÀNH CHÍNH,,,,8100000,97200000,
+OPEX,6.1,6. Chi phí tài chính & pháp lý định kỳ,"Kế toán, kiểm toán",Tháng,1,1800000,1800000,21600000,Thuê dịch vụ kế toán thuế và lập báo cáo tài chính trọn gói cho doanh nghiệp SME
+OPEX,6.2,6. Chi phí tài chính & pháp lý định kỳ,Thuế,Tháng (phân bổ),1,300000,300000,3600000,Lệ phí môn bài và các khoản phí hành chính nhà nước định kỳ
+OPEX,6.3,6. Chi phí tài chính & pháp lý định kỳ,"Gia hạn giấy phép, hợp đồng đối tác dữ liệu (hàng năm)",Tháng (phân bổ),1,800000,800000,9600000,Phân bổ phí gia hạn bản quyền dữ liệu và giấy phép liên quan
+OPEX,T6,6. Chi phí tài chính & pháp lý định kỳ,TỔNG NHÓM 6: TÀI CHÍNH & PHÁP LÝ ĐỊNH KỲ,,,,2900000,34800000,
+OPEX,7.1,7. Chi phí đo lường & báo cáo,Công cụ/phần mềm đo lường CO₂ (nếu thuê ngoài thay vì tự xây),Tháng,1,1500000,1500000,18000000,Cập nhật hệ số phát thải (Emission Factors) chuẩn quốc tế GLEC/IPCC từ cơ sở dữ liệu
+OPEX,7.2,7. Chi phí đo lường & báo cáo,Chi phí lập báo cáo ESG định kỳ cho khách hàng,Tháng,1,2000000,2000000,24000000,Xuất báo cáo định lượng CO₂ tiết giảm và chứng nhận phát thải xanh cho khách hàng B2B
+OPEX,T7,7. Chi phí đo lường & báo cáo,TỔNG NHÓM 7: ĐO LƯỜNG & BÁO CÁO,,,,3500000,42000000,
+OPEX,8.1,8. Dự phòng rủi ro,Quỹ dự phòng phát sinh (10% tổng OPEX),Tháng,1,11320000,11320000,135840000,Trích lập 10% trên tổng chi phí vận hành hàng tháng để dự phòng biến động thị trường & chi phí đột xuất
+OPEX,T8,8. Dự phòng rủi ro,TỔNG NHÓM 8: DỰ PHÒNG RỦI RO (10%),,,,11320000,135840000,
+OPEX,TOTAL,TỔNG CHI PHÍ VẬN HÀNH (OPEX),TỔNG OPEX VẬN HÀNH ĐỊNH KỲ (BAO GỒM 10% DỰ PHÒNG),,,,124520000,1494240000,TỔNG CỘNG 8 NHÓM OPEX
