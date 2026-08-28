@@ -1,39 +1,39 @@
-﻿STT,DANH MỤC LỚN,HẠNG MỤC CHI PHÍ CHI TIẾT,ĐƠN VỊ TÍNH,SỐ LƯỢNG,ĐƠN GIÁ THÁNG (VNĐ),THÀNH TIỀN THÁNG (VNĐ),THÀNH TIỀN NĂM 2027 (VNĐ),GHI CHÚ & CĂN CỨ TÍNH TOÁN
-1.1,1. Chi phí công nghệ vận hành,Phí API bản đồ (Google Maps/Mapbox/HERE...) theo lượt gọi,Tháng,1,5000000,5000000,60000000,"Dựa trên DAU TB 57-171 (User_acquisition_plan), ~100k-150k routing/matrix calls/tháng"
-1.2,1. Chi phí công nghệ vận hành,Phí dữ liệu giao thông thời gian thực,Tháng,1,2500000,2500000,30000000,API dữ liệu giao thông thời gian thực (Traffic layer & congestion indexing)
-1.3,1. Chi phí công nghệ vận hành,"Phí hosting/cloud server (AWS, GCP, Azure...)",Tháng,1,3500000,3500000,42000000,2 Cụm máy chủ ứng dụng (Web Dispatch + Driver API Backend + Load Balancer)
-1.4,1. Chi phí công nghệ vận hành,Phí lưu trữ dữ liệu (storage),Tháng,1,1200000,1200000,14400000,Managed PostgreSQL/PostGIS Database + S3 Object Storage lưu trữ lịch sử chuyến
-1.5,1. Chi phí công nghệ vận hành,"Phí duy trì bảo mật, SSL, backup định kỳ",Tháng,1,800000,800000,9600000,"Chứng chỉ SSL định kỳ, sao lưu CSDL tự động hàng ngày, Cloudflare Security Pro"
-1.6,1. Chi phí công nghệ vận hành,"Phí bảo trì, sửa lỗi hệ thống",Tháng,1,1000000,1000000,12000000,"Giám sát lỗi tự động (Sentry), APM performance monitoring, bảo trì định kỳ"
+﻿STT,DANH MỤC LỚN,HẠNG MỤC CHI PHÍ CHI TIẾT,ĐƠN VỊ TÍNH,SỐ LƯỢNG,ĐƠN GIÁ THÁNG (VNĐ),THÀNH TIỀN THÁNG (VNĐ),THÀNH TIỀN NĂM 2027 (VNĐ),CĂN CỨ ĐỊNH MỨC & DỮ LIỆU THỰC TẾ 08/2026
+1.1,1. Chi phí công nghệ vận hành,Phí API bản đồ (Google Maps/Mapbox/HERE...) theo lượt gọi,Tháng,1,5000000,5000000,60000000,"Goong Maps Gói Pro (200,000 requests/tháng) đáp ứng 100-200 DAU theo User_acquisition_plan"
+1.2,1. Chi phí công nghệ vận hành,Phí dữ liệu giao thông thời gian thực,Tháng,1,2500000,2500000,30000000,API dữ liệu giao thông thời gian thực (Traffic layer & congestion matrix)
+1.3,1. Chi phí công nghệ vận hành,"Phí hosting/cloud server (AWS, GCP, Azure...)",Tháng,1,3500000,3500000,42000000,"2 VM Compute Nodes (4 vCPU, 16GB RAM) + Application Load Balancer"
+1.4,1. Chi phí công nghệ vận hành,Phí lưu trữ dữ liệu (storage),Tháng,1,1200000,1200000,14400000,Managed PostgreSQL/PostGIS Database + S3 Storage lưu vết GPS và dữ liệu đơn hàng
+1.5,1. Chi phí công nghệ vận hành,"Phí duy trì bảo mật, SSL, backup định kỳ",Tháng,1,800000,800000,9600000,Gói Cloudflare Pro Security + Sao lưu dữ liệu tự động định kỳ hàng ngày
+1.6,1. Chi phí công nghệ vận hành,"Phí bảo trì, sửa lỗi hệ thống",Tháng,1,1000000,1000000,12000000,Sentry APM Error Tracking + NewRelic/Datadog monitoring
 T1,1. Chi phí công nghệ vận hành,TỔNG NHÓM 1: CÔNG NGHỆ VẬN HÀNH,,,,14000000,168000000,
-2.1,2. Nhân sự,"Lương đội kỹ thuật (dev, duy trì hệ thống)",Tháng (2 người),2,12500000,25000000,300000000,"2 Lập trình viên Fullstack/Mobile kiêm vận hành hệ thống (25,000,000 VND/tháng)"
-2.2,2. Nhân sự,Lương đội kinh doanh/sales,Tháng (1 người),1,10000000,10000000,120000000,1 Nhân viên Sales B2B tiếp cận các đơn vị vận chuyển và bưu cục logistics
-2.3,2. Nhân sự,Lương đội chăm sóc khách hàng/hỗ trợ vận hành,Tháng (1 người),1,8000000,8000000,96000000,"1 Nhân viên Onboarding, hướng dẫn và hỗ trợ kỹ thuật trực tiếp cho bưu cục và tài xế"
-2.4,2. Nhân sự,Lương/thù lao quản lý dự án,Tháng (1 người),1,12000000,12000000,144000000,Thù lao Quản lý dự án (Project Manager / Product Owner) điều phối chung
-2.5,2. Nhân sự,"Chi phí thuê chuyên gia tư vấn dài hạn (logistics, đo lường CO₂, VRP) nếu có",Tháng,1,4000000,4000000,48000000,Thù lao cố vấn chuyên môn giải thuật VRP và phương pháp kiểm kê phát thải CO₂
-2.6,2. Nhân sự,"Bảo hiểm xã hội, phúc lợi nhân viên (nếu tuyển chính thức)",Tháng,1,6500000,6500000,78000000,"Đóng BHXH, BHYT, BHTN theo quy định cho đội ngũ nhân sự cơ hữu"
-T2,2. Nhân sự,TỔNG NHÓM 2: NHÂN SỰ,,,,65500000,786000000,
-3.1,3. Vận hành pilot/khách hàng,Chi phí hỗ trợ kỹ thuật onsite/online cho DN thử nghiệm,Tháng,1,2500000,2500000,30000000,"Xăng xe, phụ cấp công tác trực tiếp tại các bưu cục thử nghiệm (2-4 bưu cục)"
-3.2,3. Vận hành pilot/khách hàng,"Chi phí đào tạo, hướng dẫn sử dụng cho DN và tài xế",Tháng,1,1500000,1500000,18000000,"In ấn tài liệu hướng dẫn nhanh, tổ chức các buổi đào tạo thực địa cho tài xế"
-3.3,3. Vận hành pilot/khách hàng,"Chi phí thu thập, làm sạch, hiệu chỉnh dữ liệu thực tế",Tháng,1,2000000,2000000,24000000,Xử lý chuẩn hóa địa chỉ đơn hàng và hiệu chỉnh thông số tiêu hao nhiên liệu xe
-3.4,3. Vận hành pilot/khách hàng,"Chi phí chương trình dùng thử miễn phí (coi là chi phí ""customer acquisition"") ",Tháng,1,3000000,3000000,36000000,Chi phí hỗ trợ/trợ giá dùng thử trong 4-6 tuần đầu để thu thập dữ liệu pilot
+2.1,2. Nhân sự,"Lương đội kỹ thuật (dev, duy trì hệ thống)",Tháng (2 người),2,12500000,25000000,300000000,2 Lập trình viên Fullstack/Mobile kiêm vận hành hệ thống (mức startup giai đoạn đầu)
+2.2,2. Nhân sự,Lương đội kinh doanh/sales,Tháng (1 người),1,10000000,10000000,120000000,"1 Chuyên viên Sales B2B tiếp cận các ĐVVC (GHN, Viettel Post...) và bưu cục"
+2.3,2. Nhân sự,Lương đội chăm sóc khách hàng/hỗ trợ vận hành,Tháng (1 người),1,8000000,8000000,96000000,1 Chuyên viên Onboarding & Hỗ trợ kỹ thuật trực tiếp cho bưu cục và tài xế
+2.4,2. Nhân sự,Lương/thù lao quản lý dự án,Tháng (1 người),1,12000000,12000000,144000000,Thù lao Quản lý dự án (Project Manager / Product Owner) điều phối toàn diện
+2.5,2. Nhân sự,"Chi phí thuê chuyên gia tư vấn dài hạn (logistics, đo lường CO₂, VRP) nếu có",Tháng,1,4000000,4000000,48000000,Thù lao cố vấn chuyên môn giải thuật VRP và phương pháp kiểm kê phát thải CO2
+2.6,2. Nhân sự,"Bảo hiểm xã hội, phúc lợi nhân viên (nếu tuyển chính thức)",Tháng,1,6450000,6450000,77400000,"Đóng BHXH, BHYT, BHTN theo Luật BHXH 2024 (Doanh nghiệp đóng 21.5% quỹ lương cơ bản)"
+T2,2. Nhân sự,TỔNG NHÓM 2: NHÂN SỰ,,,,65450000,785400000,
+3.1,3. Vận hành pilot/khách hàng,Chi phí hỗ trợ kỹ thuật onsite/online cho DN thử nghiệm,Tháng,1,2500000,2500000,30000000,Công tác phí trực tiếp tại các bưu cục thử nghiệm (2-4 bưu cục) theo User_acquisition_plan
+3.2,3. Vận hành pilot/khách hàng,"Chi phí đào tạo, hướng dẫn sử dụng cho DN và tài xế",Tháng,1,1500000,1500000,18000000,"Tài liệu hướng dẫn, tổ chức các buổi đào tạo thực địa cho tài xế và điều phối viên"
+3.3,3. Vận hành pilot/khách hàng,"Chi phí thu thập, làm sạch, hiệu chỉnh dữ liệu thực tế",Tháng,1,2000000,2000000,24000000,Chuẩn hóa địa chỉ đơn hàng và hiệu chỉnh thông số định mức tiêu hao nhiên liệu thực tế
+3.4,3. Vận hành pilot/khách hàng,"Chi phí chương trình dùng thử miễn phí (coi là chi phí ""customer acquisition"") ",Tháng,1,3000000,3000000,36000000,Hỗ trợ/trợ giá dùng thử trong 4-6 tuần pilot để thu thập dữ liệu hiệu chỉnh thuật toán
 T3,3. Vận hành pilot/khách hàng,TỔNG NHÓM 3: VẬN HÀNH PILOT / KHÁCH HÀNG,,,,9000000,108000000,
-4.1,4. Marketing & bán hàng,"Quảng cáo online (Facebook, LinkedIn, Google Ads)",Tháng,1,4000000,4000000,48000000,Chạy chiến dịch digital marketing nhắm vào nhóm quản lý chuỗi cung ứng/logistics
-4.2,4. Marketing & bán hàng,"Chi phí tham gia hội thảo, triển lãm logistics/ESG",Tháng (phân bổ),1,2500000,2500000,30000000,"Phân bổ chi phí tham dự các diễn đàn logistics xanh, triển lãm VLA, Green Expo"
-4.3,4. Marketing & bán hàng,"Chi phí sản xuất nội dung truyền thông (video, bài viết, case study)",Tháng,1,2500000,2500000,30000000,"Sản xuất video giới thiệu tính năng, bài viết case study chứng minh hiệu quả tiết kiệm"
-4.4,4. Marketing & bán hàng,Chi phí quà tặng/khuyến mãi cho khách hàng pilot,Tháng,1,1200000,1200000,14400000,"Quà lưu niệm, tài trợ vật phẩm cho các bưu cục và tài xế tham gia pilot"
+4.1,4. Marketing & bán hàng,"Quảng cáo online (Facebook, LinkedIn, Google Ads)",Tháng,1,4000000,4000000,48000000,"Digital Marketing B2B nhắm mục tiêu Quản lý chuỗi cung ứng, Chủ bưu cục, Trưởng kho"
+4.2,4. Marketing & bán hàng,"Chi phí tham gia hội thảo, triển lãm logistics/ESG",Tháng (phân bổ),1,2500000,2500000,30000000,"Phân bổ chi phí tham dự các diễn đàn Logistics Xanh, Vietnam Logistics Forum, Green Growth Expo"
+4.3,4. Marketing & bán hàng,"Chi phí sản xuất nội dung truyền thông (video, bài viết, case study)",Tháng,1,2500000,2500000,30000000,"Video hướng dẫn, bài viết phân tích Case Study chứng minh % giảm quãng đường & CO2"
+4.4,4. Marketing & bán hàng,Chi phí quà tặng/khuyến mãi cho khách hàng pilot,Tháng,1,1200000,1200000,14400000,"Quà lưu niệm, tài trợ vật phẩm cho các bưu cục và tài xế hoàn thành xuất sắc pilot"
 T4,4. Marketing & bán hàng,TỔNG NHÓM 4: MARKETING & BÁN HÀNG,,,,10200000,122400000,
-5.1,5. Chi phí văn phòng & hành chính,"Thuê văn phòng (nếu có), điện, nước, internet",Tháng,1,6000000,6000000,72000000,Thuê không gian làm việc Co-working Space / Vườn ươm khởi nghiệp
+5.1,5. Chi phí văn phòng & hành chính,"Thuê văn phòng (nếu có), điện, nước, internet",Tháng,1,6000000,6000000,72000000,Không gian làm việc Co-working Space / Vườn ươm khởi nghiệp ĐHQG / UEH Hub
 5.2,5. Chi phí văn phòng & hành chính,"Công cụ làm việc: Google Workspace, Slack, Zoom, phần mềm quản lý dự án",Tháng,1,1500000,1500000,18000000,"Bản quyền Google Workspace Business, Slack Pro, Notion, Jira cho 5-8 tài khoản"
-5.3,5. Chi phí văn phòng & hành chính,Văn phòng phẩm,Tháng,1,600000,600000,7200000,"Giấy in, bút, vật dụng văn phòng thiết yếu"
+5.3,5. Chi phí văn phòng & hành chính,Văn phòng phẩm,Tháng,1,600000,600000,7200000,"Giấy in, sổ sách, vật dụng văn phòng thiết yếu"
 T5,5. Chi phí văn phòng & hành chính,TỔNG NHÓM 5: VĂN PHÒNG & HÀNH CHÍNH,,,,8100000,97200000,
-6.1,6. Chi phí tài chính & pháp lý định kỳ,"Kế toán, kiểm toán",Tháng,1,1800000,1800000,21600000,Thuê dịch vụ kế toán thuế và lập báo cáo tài chính trọn gói cho doanh nghiệp SME
-6.2,6. Chi phí tài chính & pháp lý định kỳ,Thuế,Tháng (phân bổ),1,300000,300000,3600000,Lệ phí môn bài và các khoản phí hành chính nhà nước định kỳ
-6.3,6. Chi phí tài chính & pháp lý định kỳ,"Gia hạn giấy phép, hợp đồng đối tác dữ liệu (hàng năm)",Tháng (phân bổ),1,800000,800000,9600000,Phân bổ phí gia hạn bản quyền dữ liệu và giấy phép liên quan
-T6,6. Chi phí tài chính & pháp lý định kỳ,TỔNG NHÓM 6: TÀI CHÍNH & PHÁP LÝ ĐỊNH KỲ,,,,2900000,34800000,
-7.1,7. Chi phí đo lường & báo cáo,Công cụ/phần mềm đo lường CO₂ (nếu thuê ngoài thay vì tự xây),Tháng,1,1500000,1500000,18000000,Cập nhật hệ số phát thải (Emission Factors) chuẩn quốc tế GLEC/IPCC từ cơ sở dữ liệu
-7.2,7. Chi phí đo lường & báo cáo,Chi phí lập báo cáo ESG định kỳ cho khách hàng,Tháng,1,2000000,2000000,24000000,Xuất báo cáo định lượng CO₂ tiết giảm và chứng nhận phát thải xanh cho khách hàng B2B
+6.1,6. Chi phí tài chính & pháp lý định kỳ,"Kế toán, kiểm toán",Tháng,1,1800000,1800000,21600000,Dịch vụ kế toán thuế và lập báo cáo tài chính trọn gói cho doanh nghiệp SME
+6.2,6. Chi phí tài chính & pháp lý định kỳ,Thuế (Lệ phí môn bài phân bổ từ năm 2),Tháng (phân bổ),1,167000,167000,2004000,"Lệ phí môn bài bậc 2 triệu/năm (miễn năm đầu 2026 theo NĐ 22/2020, đóng từ 2027)"
+6.3,6. Chi phí tài chính & pháp lý định kỳ,"Gia hạn giấy phép, hợp đồng đối tác dữ liệu (hàng năm)",Tháng (phân bổ),1,800000,800000,9600000,"Phân bổ phí duy trì tên miền, bảo mật, gia hạn dịch vụ số"
+T6,6. Chi phí tài chính & pháp lý định kỳ,TỔNG NHÓM 6: TÀI CHÍNH & PHÁP LÝ ĐỊNH KỲ,,,,2767000,33204000,
+7.1,7. Chi phí đo lường & báo cáo,Công cụ/phần mềm đo lường CO₂ (nếu thuê ngoài thay vì tự xây),Tháng,1,1500000,1500000,18000000,Cập nhật bộ hệ số phát thải (Emission Factors) chuẩn quốc tế GLEC v3.0 / IPCC
+7.2,7. Chi phí đo lường & báo cáo,Chi phí lập báo cáo ESG định kỳ cho khách hàng,Tháng,1,2000000,2000000,24000000,Xuất chứng nhận & báo cáo định lượng CO2 tiết giảm định kỳ phục vụ kiểm toán xanh
 T7,7. Chi phí đo lường & báo cáo,TỔNG NHÓM 7: ĐO LƯỜNG & BÁO CÁO,,,,3500000,42000000,
-8.1,8. Dự phòng rủi ro,Quỹ dự phòng phát sinh (10% tổng OPEX),Tháng,1,11320000,11320000,135840000,Trích lập 10% trên tổng chi phí vận hành hàng tháng để dự phòng biến động thị trường & chi phí đột xuất
-T8,8. Dự phòng rủi ro,TỔNG NHÓM 8: DỰ PHÒNG RỦI RO (10%),,,,11320000,135840000,
-TOTAL,TỔNG CHI PHÍ VẬN HÀNH (OPEX),TỔNG OPEX VẬN HÀNH ĐỊNH KỲ (BAO GỒM 10% DỰ PHÒNG),,,,124520000,1494240000,TỔNG CỘNG 8 NHÓM OPEX
+8.1,8. Dự phòng rủi ro,Quỹ dự phòng phát sinh (10% tổng OPEX),Tháng,1,11301700,11301700,135620400,Trích lập 10% trên tổng chi phí vận hành hàng tháng để dự phòng biến động thị trường
+T8,8. Dự phòng rủi ro,TỔNG NHÓM 8: DỰ PHÒNG RỦI RO (10%),,,,11301700,135620400,
+TOTAL,TỔNG CHI PHÍ VẬN HÀNH (OPEX),TỔNG OPEX VẬN HÀNH ĐỊNH KỲ (BAO GỒM 10% DỰ PHÒNG),,,,124318700,1491824400,TỔNG CỘNG 8 NHÓM OPEX (Đã xác minh chuẩn thị trường 08/2026)

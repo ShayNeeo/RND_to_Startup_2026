@@ -1,31 +1,31 @@
-﻿STT,DANH MỤC LỚN,HẠNG MỤC CHI PHÍ CHI TIẾT,ĐƠN VỊ TÍNH,SỐ LƯỢNG,ĐƠN GIÁ (VNĐ),THÀNH TIỀN (VNĐ),GHI CHÚ & CĂN CỨ TÍNH TOÁN
-1.1,1. Phát triển sản phẩm/công nghệ,Chi phí lập trình xây dựng nền tảng (web + app di động cho tài xế),Gói MVP,1,50000000,50000000,Xây dựng Web Điều phối + App di động Flutter cho tài xế (Android/iOS) trong 3-4 tháng MVP
-1.2,1. Phát triển sản phẩm/công nghệ,Chi phí thiết kế UI/UX,Gói thiết kế,1,12000000,12000000,"Hệ thống thiết kế Figma hoàn chỉnh: Web Portal Dispatcher, Mobile Driver App, Dashboard Báo cáo"
-1.3,1. Phát triển sản phẩm/công nghệ,Chi phí xây dựng thuật toán tối ưu tuyến (VRP) ban đầu,Module Core,1,25000000,25000000,"Thuật toán tối ưu hóa tuyến đường đa điểm kết hợp ràng buộc tải trọng, khung giờ (VRPTW)"
-1.4,1. Phát triển sản phẩm/công nghệ,Chi phí tích hợp API bản đồ/GPS/giao thông lần đầu (setup fee nếu có),Lần tích hợp,1,5000000,5000000,"Setup fee, SDK integration, Webhook kết nối dữ liệu GPS và bản đồ số"
-1.5,1. Phát triển sản phẩm/công nghệ,"Chi phí xây dựng dashboard phân tích, báo cáo CO₂",Module Dashboard,1,15000000,15000000,"Dashboard phân tích phát thải theo chuẩn GLEC / GHG Protocol Scope 3, trực quan hóa biểu đồ"
-1.6,1. Phát triển sản phẩm/công nghệ,Chi phí kiểm thử (QA/testing) trước khi ra mắt,Gói QA/QC,1,8000000,8000000,"Kiểm thử chức năng (Manual), kiểm thử tải (Load/Stress Testing 500 CCU tài xế)"
-T1,1. Phát triển sản phẩm/công nghệ,TỔNG NHÓM 1: PHÁT TRIỂN SẢN PHẨM / CÔNG NGHỆ,,,,115000000,
-2.1,2. Hạ tầng kỹ thuật,Mua/thiết lập server (nếu không dùng cloud pay-as-you-go),Gói setup,1,4000000,4000000,"Khởi tạo cụm Docker/K8s, cấu hình CI/CD pipeline, VPC mạng riêng an toàn"
-2.2,2. Hạ tầng kỹ thuật,Thiết lập cơ sở dữ liệu ban đầu,Gói CSDL,1,3000000,3000000,Thiết lập PostgreSQL + PostGIS (xử lý GIS spatial queries) + Redis Cache
-2.3,2. Hạ tầng kỹ thuật,"Thiết lập hệ thống bảo mật, mã hóa dữ liệu",Gói bảo mật,1,5000000,5000000,"Mã hóa dữ liệu cá nhân theo NĐ 13/2023/NĐ-CP, SSL EV Wildcard, Cloudflare WAF setup"
-T2,2. Hạ tầng kỹ thuật,TỔNG NHÓM 2: HẠ TẦNG KỸ THUẬT,,,,12000000,
-3.1,3. Pháp lý & hành chính,Chi phí mở tài khoản ngân hàng doanh nghiệp,Tài khoản,1,0,0,Mở tài khoản thanh toán doanh nghiệp tại ngân hàng thương mại
-3.2,3. Pháp lý & hành chính,Chi phí khởi tạo và cài đặt phần mềm hóa đơn điện tử,Lần,1,2000000,2000000,Khởi tạo hệ thống hóa đơn điện tử MISA/Viettel
-3.3,3. Pháp lý & hành chính,Phí cung cấp thông tin doanh nghiệp,Lần,1,4810000,4810000,"Phí dịch vụ đăng ký thành lập doanh nghiệp, khắc dấu và bố cáo điện tử"
-3.4,3. Pháp lý & hành chính,Chi phí mua chữ ký số khai thuế,Gói (3 năm),1,3608000,3608000,Chữ ký số VINA-CA (Gói 3 năm) phục vụ kê khai thuế và BHXH
-3.5,3. Pháp lý & hành chính,Chi phí khắc con dấu và đăng cáo mẫu dấu,Bộ,1,450000,450000,Khắc dấu tròn pháp nhân doanh nghiệp + dấu chức danh
-3.6,3. Pháp lý & hành chính,Chi phí làm biển hiệu,Cái,1,1000000,1000000,Biển hiệu mica công ty theo quy định treo tại trụ sở
-3.7,3. Pháp lý & hành chính,Phí sử dụng hóa đơn điện tử,"Hóa đơn (1,000 số)",1000,1000,1000000,"1,000 số hóa đơn điện tử MISA @ 1,000 đ/số"
-3.8,3. Pháp lý & hành chính,Chi phí soạn thảo hợp đồng với đối tác dữ liệu bản đồ/GPS,Hợp đồng/Lần,1,5000000,5000000,"Tư vấn và soạn thảo hợp đồng thương mại dịch vụ API, cam kết SLA và bảo mật"
-3.9,3. Pháp lý & hành chính,"Phí dịch vụ đăng ký logo độc quyền, bản quyền thương hiệu, nhãn hiệu",Lần,1,1000000,1000000,Phí dịch vụ đại diện sở hữu trí tuệ
-3.10,3. Pháp lý & hành chính,Lệ phí nộp nhà nước đăng ký độc quyền thương hiệu,Hồ sơ,1,1000000,1000000,"Lệ phí nộp đơn (150k), công bố (120k), tra cứu (180k), thẩm định (550k)"
-3.11,3. Pháp lý & hành chính,Tư vấn pháp lý ban đầu,Gói tư vấn,1,1990000,1990000,"Tư vấn Điều khoản sử dụng (Terms of Service), Chính sách bảo mật (Privacy Policy) cho SaaS"
-T3,3. Pháp lý & hành chính,TỔNG NHÓM 3: PHÁP LÝ & HÀNH CHÍNH,,,,21858000,
-4.1,4. Thiết bị & tài sản cố định,"Laptop, thiết bị làm việc cho đội ngũ",Bộ thiết bị,2,12500000,25000000,2 Laptop chuyên dụng dev/test phục vụ build môi trường và phân tích dữ liệu
-4.2,4. Thiết bị & tài sản cố định,Thiết bị demo (nếu cần trình diễn cho khách hàng pilot),Chiếc,2,4000000,8000000,2 Smartphone/Tablet cấu hình chuẩn test app tài xế onsite tại bưu cục pilot
-T4,4. Thiết bị & tài sản cố định,TỔNG NHÓM 4: THIẾT BỊ & TÀI SẢN CỐ ĐỊNH,,,,33000000,
-5.1,5. Nghiên cứu & phát triển ban đầu,"Chi phí khảo sát thị trường, phỏng vấn doanh nghiệp (trước khi build)",Đợt khảo sát,1,5000000,5000000,"Chi phí đi lại, khảo sát thực tế và phỏng vấn 15-20 chủ bưu cục/quản lý vận tải TP.HCM"
-5.2,5. Nghiên cứu & phát triển ban đầu,Chi phí thuê chuyên gia tư vấn thiết kế hệ thống (one-time),Hợp đồng tư vấn,1,10000000,10000000,Tư vấn từ chuyên gia Logistics VLA và chuyên gia giải thuật VRP
+﻿STT,DANH MỤC LỚN,HẠNG MỤC CHI PHÍ CHI TIẾT,ĐƠN VỊ TÍNH,SỐ LƯỢNG,ĐƠN GIÁ (VNĐ),THÀNH TIỀN (VNĐ),CĂN CỨ PHÁP LÝ & THỰC TẾ THỊ TRƯỜNG 08/2026
+1.1,1. Phát triển sản phẩm/công nghệ,Chi phí lập trình xây dựng nền tảng (web + app di động cho tài xế),Gói MVP,1,45000000,45000000,"Xây dựng Web Điều phối + App di động Flutter cho tài xế (3-4 tháng MVP, 2 dev core)"
+1.2,1. Phát triển sản phẩm/công nghệ,Chi phí thiết kế UI/UX,Gói thiết kế,1,10000000,10000000,"Hệ thống Figma: Web Portal Điều phối, App Tài xế, Dashboard Báo cáo CO2"
+1.3,1. Phát triển sản phẩm/công nghệ,Chi phí xây dựng thuật toán tối ưu tuyến (VRP) ban đầu,Module Core,1,20000000,20000000,"Giải thuật VRPTW đa điểm kết hợp ràng buộc tải trọng xe, khung giờ giao & tình trạng giao thông"
+1.4,1. Phát triển sản phẩm/công nghệ,Chi phí tích hợp API bản đồ/GPS/giao thông lần đầu (setup fee nếu có),Lần tích hợp,1,4000000,4000000,"Setup fee, SDK integration, Webhook kết nối dữ liệu GPS và API bản đồ Goong/Mapbox"
+1.5,1. Phát triển sản phẩm/công nghệ,"Chi phí xây dựng dashboard phân tích, báo cáo CO₂",Module Dashboard,1,12000000,12000000,Dashboard phân tích phát thải chuẩn GLEC Framework v3.0 / ISO 14083:2023 / GHG Protocol
+1.6,1. Phát triển sản phẩm/công nghệ,Chi phí kiểm thử (QA/testing) trước khi ra mắt,Gói QA/QC,1,6000000,6000000,Manual QA test kịch bản bưu cục + Automated Load Testing 500 CCU tài xế
+T1,1. Phát triển sản phẩm/công nghệ,TỔNG NHÓM 1: PHÁT TRIỂN SẢN PHẨM / CÔNG NGHỆ,,,,97000000,
+2.1,2. Hạ tầng kỹ thuật,Mua/thiết lập server (nếu không dùng cloud pay-as-you-go),Gói setup,1,3500000,3500000,"Khởi tạo cụm Docker/K8s, VPC mạng riêng an toàn, CI/CD GitHub Actions deploy"
+2.2,2. Hạ tầng kỹ thuật,Thiết lập cơ sở dữ liệu ban đầu,Gói CSDL,1,2500000,2500000,PostgreSQL + PostGIS (GIS spatial routing engine) + Redis Caching
+2.3,2. Hạ tầng kỹ thuật,"Thiết lập hệ thống bảo mật, mã hóa dữ liệu",Gói bảo mật,1,4000000,4000000,"Tuân thủ NĐ 13/2023/NĐ-CP bảo vệ dữ liệu cá nhân, SSL EV Wildcard, Cloudflare WAF"
+T2,2. Hạ tầng kỹ thuật,TỔNG NHÓM 2: HẠ TẦNG KỸ THUẬT,,,,10000000,
+3.1,3. Pháp lý & hành chính,Chi phí mở tài khoản ngân hàng doanh nghiệp,Tài khoản,1,0,0,Miễn phí mở tài khoản thanh toán DN tại Vietcombank/MB Bank/Techcombank
+3.2,3. Pháp lý & hành chính,Chi phí khởi tạo và cài đặt phần mềm hóa đơn điện tử,Lần,1,1000000,1000000,Phí khởi tạo phần mềm hóa đơn điện tử MISA meInvoice (chuẩn niêm yết 2026)
+3.3,3. Pháp lý & hành chính,Phí cung cấp thông tin doanh nghiệp (ĐK thành lập trọn gói),Lần,1,2000000,2000000,Dịch vụ ĐKKD thành lập DN trọn gói + Lệ phí nhà nước + Bố cáo điện tử Cổng thông tin QG
+3.4,3. Pháp lý & hành chính,Chi phí mua chữ ký số khai thuế (Gói 3 năm),Gói (3 năm),1,1990000,1990000,Chữ ký số Vina-CA / Viettel-CA (Gói 36 tháng bao gồm USB Token chuẩn giá đại lý 2026)
+3.5,3. Pháp lý & hành chính,Chi phí khắc con dấu và đăng cáo mẫu dấu,Bộ,1,450000,450000,Khắc dấu tròn pháp nhân doanh nghiệp + dấu chức danh Giám đốc
+3.6,3. Pháp lý & hành chính,Chi phí làm biển hiệu,Cái,1,800000,800000,Biển hiệu mica công ty kích thước chuẩn quy định treo tại trụ sở
+3.7,3. Pháp lý & hành chính,"Phí sử dụng hóa đơn điện tử (1,000 số)","Gói (1,000 số)",1,1050000,1050000,"1,000 số hóa đơn điện tử MISA meInvoice (giá niêm yết 1.050.000 VNĐ)"
+3.8,3. Pháp lý & hành chính,Chi phí soạn thảo hợp đồng với đối tác dữ liệu bản đồ/GPS,Lần,1,4000000,4000000,"Tư vấn pháp lý soạn thảo hợp đồng API, cam kết SLA, phân định trách nhiệm bản quyền"
+3.9,3. Pháp lý & hành chính,"Phí dịch vụ đăng ký logo độc quyền, bản quyền thương hiệu, nhãn hiệu",Lần,1,1000000,1000000,Phí dịch vụ đại diện Sở hữu trí tuệ hoàn thiện hồ sơ đăng ký nhãn hiệu
+3.10,3. Pháp lý & hành chính,Lệ phí nộp nhà nước đăng ký độc quyền thương hiệu (1 nhóm),Hồ sơ,1,1120000,1120000,Lệ phí nhà nước theo TT 263/2016/TT-BTC & TT 63/2023/TT-BTC tại Cục SHTT (1 nhóm 6 SP/DV)
+3.11,3. Pháp lý & hành chính,"Tư vấn pháp lý ban đầu (Điều khoản dịch vụ SaaS, SLA, Privacy)",Gói tư vấn,1,1990000,1990000,Soạn thảo Điều khoản sử dụng (Terms of Service) và Chính sách bảo mật cho B2B SaaS
+T3,3. Pháp lý & hành chính,TỔNG NHÓM 3: PHÁP LÝ & HÀNH CHÍNH,,,,15400000,
+4.1,4. Thiết bị & tài sản cố định,"Laptop, thiết bị làm việc cho đội ngũ",Bộ,2,12500000,25000000,2 Laptop cấu hình chuẩn dev/data build & test hệ thống backend/VRP
+4.2,4. Thiết bị & tài sản cố định,Thiết bị demo (nếu cần trình diễn cho khách hàng pilot),Chiếc,2,3500000,7000000,2 Smartphone Android/iOS test ứng dụng tài xế onsite tại bưu cục
+T4,4. Thiết bị & tài sản cố định,TỔNG NHÓM 4: THIẾT BỊ & TÀI SẢN CỐ ĐỊNH,,,,32000000,
+5.1,5. Nghiên cứu & phát triển ban đầu,"Chi phí khảo sát thị trường, phỏng vấn doanh nghiệp (trước khi build)",Đợt,1,5000000,5000000,"Khảo sát thực địa, phỏng vấn 15-20 chủ bưu cục & quản lý vận tải tại TP.HCM"
+5.2,5. Nghiên cứu & phát triển ban đầu,Chi phí thuê chuyên gia tư vấn thiết kế hệ thống (one-time),Hợp đồng,1,10000000,10000000,Tham vấn chuyên gia Logistics VLA và chuyên gia giải thuật tối ưu tuyến VRP
 T5,5. Nghiên cứu & phát triển ban đầu,TỔNG NHÓM 5: NGHIÊN CỨU & PHÁT TRIỂN BAN ĐẦU,,,,15000000,
-TOTAL,TỔNG VỐN ĐẦU TƯ BAN ĐẦU (CAPEX),TỔNG CHI PHÍ ĐẦU TƯ BAN ĐẦU 1 LẦN (NĂM 0 / 2026),,,,196858000,TỔNG CỘNG 5 NHÓM CAPEX
+TOTAL,TỔNG VỐN ĐẦU TƯ BAN ĐẦU (CAPEX),TỔNG CHI PHÍ ĐẦU TƯ BAN ĐẦU 1 LẦN (NĂM 0 / 2026),,,,169400000,TỔNG CỘNG 5 NHÓM CAPEX (Đã xác minh chuẩn thị trường 08/2026)
