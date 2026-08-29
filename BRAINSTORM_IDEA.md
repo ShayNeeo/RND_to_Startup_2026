@@ -313,12 +313,13 @@ bổ sung hình ảnh, video, số liệu,... liên quan.
 
 **2\. Nhân sự**
 
-* Lương đội kỹ thuật (dev, duy trì hệ thống)  
-* Lương đội kinh doanh/sales  
-* Lương đội chăm sóc khách hàng/hỗ trợ vận hành  
-* Lương/thù lao quản lý dự án  
-* Chi phí thuê chuyên gia tư vấn dài hạn (logistics, đo lường CO₂, VRP) nếu có  
-* Bảo hiểm xã hội, phúc lợi nhân viên (nếu tuyển chính thức)
+* Lương nhân viên kỹ thuật (dev, duy trì hệ thống)  
+* Lương nhân viên kinh doanh/sales  
+* Lương nhân viên chăm sóc hành chính \- nhân sự  
+* Lương quản lý dự án  
+* Lương chuyên gia tư vấn dài hạn (logistics, đo lường CO₂, VRP)  
+* Lương nhân viên kế toán  
+* Bảo hiểm xã hội, phúc lợi nhân viên (nếu tuyển chính thức) 
 
 **3\. Vận hành pilot/khách hàng**
 
@@ -358,11 +359,13 @@ bổ sung hình ảnh, video, số liệu,... liên quan.
 | A. Nguồn thu dự kiến |  |  |  |  |  |
 | ----- | ----- | ----- | ----- | ----- | ----- |
 |  | Nguồn thu | Mô tả | Đối tượng thu | Giai đoạn áp dụng | Ưu tiên |
-| 1 | Phí thuê bao (Subscription) | Thu theo tháng, tính trên số phương tiện quản lý/số tuyến tối ưu; phân theo quy mô DN | Toàn bộ khách hàng | Sau pilot (GĐ 2–3) | Cốt lõi của ngành |
+| 1 | Phí thuê bao (Subscription) | Thu theo tháng, theo quy mô doanh nghiệp. Phí sẽ bao gồm quyền sử dụng nền tảng, dashboard quản lý, tối ưu tuyến và tính năng vận hành cơ bản. Có hạn mức Active Driver nhất định (Monthly Active Driver) | Doanh nghiệp vận tải, giao hàng, phân phối  | Sau pilot (GĐ 2–3) | Cốt lõi của ngành |
 | 2 | Phí triển khai & tích hợp | Thu một lần: nhập dữ liệu, đào tạo, tích hợp phần mềm sẵn có | Khách hàng mới | Sau pilot (GĐ 2–3) | Cốt lõi cho ứng dụng |
 | 3 | Tư vấn & báo cáo ESG | Tư vấn tối ưu chuyên sâu, báo cáo CO₂ chuẩn hóa cho DN xuất khẩu | DN có nhu cầu ESG | Mở rộng (GĐ 4–5) | Bổ sung tùy theo doanh nghiệp cần hay không |
 | 4 | Phí kết nối đơn chiều về | Hoa hồng khi ghép đơn chiều về giữa các DN | Mạng lưới logistics tuần hoàn | GĐ 6 (dài hạn) | Có thể phát triển thêm (nếu các đvvc họ đồng ý từ đầu) |
 | 5 | Hoa hồng đối tác xanh | Giới thiệu khách hàng cho đối tác xe điện/trạm sạc | Đối tác sinh thái | Mở rộng hệ sinh thái (dài hạn) | Tiềm năng cho đvvc có xe điện |
+
+*Doanh thu tháng \= Phí thuê bao \+ Phí sử dụng theo Monthly Active Driver* 
 
 Giai đoạn pilot (4–6 tuần): không thu phí — đổi lại nhận dữ liệu vận hành thực tế để hiệu chỉnh thuật toán và làm căn cứ định giá. (này consider nên thu hay không nha)
 
@@ -376,14 +379,13 @@ Giai đoạn pilot (4–6 tuần): không thu phí — đổi lại nhận dữ 
 | Marketing & tiếp cận khách hàng | Hội thảo, truyền thông, hợp tác hiệp hội/đối tác | Từ giai đoạn pilot trở đi |
 | Vận hành & duy trì hệ thống | Chi phí server, hỗ trợ khách hàng, cập nhật bảo trì | Khi thương mại hóa |
 
-| C. Nhu cầu vốn theo giai đoạn |  |  |
-| ----- | ----- | ----- |
-| Giai đoạn | Nhu cầu vốn chính | Mục đích sử dụng |
-| GĐ 1 – MVP | Vốn nhỏ / nội bộ | Hoàn thiện sản phẩm, kiểm chứng nhu cầu |
-| GĐ 2 – Pilot TP.HCM | Vốn hạt giống (seed) | Phí API dữ liệu, vận hành thử nghiệm, hỗ trợ 3–5 DN pilot |
-| GĐ 3 – Tối ưu công nghệ | Vốn mở rộng (early-stage) | Tuyển chuyên gia VRP/dữ liệu, nâng cấp hạ tầng |
-| GĐ 4–5 – Mở rộng địa bàn & hệ sinh thái | Vốn tăng trưởng | Marketing, mở rộng đội ngũ, tích hợp đối tác |
-| GĐ 6–7 – Logistics tuần hoàn & liên tỉnh | Vốn quy mô lớn / gọi vốn vòng sau | Xây dựng mạng lưới liên doanh nghiệp, mở rộng vùng địa lý |
+| Giai đoạn | Thời gian | Nhu cầu vốn chính | Mục đích sử dụng | Địa bàn / quy mô triển khai |
+| :---- | :---- | :---- | :---- | :---- |
+| GĐ 1 – MVP | 2026 | Vốn nhỏ / nội bộ | Hoàn thiện sản phẩm, kiểm chứng nhu cầu với 3–5 doanh nghiệp | TP.HCM (một số quận nội thành) |
+| GĐ 2 – Pilot TP.HCM | 2026-2027 | Vốn hạt giống (seed) | Phí API dữ liệu, vận hành thử nghiệm, hỗ trợ 3–5 DN pilot | TP.HCM (các quận có mật độ giao hàng cao: Quận 1, 3, Bình Thạnh, Phú Nhuận, Quận 7, Thủ Đức) |
+| GĐ 3 – Tối ưu công nghệ | 2028 | Vốn mở rộng (early-stage) | Tuyển chuyên gia VRP/dữ liệu, nâng cấp hạ tầng, tích hợp GPS & bản đồ số | TP.HCM (toàn thành phố) |
+| GĐ 4–5 – Mở rộng địa bàn & hệ sinh thái | 2028–2030 | Vốn tăng trưởng | Marketing, mở rộng đội ngũ, tích hợp đối tác (kho, phần mềm bán hàng, sàn TMĐT, trạm sạc) | GĐ 4 (2028): Hà Nội (Hoàn Kiếm, Cầu Giấy, Thanh Xuân), Bình Dương (TP. Thủ Dầu Một, Dĩ An), Đà Nẵng (Hải Châu, Cẩm Lệ) GĐ 5 (2029–2030): Đồng Nai (TP. Biên Hòa), mở rộng vùng ven TP.HCM và Hà Nội; thí điểm liên tỉnh ngắn (TP.HCM – Bình Dương – Đồng Nai; Hà Nội – Hưng Yên – Bắc Ninh) |
+| GĐ 6–7 – Logistics tuần hoàn & liên tỉnh | 2030–2032+ | Vốn quy mô lớn / gọi vốn vòng sau | Xây dựng mạng lưới liên doanh nghiệp, mở rộng vùng địa lý, phát triển logistics liên tỉnh và xuyên biên giới | Vùng kinh tế trọng điểm phía Nam và phía Bắc; các trục logistics liên tỉnh chính; tiến tới kết nối cửa khẩu, cảng biển lớn |
 
 # Yếu tố rủi ro và giải pháp
 
