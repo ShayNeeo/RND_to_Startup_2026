@@ -71,8 +71,8 @@ export function App() {
         className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none brightness-95"
       />
 
-      {/* Subtle Overlay to enhance contrast */}
-      <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none" />
+      {/* High-legibility vignette gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/60 z-0 pointer-events-none" />
 
       {/* Main Content Layer (Fades in when video is ready) */}
       <AnimatePresence>
@@ -96,22 +96,22 @@ export function App() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: EXPO_OUT }}
-                className="flex flex-col uppercase font-barlow font-extrabold tracking-[-0.01em] leading-[0.9] text-left cursor-pointer group"
+                className="flex flex-col uppercase font-barlow font-extrabold tracking-[-0.01em] leading-[0.9] text-left cursor-pointer group drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
                 style={{
                   fontSize: 'clamp(22px, min(3.15vh, 2.32vw), 32px)',
                 }}
               >
                 <span className="text-white group-hover:text-white/90 transition-colors">GREENLOGIX</span>
-                <span className="text-[#ffda00] group-hover:brightness-110 transition-all flex items-center gap-1">
-                  GROUP <span className="text-[10px] lowercase tracking-normal font-sans font-normal text-white/75 bg-white/10 px-1.5 py-0.5 rounded-full">B2B SaaS</span>
+                <span className="text-[#ffda00] group-hover:brightness-110 transition-all flex items-center gap-1.5">
+                  GROUP <span className="text-[11px] lowercase tracking-normal font-sans font-semibold text-emerald-300 bg-black/40 border border-white/20 px-2 py-0.5 rounded-full backdrop-blur-sm">B2B SaaS</span>
                 </span>
               </motion.a>
 
-              {/* Desktop Nav (Center/Right on md+) */}
+              {/* Desktop Nav (Glass pill container for supreme legibility) */}
               <nav
-                className="hidden md:flex items-center"
+                className="hidden md:flex items-center bg-black/30 backdrop-blur-md px-5 py-2 rounded-full border border-white/15 shadow-lg shadow-black/20"
                 style={{
-                  gap: 'clamp(20px, 3.8vw, 52px)',
+                  gap: 'clamp(16px, 2.8vw, 36px)',
                 }}
               >
                 {navItems.map((item, idx) => (
@@ -125,14 +125,14 @@ export function App() {
                       delay: 0.15 + idx * 0.08,
                       ease: EXPO_OUT,
                     }}
-                    whileHover={{ x: 2 }}
-                    className="flex items-center gap-1.5 text-white hover:text-[#ffda00] font-sans font-medium tracking-[-0.02em] transition-colors cursor-pointer"
+                    whileHover={{ scale: 1.04, y: -1 }}
+                    className="flex items-center gap-1.5 text-white/95 hover:text-[#ffda00] font-sans font-semibold tracking-tight transition-colors cursor-pointer drop-shadow-sm"
                     style={{
-                      fontSize: 'clamp(15px, min(1.97vh, 1.45vw), 20px)',
+                      fontSize: 'clamp(13px, min(1.8vh, 1.35vw), 16px)',
                     }}
                   >
                     <span>{item.name}</span>
-                    <ChevronDown className="w-4 h-4 opacity-75 group-hover:opacity-100 transition-opacity" />
+                    <ChevronDown className="w-3.5 h-3.5 opacity-80 group-hover:opacity-100 transition-opacity" />
                   </motion.button>
                 ))}
               </nav>
@@ -140,10 +140,10 @@ export function App() {
               {/* Mobile Hamburger Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-white hover:text-[#ffda00] focus:outline-none transition-colors"
+                className="md:hidden p-2 text-white bg-black/40 backdrop-blur-md rounded-full border border-white/20 hover:text-[#ffda00] focus:outline-none transition-colors"
                 aria-label="Toggle Navigation"
               >
-                {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
               </button>
             </header>
 
@@ -155,7 +155,7 @@ export function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute inset-0 z-40 bg-[#6682c2]/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
+                  className="absolute inset-0 z-40 bg-[#002a35]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden"
                 >
                   <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -189,9 +189,9 @@ export function App() {
                         setMobileMenuOpen(false);
                         setPilotModalOpen(true);
                       }}
-                      className="mt-4 px-8 py-3.5 rounded-full bg-[#ffda00] text-[#002a35] font-bold text-lg shadow-lg"
+                      className="mt-4 px-8 py-3.5 rounded-full bg-[#ffda00] text-[#002a35] font-extrabold text-lg shadow-xl"
                     >
-                      Đăng Ký Pilot 4-6 Tuần
+                      Đăng Ký Pilot 4–6 Tuần
                     </motion.button>
                   </div>
                 </motion.div>
@@ -219,17 +219,17 @@ export function App() {
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0, ease: EXPO_OUT }}
-                    className="text-white drop-shadow-md"
+                    className="text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
                   >
                     BEYOND
                   </motion.div>
 
-                  {/* Line 2: BORDERS */}
+                  {/* Line 2: BORDERS with high-contrast shadow */}
                   <motion.div
                     initial={{ x: 900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.13, ease: EXPO_OUT }}
-                    className="text-[#002a35] drop-shadow-sm"
+                    className="text-[#002a35] drop-shadow-[0_3px_10px_rgba(255,255,255,0.4)]"
                     style={{ marginLeft: '0.524em' }}
                   >
                     BORDERS
@@ -240,7 +240,7 @@ export function App() {
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.26, ease: EXPO_OUT }}
-                    className="text-white drop-shadow-md"
+                    className="text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
                   >
                     AND LIMITS
                   </motion.div>
@@ -254,9 +254,9 @@ export function App() {
                   gap: 'clamp(16px, 2.66vh, 32px)',
                 }}
               >
-                {/* Tagline Text with word-by-word reveal (Green Logistics Theme) */}
+                {/* Tagline Text with crystal-clear high contrast */}
                 <div
-                  className="font-sans font-normal text-[#002a35] leading-[0.9] tracking-[-0.02em] flex flex-col"
+                  className="font-sans font-normal leading-[0.92] tracking-[-0.02em] flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
                   style={{
                     fontSize: 'clamp(24px, min(4vh, 3vw), 52px)',
                   }}
@@ -267,7 +267,7 @@ export function App() {
                       initial={{ y: '100%', rotateX: 45 }}
                       animate={{ y: 0, rotateX: 0 }}
                       transition={{ duration: 0.6, delay: 0.3, ease: EXPO_OUT }}
-                      className="inline-block origin-bottom font-bold text-gray-900"
+                      className="inline-block origin-bottom font-extrabold text-white"
                     >
                       Logistics
                     </motion.span>
@@ -281,7 +281,7 @@ export function App() {
                         initial={{ y: '100%', rotateX: 45 }}
                         animate={{ y: 0, rotateX: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em] font-medium"
+                        className="inline-block origin-bottom mr-[0.25em] font-bold text-white/95"
                       >
                         {word}
                       </motion.span>
@@ -296,7 +296,7 @@ export function App() {
                         initial={{ y: '100%', rotateX: 45 }}
                         animate={{ y: 0, rotateX: 0 }}
                         transition={{ duration: 0.6, delay: 0.7 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em] font-medium text-[#002a35]"
+                        className="inline-block origin-bottom mr-[0.25em] font-extrabold text-[#ffda00]"
                       >
                         {word}
                       </motion.span>
@@ -304,7 +304,7 @@ export function App() {
                   </div>
                 </div>
 
-                {/* Map Section (VRPTW Live Multi-modal Route Optimization) */}
+                {/* Map Section (VRPTW Live Multi-modal Route Network) */}
                 <div
                   className="relative w-full overflow-visible"
                   style={{ aspectRatio: '435 / 263' }}
@@ -313,7 +313,7 @@ export function App() {
                   <img
                     src="https://polo-pecan-73837341.figma.site/_assets/v11/b6d561167283e799453232309bd13dd78b2d1afa.png"
                     alt="VRPTW Urban & Regional Route Network"
-                    className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-md"
+                    className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]"
                   />
 
                   {/* Route Lines SVG Overlay */}
@@ -338,7 +338,7 @@ export function App() {
                             d={pathD}
                             fill="none"
                             stroke="#FFDA00"
-                            strokeWidth="2.5"
+                            strokeWidth="2.8"
                             strokeLinecap="round"
                             initial={{ pathLength: 0 }}
                             animate={{ pathLength: 1 }}
@@ -392,8 +392,8 @@ export function App() {
                       damping: 16,
                       delay: 2.1,
                     }}
-                    whileHover={{ scale: 1.12, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] cursor-pointer"
+                    whileHover={{ scale: 1.15, y: -4 }}
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
                     style={{
                       left: '26.0%',
                       top: '28.9%',
@@ -418,8 +418,8 @@ export function App() {
                       damping: 16,
                       delay: 2.2,
                     }}
-                    whileHover={{ scale: 1.12, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] cursor-pointer"
+                    whileHover={{ scale: 1.15, y: -4 }}
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
                     style={{
                       left: '70.8%',
                       top: '15.6%',
@@ -445,8 +445,8 @@ export function App() {
                       damping: 16,
                       delay: 2.3,
                     }}
-                    whileHover={{ scale: 1.12, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] cursor-pointer"
+                    whileHover={{ scale: 1.15, y: -4 }}
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
                     style={{
                       left: '55.2%',
                       top: '52.1%',
@@ -462,20 +462,23 @@ export function App() {
                     />
                   </motion.div>
 
-                  {/* Map Description Text */}
+                  {/* Map Description Text - Enhanced Glass Pill for supreme legibility */}
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 2.4 }}
-                    className="hidden sm:block absolute font-sans font-medium text-[#002a35] leading-tight"
+                    className="hidden sm:inline-flex items-center gap-2 absolute bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/20 shadow-lg text-white font-sans font-medium leading-tight"
                     style={{
-                      left: '55.6%',
-                      top: '89%',
-                      width: '44%',
-                      fontSize: 'clamp(12px, min(1.6vh, 1.2vw), 20px)',
+                      left: '35%',
+                      top: '84%',
+                      maxWidth: '65%',
+                      fontSize: 'clamp(11px, min(1.5vh, 1.1vw), 14px)',
                     }}
                   >
-                    Tối ưu đa ràng buộc VRPTW &amp; kiểm kê CO₂ theo chuẩn ISO 14083.
+                    <span className="w-2 h-2 rounded-full bg-[#ffda00] shrink-0 animate-pulse"></span>
+                    <span className="text-white/95">
+                      Tối ưu VRPTW đa ràng buộc &amp; đo CO₂ chuẩn <strong>ISO 14083</strong>.
+                    </span>
                   </motion.div>
                 </div>
               </div>
@@ -493,11 +496,11 @@ export function App() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.65, delay: 0.45, ease: EXPO_OUT }}
-                className="flex items-center gap-3 sm:gap-4 text-left"
+                className="flex items-center gap-3 sm:gap-4 text-left bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/15 shadow-xl"
               >
                 {/* 3M+ Stat Number */}
                 <div
-                  className="font-barlow font-extrabold uppercase text-[#ffda00] leading-none"
+                  className="font-barlow font-extrabold uppercase text-[#ffda00] leading-none drop-shadow-[0_2px_8px_rgba(255,218,0,0.3)]"
                   style={{
                     fontSize: 'clamp(52px, min(8vh, 6vw), 98px)',
                   }}
@@ -508,19 +511,19 @@ export function App() {
                 {/* Description + Icon */}
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   <div
-                    className="font-sans font-normal text-white leading-[1.25]"
+                    className="font-sans font-medium text-white leading-[1.25] drop-shadow-sm"
                     style={{
-                      fontSize: 'clamp(14px, min(1.6vh, 1.2vw), 20px)',
+                      fontSize: 'clamp(13px, min(1.55vh, 1.15vw), 18px)',
                     }}
                   >
-                    <div>tấn hàng hóa tối ưu tuyến</div>
-                    <div>cắt 5–12% CO₂ / đơn hàng</div>
-                    <div className="text-white/80">giảm 10–20% xe chạy rỗng</div>
+                    <div className="text-white font-bold">tấn hàng hóa tối ưu tuyến</div>
+                    <div className="text-emerald-300">cắt 5–12% CO₂ / đơn hàng</div>
+                    <div className="text-white/90">giảm 10–20% xe chạy rỗng</div>
                   </div>
 
                   {/* Small Cargo Icon in White Circle */}
                   <div
-                    className="rounded-full bg-white flex items-center justify-center shadow-md shrink-0"
+                    className="rounded-full bg-white flex items-center justify-center shadow-lg ring-2 ring-white/30 shrink-0"
                     style={{
                       width: 'clamp(40px, min(5.5vh, 4vw), 67px)',
                       height: 'clamp(40px, min(5.5vh, 4vw), 67px)',
@@ -545,7 +548,7 @@ export function App() {
                 whileTap={{ scale: 0.97 }}
                 onHoverStart={() => setIsCtaHovered(true)}
                 onHoverEnd={() => setIsCtaHovered(false)}
-                className="relative cursor-pointer flex items-center justify-center focus:outline-none w-full sm:w-auto"
+                className="relative cursor-pointer flex items-center justify-center focus:outline-none w-full sm:w-auto drop-shadow-2xl"
                 style={{
                   height: 'clamp(48px, min(6vh, 4.5vw), 68px)',
                   aspectRatio: '434 / 68',
@@ -557,7 +560,7 @@ export function App() {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                   preserveAspectRatio="none"
-                  className="w-full h-full drop-shadow-lg"
+                  className="w-full h-full drop-shadow-xl"
                 >
                   <path
                     d="M316 0C329.08 0 340.435 7.38674 346.121 18.2162C348.618 22.9736 353.086 26.8535 358.459 26.8535H359.252C364.667 26.8535 369.155 22.9169 371.63 18.1007C377.159 7.34039 388.205 0.00015843 400.931 0C419.195 0 434.001 15.1191 434.001 33.7695L433.99 34.6416C433.537 52.8891 418.909 67.5391 400.931 67.5391C387.96 67.5389 376.734 59.9132 371.317 48.8128C368.923 43.9077 364.427 39.873 358.969 39.873C353.492 39.873 348.986 43.9356 346.589 48.8605C341.074 60.1913 329.449 68 316 68H34.001C15.2233 68 0 52.7777 0 34C0 15.2223 15.2233 0 34.001 0H316ZM400.931 2.44141C384.063 2.44163 370.303 16.419 370.303 33.7695C370.303 51.1201 384.063 65.0974 400.931 65.0977C417.798 65.0977 431.56 51.1202 431.56 33.7695C431.56 16.4189 417.798 2.44141 400.931 2.44141Z"
@@ -567,7 +570,7 @@ export function App() {
 
                 {/* Button Label (Centered in the left portion) */}
                 <div
-                  className="absolute left-0 right-[20%] inset-y-0 flex items-center justify-center font-sans font-bold text-[#002a35] tracking-tight whitespace-nowrap"
+                  className="absolute left-0 right-[20%] inset-y-0 flex items-center justify-center font-sans font-extrabold text-[#002a35] tracking-tight whitespace-nowrap"
                   style={{
                     fontSize: 'clamp(14px, min(1.6vh, 1.2vw), 20px)',
                   }}
@@ -594,7 +597,7 @@ export function App() {
                     <path
                       d="M8.445 1.5V18.87M8.445 1.5L1.5 8.445M8.445 1.5L15.39 8.445"
                       stroke="#FFFFFF"
-                      strokeWidth="2.2"
+                      strokeWidth="2.4"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
