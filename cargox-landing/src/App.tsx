@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, CheckCircle2, ShieldCheck, Sparkles, Building2, Phone, Mail, User, Truck } from 'lucide-react';
 
 const EXPO_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -8,9 +8,22 @@ export function App() {
   const [videoReady, setVideoReady] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
+  const [pilotModalOpen, setPilotModalOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    phone: '',
+    email: '',
+    fleetSize: '5-15 xe',
+    area: 'TP. Hồ Chí Minh (Ưu tiên đợt 1)',
+    notes: '',
+  });
 
   useEffect(() => {
-    // Safety fallback: in case video onCanPlay takes long or is cached
+    // Safety fallback: in case video onCanPlay takes long
     const timer = setTimeout(() => {
       setVideoReady(true);
     }, 1200);
@@ -18,9 +31,10 @@ export function App() {
   }, []);
 
   const navItems = [
-    { name: 'Services', href: '#' },
-    { name: 'Industries', href: '#' },
-    { name: 'Company', href: '#' },
+    { name: 'Thuật Toán VRPTW', href: '#vrptw' },
+    { name: 'Quy Trình 8 Bước', href: '#workflow' },
+    { name: 'Kiểm Kê CO₂ & ESG', href: '#esg' },
+    { name: 'Chương Trình Pilot', href: '#pilot' },
   ];
 
   const mapPaths = [
@@ -38,6 +52,11 @@ export function App() {
     { cx: 19.519, cy: 104.519 },
   ];
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <div className="relative w-full h-full min-h-screen overflow-hidden flex flex-col bg-[#1a1a2e] select-none">
       {/* Background Video */}
@@ -49,8 +68,11 @@ export function App() {
         playsInline
         onCanPlay={() => setVideoReady(true)}
         onLoadedData={() => setVideoReady(true)}
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none brightness-95"
       />
+
+      {/* Subtle Overlay to enhance contrast */}
+      <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none" />
 
       {/* Main Content Layer (Fades in when video is ready) */}
       <AnimatePresence>
@@ -68,7 +90,7 @@ export function App() {
                 padding: 'clamp(16px, 4vh, 40px) clamp(16px, 3vw, 48px) 0',
               }}
             >
-              {/* Logo (Left): Stacked CARGOX / GROUP */}
+              {/* Logo (Left): Stacked GREENLOGIX / GROUP (B2B Green Logistics) */}
               <motion.a
                 href="#"
                 initial={{ opacity: 0, y: -20 }}
@@ -79,8 +101,10 @@ export function App() {
                   fontSize: 'clamp(22px, min(3.15vh, 2.32vw), 32px)',
                 }}
               >
-                <span className="text-white group-hover:text-white/90 transition-colors">CARGOX</span>
-                <span className="text-[#ffda00] group-hover:brightness-110 transition-all">GROUP</span>
+                <span className="text-white group-hover:text-white/90 transition-colors">GREENLOGIX</span>
+                <span className="text-[#ffda00] group-hover:brightness-110 transition-all flex items-center gap-1">
+                  GROUP <span className="text-[10px] lowercase tracking-normal font-sans font-normal text-white/75 bg-white/10 px-1.5 py-0.5 rounded-full">B2B SaaS</span>
+                </span>
               </motion.a>
 
               {/* Desktop Nav (Center/Right on md+) */}
@@ -91,9 +115,9 @@ export function App() {
                 }}
               >
                 {navItems.map((item, idx) => (
-                  <motion.a
+                  <motion.button
                     key={item.name}
-                    href={item.href}
+                    onClick={() => setPilotModalOpen(true)}
                     initial={{ opacity: 0, y: -15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
@@ -109,7 +133,7 @@ export function App() {
                   >
                     <span>{item.name}</span>
                     <ChevronDown className="w-4 h-4 opacity-75 group-hover:opacity-100 transition-opacity" />
-                  </motion.a>
+                  </motion.button>
                 ))}
               </nav>
 
@@ -131,7 +155,7 @@ export function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute inset-0 z-40 bg-[#6682c2] flex flex-col items-center justify-center gap-8 md:hidden"
+                  className="absolute inset-0 z-40 bg-[#6682c2]/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
                 >
                   <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -142,29 +166,33 @@ export function App() {
 
                   <div className="flex flex-col items-center gap-6">
                     {navItems.map((item, idx) => (
-                      <motion.a
+                      <motion.button
                         key={item.name}
-                        href={item.href}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 + idx * 0.08 }}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setPilotModalOpen(true);
+                        }}
                         className="text-2xl font-bold text-white hover:text-[#ffda00] transition-colors"
                       >
                         {item.name}
-                      </motion.a>
+                      </motion.button>
                     ))}
 
-                    <motion.a
-                      href="#contact"
+                    <motion.button
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.35 }}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setPilotModalOpen(true);
+                      }}
                       className="mt-4 px-8 py-3.5 rounded-full bg-[#ffda00] text-[#002a35] font-bold text-lg shadow-lg"
                     >
-                      Get in touch
-                    </motion.a>
+                      Đăng Ký Pilot 4-6 Tuần
+                    </motion.button>
                   </div>
                 </motion.div>
               )}
@@ -178,7 +206,7 @@ export function App() {
                 gap: 'clamp(20px, 4vh, 48px)',
               }}
             >
-              {/* Left Column: Giant Headline */}
+              {/* Left Column: Giant Headline adapted to GreenLogix & Net Zero 2050 */}
               <div className="overflow-clip flex flex-col justify-center text-left">
                 <div
                   className="font-barlow font-extrabold uppercase leading-[0.78] tracking-[-0.01em] flex flex-col"
@@ -191,7 +219,7 @@ export function App() {
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0, ease: EXPO_OUT }}
-                    className="text-white"
+                    className="text-white drop-shadow-md"
                   >
                     BEYOND
                   </motion.div>
@@ -201,7 +229,7 @@ export function App() {
                     initial={{ x: 900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.13, ease: EXPO_OUT }}
-                    className="text-[#002a35]"
+                    className="text-[#002a35] drop-shadow-sm"
                     style={{ marginLeft: '0.524em' }}
                   >
                     BORDERS
@@ -212,7 +240,7 @@ export function App() {
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.26, ease: EXPO_OUT }}
-                    className="text-white"
+                    className="text-white drop-shadow-md"
                   >
                     AND LIMITS
                   </motion.div>
@@ -226,7 +254,7 @@ export function App() {
                   gap: 'clamp(16px, 2.66vh, 32px)',
                 }}
               >
-                {/* Tagline Text with word-by-word reveal */}
+                {/* Tagline Text with word-by-word reveal (Green Logistics Theme) */}
                 <div
                   className="font-sans font-normal text-[#002a35] leading-[0.9] tracking-[-0.02em] flex flex-col"
                   style={{
@@ -239,7 +267,7 @@ export function App() {
                       initial={{ y: '100%', rotateX: 45 }}
                       animate={{ y: 0, rotateX: 0 }}
                       transition={{ duration: 0.6, delay: 0.3, ease: EXPO_OUT }}
-                      className="inline-block origin-bottom font-semibold"
+                      className="inline-block origin-bottom font-bold text-gray-900"
                     >
                       Logistics
                     </motion.span>
@@ -253,7 +281,7 @@ export function App() {
                         initial={{ y: '100%', rotateX: 45 }}
                         animate={{ y: 0, rotateX: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em]"
+                        className="inline-block origin-bottom mr-[0.25em] font-medium"
                       >
                         {word}
                       </motion.span>
@@ -268,7 +296,7 @@ export function App() {
                         initial={{ y: '100%', rotateX: 45 }}
                         animate={{ y: 0, rotateX: 0 }}
                         transition={{ duration: 0.6, delay: 0.7 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em]"
+                        className="inline-block origin-bottom mr-[0.25em] font-medium text-[#002a35]"
                       >
                         {word}
                       </motion.span>
@@ -276,7 +304,7 @@ export function App() {
                   </div>
                 </div>
 
-                {/* Map Section */}
+                {/* Map Section (VRPTW Live Multi-modal Route Optimization) */}
                 <div
                   className="relative w-full overflow-visible"
                   style={{ aspectRatio: '435 / 263' }}
@@ -284,7 +312,7 @@ export function App() {
                   {/* Map Image Base */}
                   <img
                     src="https://polo-pecan-73837341.figma.site/_assets/v11/b6d561167283e799453232309bd13dd78b2d1afa.png"
-                    alt="CargoX Global Route Map"
+                    alt="VRPTW Urban & Regional Route Network"
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-md"
                   />
 
@@ -375,12 +403,12 @@ export function App() {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/08d6a37375d428e07c59e24a8529de89bfee157e.08d6a373.png"
-                      alt="Maritime Fleet"
+                      alt="Maritime Logistics"
                       className="w-[60%] h-[60%] object-contain"
                     />
                   </motion.div>
 
-                  {/* 2. Car / Road Fleet */}
+                  {/* 2. Car / Road Fleet (GreenLogix Delivery Hub) */}
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -402,7 +430,7 @@ export function App() {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/7d6f50a87e1427d9b4d1a9c9f1c064ff04b2b3f9.7d6f50a8.png"
-                      alt="Road & Urban Fleet"
+                      alt="Urban Delivery Van"
                       className="w-[60%] h-[60%] object-contain"
                     />
                   </motion.div>
@@ -447,7 +475,7 @@ export function App() {
                       fontSize: 'clamp(12px, min(1.6vh, 1.2vw), 20px)',
                     }}
                   >
-                    We ensure full transparency at every stage to build trust and drive results.
+                    Tối ưu đa ràng buộc VRPTW &amp; kiểm kê CO₂ theo chuẩn ISO 14083.
                   </motion.div>
                 </div>
               </div>
@@ -460,14 +488,14 @@ export function App() {
                 padding: 'clamp(12px, 3vh, 32px) clamp(16px, 3vw, 48px) clamp(16px, 5vh, 66px)',
               }}
             >
-              {/* Left: Stat Block */}
+              {/* Left: Stat Block (BRAINSTORM_IDEA.md: 3M+ / 8-15% distance saved) */}
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.65, delay: 0.45, ease: EXPO_OUT }}
                 className="flex items-center gap-3 sm:gap-4 text-left"
               >
-                {/* 3M+ Number */}
+                {/* 3M+ Stat Number */}
                 <div
                   className="font-barlow font-extrabold uppercase text-[#ffda00] leading-none"
                   style={{
@@ -485,9 +513,9 @@ export function App() {
                       fontSize: 'clamp(14px, min(1.6vh, 1.2vw), 20px)',
                     }}
                   >
-                    <div>tons of cargo</div>
-                    <div>successfully delivered</div>
-                    <div className="text-white/80">without delays</div>
+                    <div>tấn hàng hóa tối ưu tuyến</div>
+                    <div>cắt 5–12% CO₂ / đơn hàng</div>
+                    <div className="text-white/80">giảm 10–20% xe chạy rỗng</div>
                   </div>
 
                   {/* Small Cargo Icon in White Circle */}
@@ -507,8 +535,9 @@ export function App() {
                 </div>
               </motion.div>
 
-              {/* Right: Custom SVG Pill CTA Button */}
+              {/* Right: Custom SVG Pill CTA Button with Interactive Pilot Trigger */}
               <motion.button
+                onClick={() => setPilotModalOpen(true)}
                 initial={{ opacity: 0, x: 60 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.65, delay: 0.5, ease: EXPO_OUT }}
@@ -543,7 +572,7 @@ export function App() {
                     fontSize: 'clamp(14px, min(1.6vh, 1.2vw), 20px)',
                   }}
                 >
-                  Get in touch
+                  Đăng Ký Pilot Free
                 </div>
 
                 {/* Rotating Arrow inside the Right Circle Cutout */}
@@ -574,6 +603,191 @@ export function App() {
               </motion.button>
             </footer>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Pilot Program Registration Modal (Connected to BRAINSTORM_IDEA.md) */}
+      <AnimatePresence>
+        {pilotModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="bg-white text-gray-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative border border-gray-100 max-h-[90vh] overflow-y-auto"
+            >
+              <button
+                onClick={() => setPilotModalOpen(false)}
+                className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                aria-label="Đóng modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {!submitted ? (
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-100 text-[#002a35] flex items-center justify-center font-bold">
+                      <Sparkles className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold tracking-wider text-amber-700 uppercase bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                        Thử Nghiệm Pilot 4–6 Tuần (Miễn Phí)
+                      </span>
+                      <h3 className="text-xl font-bold text-gray-900 mt-1">Đăng Ký Tham Gia GreenLogix</h3>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-600 mb-5 leading-relaxed">
+                    Dành riêng cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> (Viettel Post, GHN, phân phối FMCG/F&amp;B). Đội ngũ kỹ thuật hỗ trợ chuẩn hóa dữ liệu và vận hành trực tiếp.
+                  </p>
+
+                  <form onSubmit={handleSubmit} className="space-y-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Họ và tên người liên hệ *
+                        </label>
+                        <div className="relative">
+                          <User className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                          <input
+                            type="text"
+                            required
+                            placeholder="VD: Nguyễn Văn A"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35]"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Doanh nghiệp / Bưu cục *
+                        </label>
+                        <div className="relative">
+                          <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                          <input
+                            type="text"
+                            required
+                            placeholder="VD: Bưu cục GHN Q. Bình Thạnh"
+                            value={formData.company}
+                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Số điện thoại *
+                        </label>
+                        <div className="relative">
+                          <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                          <input
+                            type="tel"
+                            required
+                            placeholder="09xx xxx xxx"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35]"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Email công việc *
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                          <input
+                            type="email"
+                            required
+                            placeholder="name@company.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Quy mô đội xe giao hàng
+                        </label>
+                        <div className="relative">
+                          <Truck className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                          <select
+                            value={formData.fleetSize}
+                            onChange={(e) => setFormData({ ...formData, fleetSize: e.target.value })}
+                            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35] bg-white"
+                          >
+                            <option value="Dưới 5 xe">Dưới 5 xe</option>
+                            <option value="5-15 xe">5–15 xe (Phù hợp Pilot)</option>
+                            <option value="15-50 xe">15–50 xe</option>
+                            <option value="Trên 50 xe">Trên 50 xe</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Khu vực vận hành chính
+                        </label>
+                        <select
+                          value={formData.area}
+                          onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                          className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#002a35] bg-white"
+                        >
+                          <option value="TP. Hồ Chí Minh (Ưu tiên đợt 1)">TP. Hồ Chí Minh (Đợt 1)</option>
+                          <option value="Hà Nội (Đợt 2)">Hà Nội (Đợt 2)</option>
+                          <option value="Bình Dương / Đồng Nai">Bình Dương / Đồng Nai</option>
+                          <option value="Đà Nẵng">Đà Nẵng</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full mt-2 py-3 rounded-xl font-bold text-xs sm:text-sm text-gray-900 bg-[#ffda00] hover:bg-[#ebd01e] shadow-md transition-all flex items-center justify-center gap-2"
+                    >
+                      <span>Gửi Thông Tin Đăng Ký Pilot Miễn Phí</span>
+                    </button>
+
+                    <div className="flex items-center justify-center gap-1.5 text-[11px] text-gray-500 pt-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Cam kết bảo mật dữ liệu theo Nghị định 13/2023/NĐ-CP</span>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Đăng Ký Pilot Thành Công!</h3>
+                  <p className="text-xs text-gray-600 mb-6 leading-relaxed max-w-sm mx-auto">
+                    Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để khảo sát mô hình bưu cục và khởi tạo tài khoản trải nghiệm.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setPilotModalOpen(false);
+                      setSubmitted(false);
+                    }}
+                    className="px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-[#002a35] hover:bg-black transition-all"
+                  >
+                    Hoàn Tất &amp; Đóng
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
