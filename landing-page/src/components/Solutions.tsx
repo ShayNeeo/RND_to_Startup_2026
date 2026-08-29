@@ -15,6 +15,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
         'Tự động gom cụm đơn hàng (Clustering) và phân bổ tải trọng xe tối ưu theo khung giờ giao cam kết (Time Windows), loại bỏ hoàn toàn việc phân tuyến thủ công.',
       icon: Route,
       badge: 'Lõi Thuật Toán',
+      gradient: 'from-emerald-700 via-green-800 to-[#111827]',
       image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Xử lý 50–500 đơn hàng trong <10 giây',
@@ -30,6 +31,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
         'Tích hợp dữ liệu giao thông đô thị thời gian thực từ Goong/Mapbox API, tự động cảnh báo điểm ùn tắc và tái định tuyến linh hoạt cho tài xế.',
       icon: Navigation,
       badge: 'Bản Đồ Số & GPS',
+      gradient: 'from-slate-800 via-teal-900 to-[#111827]',
       image: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Cập nhật mật độ xe & kẹt xe theo thời gian thực',
@@ -45,6 +47,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
         'Tự động quét và đề xuất các đơn hàng cần lấy hoặc trả hàng trên lộ trình quay về của xe, triệt tiêu tình trạng xe chạy rỗng lãng phí nhiên liệu.',
       icon: Repeat,
       badge: 'Kinh Tế Tuần Hoàn',
+      gradient: 'from-green-900 via-emerald-950 to-[#111827]',
       image: 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Cắt giảm 10–20% quãng đường xe chạy rỗng',
@@ -60,6 +63,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
         'Hệ thống tự động tính toán lượng phát thải CO₂ trên từng đơn hàng và chuyến xe theo chuẩn quốc tế GLEC Framework & ISO 14083 phục vụ kiểm toán ESG.',
       icon: Leaf,
       badge: 'ESG & Kiểm Kê Xanh',
+      gradient: 'from-emerald-900 via-slate-900 to-[#111827]',
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
       highlights: [
         'Đo lường CO₂ chuẩn GLEC Framework v3.0 / Scope 3',
@@ -70,7 +74,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
   ];
 
   return (
-    <section id="solutions" className="py-28 bg-[#FAFAFA] relative overflow-hidden">
+    <section id="solutions" className="py-20 sm:py-28 bg-[#FAFAFA] relative overflow-hidden">
       {/* Background Dotted Radial Pattern */}
       <div 
         className="absolute inset-0 opacity-15 pointer-events-none"
@@ -81,33 +85,33 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
       />
 
       {/* Decorative Circular Accent Rings */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full border-[1.5px] border-[#5C7D52]/20 pointer-events-none" />
-      <div className="absolute -top-12 -left-12 w-72 h-72 rounded-full border-[1.5px] border-[#5C7D52]/15 pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full border-[1.5px] border-[#5C7D52]/20 pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full border-[1.5px] border-[#5C7D52]/20 pointer-events-none" />
+      <div className="absolute -top-12 -left-12 w-52 sm:w-72 h-52 sm:h-72 rounded-full border-[1.5px] border-[#5C7D52]/15 pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-72 sm:w-96 h-72 sm:h-96 rounded-full border-[1.5px] border-[#5C7D52]/20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white border border-[#5C7D52]/20 shadow-sm mb-5">
-            <span className="h-px w-6 bg-[#5C7D52]"></span>
-            <span className="text-xs font-extrabold tracking-widest text-[#5C7D52] uppercase flex items-center gap-1.5">
+        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white border border-[#5C7D52]/20 shadow-sm mb-4 sm:mb-5">
+            <span className="h-px w-5 sm:w-6 bg-[#5C7D52]"></span>
+            <span className="text-[11px] sm:text-xs font-extrabold tracking-widest text-[#5C7D52] uppercase flex items-center gap-1.5">
               GIẢI PHÁP CỐT LÕI <Leaf className="w-3.5 h-3.5 text-[#74b72e] fill-current inline" /> GREENLOGIX
             </span>
-            <span className="h-px w-6 bg-[#5C7D52]"></span>
+            <span className="h-px w-5 sm:w-6 bg-[#5C7D52]"></span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-[#111827] leading-tight tracking-tight mb-5">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold text-[#111827] leading-tight tracking-tight mb-4 sm:mb-5">
             Tiên Phong Công Nghệ <span className="text-[#5C7D52]">Logistics Bền Vững</span>
           </h2>
           
-          <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed">
             Sự kết hợp hoàn hảo giữa toán học tối ưu vận tải và công nghệ đo lường khí nhà kính, giúp doanh nghiệp vận hành thông minh hơn mỗi ngày.
           </p>
         </div>
 
         {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 items-stretch pt-2">
           {solutions.map((item) => {
             const Icon = item.icon;
             return (
@@ -117,23 +121,23 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
               >
                 {/* Floating Icon at -top-7 left-8 */}
                 <div className="relative">
-                  <div className="relative h-52 w-full overflow-hidden bg-gray-100">
+                  <div className={`relative h-48 sm:h-52 w-full overflow-hidden bg-gradient-to-br ${item.gradient}`}>
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
                     
                     {/* Badge top right of image */}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold text-[#5C7D52] shadow-sm">
+                    <div className="absolute top-3.5 right-3.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-[#5C7D52] shadow-sm">
                       {item.badge}
                     </div>
 
                     {/* Curved SVG Mask cutting image bottom into white card body */}
                     <svg
-                      className="absolute -bottom-[1px] left-0 right-0 w-full h-10 text-white fill-current"
+                      className="absolute -bottom-[1px] left-0 right-0 w-full h-9 sm:h-10 text-white fill-current"
                       viewBox="0 0 400 40"
                       preserveAspectRatio="none"
                     >
@@ -142,30 +146,30 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenPilotModal }) => {
                   </div>
 
                   {/* Floating Icon Button */}
-                  <div className="absolute top-4 left-6 w-14 h-14 rounded-2xl bg-[#5C7D52] group-hover:bg-[#4a6541] group-hover:-translate-y-1 text-white flex items-center justify-center shadow-lg shadow-green-900/30 transition-all duration-300">
-                    <Icon className="w-7 h-7" />
+                  <div className="absolute top-3.5 left-5 sm:left-6 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#5C7D52] group-hover:bg-[#4a6541] group-hover:-translate-y-1 text-white flex items-center justify-center shadow-lg shadow-green-900/30 transition-all duration-300">
+                    <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                 </div>
 
                 {/* Card Content Body */}
-                <div className="p-6 sm:p-7 pt-4 flex-1 flex flex-col justify-between">
+                <div className="p-5 sm:p-6 lg:p-7 pt-3 sm:pt-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-[11px] font-bold text-[#74b72e] uppercase tracking-wider block mb-1">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-[#74b72e] uppercase tracking-wider block mb-1">
                       {item.subtitle}
                     </span>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 leading-snug mb-3">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-snug mb-2 sm:mb-3">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-5">
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-4 sm:mb-5">
                       {item.description}
                     </p>
 
                     {/* Benefit Checklist */}
-                    <ul className="space-y-2 border-t border-gray-100 pt-4 mb-6">
+                    <ul className="space-y-2 border-t border-gray-100 pt-3.5 mb-5 sm:mb-6">
                       {item.highlights.map((point, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
                           <CheckCircle2 className="w-4 h-4 text-[#5C7D52] shrink-0 mt-0.5" />
-                          <span>{point}</span>
+                          <span className="leading-snug">{point}</span>
                         </li>
                       ))}
                     </ul>

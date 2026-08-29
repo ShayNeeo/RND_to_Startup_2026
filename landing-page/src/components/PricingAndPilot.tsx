@@ -64,48 +64,48 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-[#FAFAFA] relative overflow-hidden">
+    <section id="pricing" className="py-20 sm:py-24 bg-[#FAFAFA] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5C7D52]/10 text-[#5C7D52] text-xs font-bold tracking-widest uppercase mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5C7D52]/10 text-[#5C7D52] text-[11px] sm:text-xs font-bold tracking-widest uppercase mb-3 sm:mb-4">
             <Sparkles className="w-3.5 h-3.5" />
             <span>CHÍNH SÁCH GIÁ &amp; CHƯƠNG TRÌNH THỬ NGHIỆM</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-3 sm:mb-4">
             Lựa Chọn Gói Dịch Vụ Phù Hợp <span className="text-[#5C7D52]">Quy Mô Đội Xe</span>
           </h2>
-          <p className="text-base text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             Chính sách giá minh bạch, linh hoạt theo mô hình SaaS kết hợp phí tài xế hoạt động giúp tối ưu chi phí đầu tư cho doanh nghiệp.
           </p>
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch mb-12 sm:mb-16">
           {tiers.map((tier) => (
             <div
               key={tier.name}
-              className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 relative ${
+              className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 relative ${
                 tier.isFeatured
-                  ? 'bg-white border-2 border-[#5C7D52] shadow-xl shadow-green-900/10 scale-105 z-20'
+                  ? 'bg-white border-2 border-[#5C7D52] shadow-xl shadow-green-900/10 lg:-translate-y-2 z-20'
                   : 'bg-white border border-gray-200/80 shadow-sm hover:shadow-md'
               }`}
             >
               {tier.isFeatured && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#5C7D52] text-white text-[11px] font-extrabold uppercase px-4 py-1 rounded-full shadow-md">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#5C7D52] text-white text-[10px] sm:text-[11px] font-extrabold uppercase px-3.5 py-1 rounded-full shadow-md whitespace-nowrap">
                   Chương Trình Khuyên Dùng
                 </div>
               )}
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-gray-900 tracking-wider">
+                <div className="flex items-center justify-between mb-1.5">
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900 tracking-wider">
                     {tier.name}
                   </h3>
                 </div>
 
-                <div className="inline-block text-[11px] font-semibold text-[#5C7D52] bg-green-50 px-2.5 py-0.5 rounded-md mb-4">
+                <div className="inline-block text-[10px] sm:text-[11px] font-semibold text-[#5C7D52] bg-green-50 px-2.5 py-0.5 rounded-md mb-3 sm:mb-4 border border-green-200/50">
                   {tier.badge}
                 </div>
 
@@ -125,13 +125,13 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
                   )}
                 </div>
 
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-6 border-b border-gray-100 pb-4">
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-5 sm:mb-6 border-b border-gray-100 pb-4">
                   {tier.desc}
                 </p>
 
                 {/* Features List */}
-                <div className="space-y-3 mb-8">
-                  <span className="text-[11px] font-bold text-gray-900 uppercase tracking-wider block">
+                <div className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-gray-900 uppercase tracking-wider block">
                     Quyền lợi bao gồm:
                   </span>
                   {tier.features.map((feat, idx) => (
@@ -139,7 +139,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
                       <div className="w-4 h-4 rounded-full bg-green-100 text-[#5C7D52] flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 stroke-[3]" />
                       </div>
-                      <span>{feat}</span>
+                      <span className="leading-snug">{feat}</span>
                     </div>
                   ))}
                 </div>
@@ -147,7 +147,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
 
               <button
                 onClick={onOpenPilotModal}
-                className={`w-full py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3 sm:py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 ${
                   tier.isFeatured
                     ? 'bg-[#5C7D52] hover:bg-[#4a6541] text-white shadow-md shadow-green-900/20 hover:shadow-lg'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
@@ -161,11 +161,11 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         </div>
 
         {/* FAQ or Assurance note */}
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex items-center gap-4">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center gap-3.5 sm:gap-4">
           <div className="w-10 h-10 rounded-xl bg-green-100 text-[#5C7D52] flex items-center justify-center shrink-0">
             <HelpCircle className="w-5 h-5" />
           </div>
-          <div className="text-xs sm:text-sm text-gray-600">
+          <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
             <strong className="text-gray-900 font-semibold">Doanh nghiệp chưa có dữ liệu chuẩn?</strong> Đội ngũ kỹ thuật GreenLogix sẽ trực tiếp hỗ trợ bưu cục bạn chuyển đổi từ bảng tính Excel/Google Sheets trong suốt 4–6 tuần pilot.
           </div>
         </div>
