@@ -1,0 +1,213 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X, CheckCircle2, ShieldCheck, Sparkles, Building2, Phone, Mail, User, Truck } from 'lucide-react';
+
+interface PilotModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    phone: '',
+    email: '',
+    fleetSize: '5-15 xe',
+    area: 'TP. Hồ Chí Minh (Ưu tiên đợt 1)',
+    notes: '',
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative border border-white/10 max-h-[90vh] overflow-y-auto"
+        >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Đóng modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {!submitted ? (
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#ffda00]/10 border border-[#ffda00]/20 text-[#ffda00] flex items-center justify-center font-bold">
+                  <Sparkles className="w-5 h-5 text-[#ffda00]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold tracking-wider text-[#ffda00] uppercase bg-[#ffda00]/10 px-2.5 py-0.5 rounded-full border border-[#ffda00]/20">
+                    THỬ NGHIỆM PILOT 4–6 TUẦN (MIỄN PHÍ)
+                  </span>
+                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Tham Gia GreenLogix</h3>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-300 mb-5 leading-relaxed">
+                Dành riêng cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> (Viettel Post, GHN, phân phối FMCG/F&amp;B). Đội ngũ kỹ thuật hỗ trợ chuẩn hóa dữ liệu và vận hành trực tiếp.
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Họ và tên người liên hệ *
+                    </label>
+                    <div className="relative">
+                      <User className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="VD: Nguyễn Văn A"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Doanh nghiệp / Bưu cục *
+                    </label>
+                    <div className="relative">
+                      <Building2 className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="VD: Bưu cục GHN Q. Bình Thạnh"
+                        value={formData.company}
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Số điện thoại *
+                    </label>
+                    <div className="relative">
+                      <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <input
+                        type="tel"
+                        required
+                        placeholder="09xx xxx xxx"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Email công việc *
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@company.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Quy mô đội xe giao hàng
+                    </label>
+                    <div className="relative">
+                      <Truck className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                      <select
+                        value={formData.fleetSize}
+                        onChange={(e) => setFormData({ ...formData, fleetSize: e.target.value })}
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      >
+                        <option value="Dưới 5 xe">Dưới 5 xe</option>
+                        <option value="5-15 xe">5–15 xe (Phù hợp Pilot)</option>
+                        <option value="15-50 xe">15–50 xe</option>
+                        <option value="Trên 50 xe">Trên 50 xe</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Khu vực vận hành chính
+                    </label>
+                    <select
+                      value={formData.area}
+                      onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                    >
+                      <option value="TP. Hồ Chí Minh (Ưu tiên đợt 1)">TP. Hồ Chí Minh (Đợt 1)</option>
+                      <option value="Hà Nội (Đợt 2)">Hà Nội (Đợt 2)</option>
+                      <option value="Bình Dương / Đồng Nai">Bình Dương / Đồng Nai</option>
+                      <option value="Đà Nẵng">Đà Nẵng</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full mt-2 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Gửi Thông Tin Đăng Ký Pilot Miễn Phí</span>
+                </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Cam kết bảo mật dữ liệu theo Nghị định 13/2023/NĐ-CP</span>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Đăng Ký Pilot Thành Công!</h3>
+              <p className="text-xs text-slate-300 mb-6 leading-relaxed max-w-sm mx-auto">
+                Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để khảo sát mô hình bưu cục và kích hoạt môi trường trải nghiệm.
+              </p>
+              <button
+                onClick={() => {
+                  setSubmitted(false);
+                  onClose();
+                }}
+                className="px-6 py-2.5 rounded-xl font-bold text-xs text-slate-950 bg-[#ffda00] hover:bg-yellow-300 transition-all cursor-pointer"
+              >
+                Hoàn Tất &amp; Đóng
+              </button>
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+};

@@ -1,0 +1,227 @@
+import React, { useState } from 'react';
+import { Calculator, TrendingDown, Leaf, ArrowRight, DollarSign } from 'lucide-react';
+
+interface CalculatorProps {
+  onOpenPilotModal: () => void;
+}
+
+export const InteractiveSavingsCalculator: React.FC<CalculatorProps> = ({ onOpenPilotModal }) => {
+  const [fleetSize, setFleetSize] = useState<number>(12);
+  const [dailyKm, setDailyKm] = useState<number>(85);
+  const [fuelConsumption, setFuelConsumption] = useState<number>(11); // L/100km
+  const [savingsRate, setSavingsRate] = useState<number>(12); // %
+
+  // Calculations
+  const workingDays = 26; // days/month
+  const fuelPrice = 23500; // VND/liter
+  const emissionFactor = 2.68; // kg CO2 / liter diesel (ISO 14083 standard)
+
+  const totalMonthlyKm = fleetSize * dailyKm * workingDays;
+  const kmSaved = (totalMonthlyKm * savingsRate) / 100;
+  const litersSaved = (kmSaved * fuelConsumption) / 100;
+  const moneySavedVND = litersSaved * fuelPrice;
+  const co2SavedKg = litersSaved * emissionFactor;
+
+  return (
+    <section id="calculator" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-900 border-t border-white/5 scroll-mt-24">
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-white/10 text-xs font-bold text-[#ffda00] mb-4">
+            <Calculator className="w-3.5 h-3.5" />
+            <span>MÔ HÌNH DỰ PHÓNG HIỆU QUẢ TÀI CHÍNH &amp; MÔI TRƯỜNG</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            Ước Tính Mức Tiết Kiệm Chi Phí &amp; <span className="text-[#ffda00]">Cắt Giảm CO₂</span>
+          </h2>
+
+          <p className="mt-4 text-sm sm:text-base text-slate-300">
+            Kéo các thanh trượt theo quy mô thực tế của bưu cục / đội xe để tính toán ngay tức thì lợi nhuận ròng và chỉ số ESG đạt được sau khi tối ưu.
+          </p>
+        </div>
+
+        {/* Calculator Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Sliders Control Panel (Left 7 Cols) */}
+          <div className="lg:col-span-7 bg-slate-950/80 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 border border-white/10 shadow-2xl flex flex-col justify-between">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <span>Thông Số Đội Xe &amp; Vận Hành</span>
+            </h3>
+
+            <div className="space-y-6">
+              {/* Slider 1: Fleet Size */}
+              <div>
+                <div className="flex justify-between items-center text-sm font-semibold mb-2">
+                  <span className="text-slate-300">Quy mô đội xe giao hàng:</span>
+                  <span className="text-lg font-extrabold text-[#ffda00] bg-slate-900 border border-white/10 px-3 py-1 rounded-xl">
+                    {fleetSize} xe
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="3"
+                  max="80"
+                  step="1"
+                  value={fleetSize}
+                  onChange={(e) => setFleetSize(Number(e.target.value))}
+                  className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#ffda00]"
+                />
+                <div className="flex justify-between text-[11px] text-slate-500 mt-1">
+                  <span>3 xe</span>
+                  <span>40 xe</span>
+                  <span>80 xe</span>
+                </div>
+              </div>
+
+              {/* Slider 2: Daily Km */}
+              <div>
+                <div className="flex justify-between items-center text-sm font-semibold mb-2">
+                  <span className="text-slate-300">Quãng đường bình quân/xe/ngày:</span>
+                  <span className="text-lg font-extrabold text-[#ffda00] bg-slate-900 border border-white/10 px-3 py-1 rounded-xl">
+                    {dailyKm} km
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="30"
+                  max="200"
+                  step="5"
+                  value={dailyKm}
+                  onChange={(e) => setDailyKm(Number(e.target.value))}
+                  className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#ffda00]"
+                />
+                <div className="flex justify-between text-[11px] text-slate-500 mt-1">
+                  <span>30 km</span>
+                  <span>100 km</span>
+                  <span>200 km</span>
+                </div>
+              </div>
+
+              {/* Slider 3: Fuel Consumption */}
+              <div>
+                <div className="flex justify-between items-center text-sm font-semibold mb-2">
+                  <span className="text-slate-300">Định mức tiêu hao nhiên liệu:</span>
+                  <span className="text-lg font-extrabold text-[#ffda00] bg-slate-900 border border-white/10 px-3 py-1 rounded-xl">
+                    {fuelConsumption} L / 100km
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="6"
+                  max="20"
+                  step="0.5"
+                  value={fuelConsumption}
+                  onChange={(e) => setFuelConsumption(Number(e.target.value))}
+                  className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#ffda00]"
+                />
+                <div className="flex justify-between text-[11px] text-slate-500 mt-1">
+                  <span>6L (Xe máy/Van nhỏ)</span>
+                  <span>12L (Xe tải 1–2T)</span>
+                  <span>20L (Xe tải nặng)</span>
+                </div>
+              </div>
+
+              {/* Slider 4: Savings Rate */}
+              <div>
+                <div className="flex justify-between items-center text-sm font-semibold mb-2">
+                  <span className="text-slate-300">Tỷ lệ quãng đường cắt giảm tối ưu:</span>
+                  <span className="text-lg font-extrabold text-emerald-400 bg-slate-900 border border-white/10 px-3 py-1 rounded-xl">
+                    {savingsRate}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="8"
+                  max="18"
+                  step="1"
+                  value={savingsRate}
+                  onChange={(e) => setSavingsRate(Number(e.target.value))}
+                  className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                />
+                <div className="flex justify-between text-[11px] text-slate-500 mt-1">
+                  <span>8% (Mức cơ sở)</span>
+                  <span>12% (Mức chuẩn VRPTW)</span>
+                  <span>18% (Tối ưu ghép đơn)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between">
+              <span>* Giá dầu cơ sở: 23.500đ/L • Tiêu chuẩn hệ số phát thải ISO 14083: 2.68 kg CO₂/L</span>
+            </div>
+          </div>
+
+          {/* Results Metric Panel (Right 5 Cols) */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-slate-950 to-slate-900 rounded-3xl p-6 sm:p-9 border border-[#ffda00]/30 shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between pb-5 border-b border-white/10 mb-6">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300">
+                  DỰ TOÁN TIẾT KIỆM MỖI THÁNG
+                </span>
+                <span className="text-xs font-bold text-[#ffda00] bg-[#ffda00]/10 border border-[#ffda00]/20 px-2.5 py-1 rounded-full">
+                  Mô hình 26 ngày làm việc
+                </span>
+              </div>
+
+              {/* Big Financial Result */}
+              <div className="mb-6 p-5 rounded-2xl bg-slate-900/90 border border-white/10">
+                <div className="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1.5">
+                  <DollarSign className="w-4 h-4 text-emerald-400" />
+                  <span>Chi phí nhiên liệu tiết kiệm ròng:</span>
+                </div>
+                <div className="text-3xl sm:text-4xl font-extrabold text-[#ffda00] tracking-tight">
+                  {Math.round(moneySavedVND).toLocaleString('vi-VN')}{' '}
+                  <span className="text-sm font-bold text-white">VNĐ/tháng</span>
+                </div>
+                <div className="text-xs text-emerald-400 font-semibold mt-1">
+                  ~ {Math.round(litersSaved).toLocaleString('vi-VN')} Lít dầu diesel cắt giảm
+                </div>
+              </div>
+
+              {/* 2 Secondary Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+                <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1">
+                    <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>CO₂ Tiết Giảm</span>
+                  </div>
+                  <div className="text-xl font-extrabold text-white">
+                    {Math.round(co2SavedKg).toLocaleString('vi-VN')}{' '}
+                    <span className="text-xs font-normal text-slate-400">kg CO₂</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    ~ {(co2SavedKg / 1000).toFixed(2)} Tấn CO₂/tháng
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1">
+                    <TrendingDown className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Km Cắt Giảm</span>
+                  </div>
+                  <div className="text-xl font-extrabold text-white">
+                    {Math.round(kmSaved).toLocaleString('vi-VN')}{' '}
+                    <span className="text-xs font-normal text-slate-400">km/tháng</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    Giảm mài mòn &amp; bảo trì xe
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Trigger Button */}
+            <button
+              onClick={onOpenPilotModal}
+              className="w-full py-3.5 rounded-2xl font-extrabold text-xs sm:text-sm text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-xl shadow-[#ffda00]/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Trải Nghiệm Thử Nghiệm Pilot 4–6 Tuần</span>
+              <ArrowRight className="w-4 h-4 text-slate-950" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
