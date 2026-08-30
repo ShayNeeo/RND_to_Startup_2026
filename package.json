@@ -8,9 +8,11 @@
     "dev:landing": "pnpm --filter @greenlogix/landing dev",
     "build:landing": "pnpm --filter @greenlogix/landing build",
     "preview:landing": "pnpm --filter @greenlogix/landing preview",
+    "deploy:landing": "wrangler pages deploy apps/landing/dist --project-name=cargox-group --branch=main --commit-dirty=true",
     "build": "pnpm --filter \"./apps/*\" build"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "wrangler": "^4.126.0"
   }
 }
