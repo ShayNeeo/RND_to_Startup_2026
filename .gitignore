@@ -1,8 +1,28 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production Build Outputs
+dist/
+build/
+.output/
+
+# Logs & Environment
+*.log
 .env
 .env.local
-.wrangler
-.serena
-.loop-state
+.env.*.local
+
+# Cloudflare & Wrangler
+.wrangler/
+
+# IDE & OS
+.vscode/
+.idea/
 .DS_Store
+Thumbs.db
+
+# Agentic scratch & temp
+.serena/
+.loop-state/
+graphify-out/

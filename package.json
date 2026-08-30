@@ -1,0 +1,16 @@
+{
+  "name": "greenlogix-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GreenLogix — B2B Urban Logistics Optimization & ISO 14083 Carbon Accounting Platform",
+  "packageManager": "pnpm@10.5.2",
+  "scripts": {
+    "dev:landing": "pnpm --filter @greenlogix/landing dev",
+    "build:landing": "pnpm --filter @greenlogix/landing build",
+    "preview:landing": "pnpm --filter @greenlogix/landing preview",
+    "build": "pnpm --filter \"./apps/*\" build"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
