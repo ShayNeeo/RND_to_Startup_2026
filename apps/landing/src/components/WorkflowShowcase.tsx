@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Layers, FileSpreadsheet, Truck, MapPin, Route, RefreshCw, Smartphone, Navigation, FileCheck2, Check } from 'lucide-react';
+import { Layers, FileSpreadsheet, Truck, MapPin, Route, RefreshCw, Globe2, Navigation, FileCheck2, Check } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
 
 const REVEAL_EASE = [0.16, 1, 0.3, 1] as const;
@@ -87,17 +87,17 @@ export const WorkflowShowcase: React.FC = () => {
       icon: <RefreshCw className="w-5 h-5 text-emerald-400" />,
       summary: 'Tìm kiếm đơn lấy hàng trên cung đường quay về kho.',
       details:
-        'Ví dụ: Xe giao xong tại Thủ Đức lúc 14:00, hệ thống phát hiện đơn lấy từ Thủ Đức về Bình Thạnh → ghép ngay cho xe thực hiện, triệt tiêu xe chạy rỗng.',
+        'Ví dụ: Xe giao xong tại Thủ Đức lúc 14:00, hệ thống phát hiện đơn lấy từ Thủ Đức về Bình Thạnh → đề xuất ghép cho xe thực hiện trên đường quay về.',
       badge: 'Ghép Đơn Chiều Về',
     },
     {
       num: '06',
-      title: 'Tài Xế Nhận Tuyến Trên Điện Thoại',
-      icon: <Smartphone className="w-5 h-5 text-emerald-300" />,
-      summary: 'Lộ trình được gửi trực tiếp đến ứng dụng điện thoại của tài xế.',
+      title: 'Tài Xế Nhận Tuyến Trên Web',
+      icon: <Globe2 className="w-5 h-5 text-emerald-300" />,
+      summary: 'Lộ trình được gửi đến giao diện web responsive dành cho tài xế.',
       details:
-        'Chỉ dẫn từng chặng, cập nhật trạng thái đơn hàng và lưu ảnh hoặc chữ ký xác nhận sau khi giao.',
-      badge: 'Ứng Dụng Tài Xế',
+        'Tài xế mở đường dẫn trên trình duyệt để xem chỉ dẫn từng chặng, cập nhật trạng thái và lưu ảnh hoặc chữ ký xác nhận sau khi giao.',
+      badge: 'Web Dành Cho Tài Xế',
     },
     {
       num: '07',
@@ -259,15 +259,15 @@ export const WorkflowShowcase: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 text-slate-200">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Tiết kiệm 85% thời gian sắp tuyến mỗi ngày</span>
+                <span>Rút ngắn 80–90% thời gian điều phối mỗi ngày</span>
               </div>
               <div className="flex items-center gap-2 text-slate-200">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Loại bỏ hoàn toàn sai sót do phân bổ bằng tay</span>
+                <span>Giảm sai sót phát sinh khi phân bổ bằng tay</span>
               </div>
               <div className="flex items-center gap-2 text-slate-200">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Thông tin thống nhất giữa màn hình quản lý và ứng dụng tài xế</span>
+                <span>Thông tin thống nhất giữa màn hình quản lý và web tài xế</span>
               </div>
             </div>
           </div>
@@ -299,17 +299,17 @@ export const WorkflowShowcase: React.FC = () => {
                 <tr>
                   <td className="py-3 px-4 font-bold text-white">Thời gian lập tuyến</td>
                   <td className="py-3 px-4 text-slate-300">1.5 – 2 giờ/ngày (Phụ thuộc kinh nghiệm)</td>
-                  <td className="py-3 px-4 font-bold text-emerald-400">3 – 5 giây (Tự động 100%)</td>
+                  <td className="py-3 px-4 font-bold text-emerald-400">10 – 20 phút, giảm 80–90% thời gian điều phối</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-bold text-white">Tổng quãng đường di chuyển</td>
                   <td className="py-3 px-4 text-slate-300">Chồng chéo, nhiều km thừa</td>
-                  <td className="py-3 px-4 font-bold text-emerald-400">Cắt giảm 8 – 15% tổng km</td>
+                  <td className="py-3 px-4 font-bold text-emerald-400">Cắt giảm 20–30% tổng km</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-bold text-white">Tỷ lệ xe chạy rỗng chiều về</td>
-                  <td className="py-3 px-4 text-slate-300">30 – 40% xe chạy rỗng sau khi giao</td>
-                  <td className="py-3 px-4 font-bold text-emerald-400">Tự động ghép đơn, giảm 10–20% xe rỗng</td>
+                  <td className="py-3 px-4 text-slate-300">30–35% xe chạy rỗng sau khi giao</td>
+                  <td className="py-3 px-4 font-bold text-emerald-400">Ghép đơn chiều về, đưa tỷ lệ xuống 5–10%</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-bold text-white">Đo lường phát thải CO₂</td>

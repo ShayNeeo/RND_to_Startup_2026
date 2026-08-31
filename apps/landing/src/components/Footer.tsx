@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
             <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">Hệ Thống</h4>
             <ul className="space-y-2">
               <li><a href="#showcase" className="hover:text-greenlogix-lime transition-colors">Màn hình quản lý giao hàng</a></li>
-              <li><a href="#showcase" className="hover:text-greenlogix-lime transition-colors">Ứng dụng điện thoại cho tài xế</a></li>
+              <li><a href="#showcase" className="hover:text-greenlogix-lime transition-colors">Web vận hành cho tài xế</a></li>
               <li><a href="#workflow" className="hover:text-greenlogix-lime transition-colors">Quy trình 8 bước</a></li>
               <li><a href="#team" className="hover:text-greenlogix-lime transition-colors">Đội ngũ GreenLogix</a></li>
               <li><a href="#pricing" className="hover:text-greenlogix-lime transition-colors">Bảng giá gói cước</a></li>

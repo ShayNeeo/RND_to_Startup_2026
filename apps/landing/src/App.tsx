@@ -38,7 +38,7 @@ export function App() {
         {/* 4. 8-Step Interactive Dispatch Workflow */}
         <WorkflowShowcase />
 
-        {/* 5. Web Portal & Mobile App Showcase */}
+        {/* 5. Dispatcher & Driver Web Portal Showcase */}
         <DriverAndDispatcherShowcase />
 
         {/* 6. Interdisciplinary Founding Team */}

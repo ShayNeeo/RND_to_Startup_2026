@@ -1,11 +1,16 @@
-import React from 'react';
-import { Tag, Check, Sparkles, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Tag, Check, Sparkles, ArrowRight, FileText, RefreshCw, Calculator, Info, Plug } from 'lucide-react';
 
 interface PricingProps {
   onOpenPilotModal: () => void;
 }
 
 export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) => {
+  const [monthlyOrders, setMonthlyOrders] = useState<number>(100);
+  const [averageWeight, setAverageWeight] = useState<number>(50);
+  const [averageDistance, setAverageDistance] = useState<number>(20);
+  const backhaulFeeEstimate = monthlyOrders * (5000 + averageWeight * averageDistance * 10);
+
   const tiers = [
     {
       name: 'Gói Starter',
@@ -17,6 +22,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         'Tự động sắp xếp tuyến giao hàng cơ bản',
         'Nhập đơn hàng từ bảng tính',
         'Hỗ trợ thiết lập và bắt đầu sử dụng',
+        'Vượt mức: +100.000đ/tài xế/tháng',
       ],
       highlight: false,
     },
@@ -30,6 +36,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         'Tất cả tính năng của gói Starter',
         'Tích hợp dữ liệu giao thông thời gian thực',
         'Theo dõi tài xế và tiến độ đơn hàng',
+        'Vượt mức: +75.000đ/tài xế/tháng',
       ],
       highlight: true,
       badge: 'PHỔ BIẾN NHẤT',
@@ -44,6 +51,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         'Tất cả tính năng của gói Nhỏ',
         'Tự động ghép đơn cho chiều xe quay về',
         'Báo cáo nhiên liệu và lượng CO₂',
+        'Vượt mức: +50.000đ/tài xế/tháng',
       ],
       highlight: false,
     },
@@ -57,6 +65,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         'Tùy chỉnh kết nối với hệ thống hiện có',
         'Hạ tầng vận hành theo nhu cầu doanh nghiệp',
         'Hỗ trợ kỹ thuật và đào tạo ưu tiên',
+        'Vượt mức: +50.000đ/tài xế/tháng',
       ],
       highlight: false,
     },
@@ -135,6 +144,173 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               </button>
             </div>
           ))}
+        </div>
+
+        <div className="mb-16">
+          <div className="mx-auto mb-8 max-w-3xl text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-greenlogix-lime">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>DỊCH VỤ BỔ SUNG THEO NHU CẦU</span>
+            </div>
+            <h3 className="text-2xl font-extrabold text-white sm:text-3xl">
+              Báo Cáo CO₂ Theo Năm &amp; Kết Nối Đơn Chiều Về
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+              Hai dịch vụ được đăng ký riêng theo quy mô vận hành, không gộp cứng vào giá thuê bao hàng tháng.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <article className="flex flex-col rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-6 shadow-xl sm:p-8">
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-300">
+                  Hợp đồng theo năm
+                </span>
+              </div>
+
+              <h4 className="text-xl font-extrabold text-white sm:text-2xl">Báo Cáo CO₂ &amp; Tư Vấn Giảm Phát Thải</h4>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                Báo giá riêng theo số phương tiện, khối lượng dữ liệu, tần suất báo cáo và phạm vi tư vấn. GreenLogix không áp một mức giá cố định như các gói thuê bao.
+              </p>
+
+              <div className="my-6 space-y-3 text-xs text-slate-200 sm:text-sm">
+                {[
+                  'Kiểm kê phát thải theo chuyến xe, đơn hàng và đội phương tiện',
+                  'Chuẩn hóa dữ liệu nhiên liệu, quãng đường và hệ số phát thải',
+                  'Báo cáo định kỳ, so sánh theo năm và hồ sơ phục vụ ESG',
+                  'Tư vấn mục tiêu giảm phát thải và lộ trình cải thiện vận hành',
+                ].map((feature) => (
+                  <div key={feature} className="flex items-start gap-2.5">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={onOpenPilotModal}
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 py-3 text-xs font-bold text-emerald-300 transition-colors hover:bg-emerald-500/20"
+              >
+                <span>Đăng Ký Tư Vấn Theo Năm</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </article>
+
+            <article className="rounded-3xl border border-greenlogix-lime/30 bg-slate-900 p-6 shadow-xl sm:p-8">
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-greenlogix-lime/20 bg-greenlogix-lime/10 text-greenlogix-lime">
+                  <RefreshCw className="h-6 w-6" />
+                </div>
+                <span className="rounded-full border border-greenlogix-lime/20 bg-greenlogix-lime/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-greenlogix-lime">
+                  Tính theo mức sử dụng
+                </span>
+              </div>
+
+              <h4 className="text-xl font-extrabold text-white sm:text-2xl">Module Kết Nối Đơn Chiều Về</h4>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                Doanh nghiệp đăng ký module riêng. Phí được dự toán theo tổng số đơn kết nối, khối lượng bình quân và quãng đường vận chuyển.
+              </p>
+
+              <div className="my-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div>
+                  <label htmlFor="backhaul-orders" className="mb-1.5 block text-xs font-semibold text-slate-300">
+                    Số đơn/tháng
+                  </label>
+                  <input
+                    id="backhaul-orders"
+                    type="number"
+                    min="1"
+                    value={monthlyOrders}
+                    onChange={(event) => setMonthlyOrders(Math.max(1, Number(event.target.value)))}
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm font-bold text-white focus:ring-2 focus:ring-greenlogix-lime"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="backhaul-weight" className="mb-1.5 block text-xs font-semibold text-slate-300">
+                    Kg/đơn
+                  </label>
+                  <input
+                    id="backhaul-weight"
+                    type="number"
+                    min="1"
+                    value={averageWeight}
+                    onChange={(event) => setAverageWeight(Math.max(1, Number(event.target.value)))}
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm font-bold text-white focus:ring-2 focus:ring-greenlogix-lime"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="backhaul-distance" className="mb-1.5 block text-xs font-semibold text-slate-300">
+                    Km/đơn
+                  </label>
+                  <input
+                    id="backhaul-distance"
+                    type="number"
+                    min="1"
+                    value={averageDistance}
+                    onChange={(event) => setAverageDistance(Math.max(1, Number(event.target.value)))}
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm font-bold text-white focus:ring-2 focus:ring-greenlogix-lime"
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-greenlogix-lime/20 bg-slate-950 p-5">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <Calculator className="h-4 w-4 text-greenlogix-lime" />
+                  <span>Dự toán phí module mỗi tháng</span>
+                </div>
+                <div className="mt-2 text-3xl font-extrabold tracking-tight text-greenlogix-lime">
+                  {backhaulFeeEstimate.toLocaleString('vi-VN')}đ
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+                  Công thức minh họa: 5.000đ/đơn + 10đ/kg/km. Đơn giá chính thức được hiệu chỉnh theo sản lượng, cung đường và thỏa thuận với doanh nghiệp.
+                </p>
+              </div>
+
+              <button
+                onClick={onOpenPilotModal}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-greenlogix-lime py-3 text-xs font-bold text-slate-950 transition-colors hover:bg-yellow-300"
+              >
+                <span>Đăng Ký Kết Nối Đơn Chiều Về</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </article>
+          </div>
+        </div>
+
+        <div className="mb-16 rounded-3xl border border-white/10 bg-slate-900/70 p-6 sm:p-8">
+          <div className="grid items-center gap-6 lg:grid-cols-[0.9fr_1.6fr]">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-950 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                <Plug className="h-3.5 w-3.5 text-greenlogix-lime" />
+                <span>Chính sách khách hàng mới</span>
+              </div>
+              <h3 className="text-2xl font-extrabold text-white">Phí Triển Khai &amp; Tích Hợp Một Lần</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                Khoản phí onboarding được báo giá trước khi ký hợp đồng và tách riêng khỏi phí thuê bao hàng tháng.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[
+                'Khảo sát, làm sạch và nhập dữ liệu ban đầu',
+                'Cấu hình tài khoản, bưu cục và đội phương tiện',
+                'Đào tạo người quản lý và tài xế sử dụng web',
+                'Kết nối API hoặc phần mềm doanh nghiệp đang dùng',
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-2.5 rounded-2xl border border-white/5 bg-slate-950/70 p-3 text-xs text-slate-200">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-greenlogix-lime" />
+                  <span>{item}</span>
+                </div>
+              ))}
+              <div className="flex items-start gap-2.5 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs text-amber-100 sm:col-span-2">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                <span>Mức phí phụ thuộc số điểm vận hành, chất lượng dữ liệu và độ phức tạp tích hợp; mọi hạng mục được xác nhận trong báo giá riêng.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Free Pilot Callout Banner */}
