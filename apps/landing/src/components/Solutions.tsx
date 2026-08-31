@@ -24,7 +24,7 @@ export const Solutions: React.FC = () => {
       title: 'Chủ Động Tránh Đường Ùn Tắc',
       description:
         'Cập nhật mật độ xe và điểm ùn tắc thời gian thực theo từng cung đường đô thị tại TP.HCM & Hà Nội, chủ động đề xuất lộ trình thay thế tránh kẹt xe giờ cao điểm.',
-      metrics: ['Tăng tỷ lệ giao đúng hẹn 98.8%', 'Giảm thời gian chờ tài xế', 'Cảnh báo lệch tuyến tức thì'],
+      metrics: ['Tăng tỷ lệ giao đúng hẹn 98.8%', 'Cảnh báo lệch tuyến tức thì'],
       gradient: 'from-emerald-500/10 to-teal-500/5',
     },
     {

@@ -173,7 +173,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
 
               <h4 className="text-xl font-extrabold text-white sm:text-2xl">Báo Cáo CO₂ &amp; Tư Vấn Giảm Phát Thải</h4>
               <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                Báo giá riêng theo số phương tiện, khối lượng dữ liệu, tần suất báo cáo và phạm vi tư vấn. GreenLogix không áp một mức giá cố định như các gói thuê bao.
+                Báo giá riêng theo số phương tiện, khối lượng dữ liệu, tần suất báo cáo và phạm vi tư vấn.
               </p>
 
               <div className="my-6 space-y-3 text-xs text-slate-200 sm:text-sm">
