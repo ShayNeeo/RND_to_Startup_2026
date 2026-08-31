@@ -1,4 +1,4 @@
-name: Deploy GreenLogix Landing to Cloudflare Pages
+name: CI - Build & Verify Landing Page
 
 on:
   push:
@@ -10,15 +10,21 @@ on:
       - 'pnpm-workspace.yaml'
       - 'package.json'
       - 'pnpm-lock.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/landing/**'
+      - '.github/workflows/deploy-landing.yml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Build & Deploy to Cloudflare Pages
+  verify:
+    name: 🏗️ Build & Typecheck Verification
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
 
     steps:
       - name: 📥 Checkout Repository
@@ -40,9 +46,3 @@ jobs:
 
       - name: 🏗️ Build Landing Page
         run: pnpm run build:landing
-
-      - name: 🚀 Deploy to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler pages deploy apps/landing/dist --project-name=greenlogix --branch=main --commit-dirty=true --account-id=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
