@@ -39,8 +39,8 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-            aria-label="Đóng modal"
+            className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Đóng cửa sổ đăng ký"
           >
             <X className="w-5 h-5" />
           </button>
@@ -48,53 +48,57 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
           {!submitted ? (
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-[#ffda00]/10 border border-[#ffda00]/20 text-[#ffda00] flex items-center justify-center font-bold">
-                  <Sparkles className="w-5 h-5 text-[#ffda00]" />
+                <div className="w-10 h-10 rounded-2xl bg-greenlogix-lime/10 border border-greenlogix-lime/20 text-greenlogix-lime flex items-center justify-center font-bold">
+                  <Sparkles className="w-5 h-5 text-greenlogix-lime" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold tracking-wider text-[#ffda00] uppercase bg-[#ffda00]/10 px-2.5 py-0.5 rounded-full border border-[#ffda00]/20">
-                    THỬ NGHIỆM PILOT 4–6 TUẦN (MIỄN PHÍ)
+                  <span className="text-[10px] font-bold tracking-wider text-greenlogix-lime uppercase bg-greenlogix-lime/10 px-2.5 py-0.5 rounded-full border border-greenlogix-lime/20">
+                    DÙNG THỬ MIỄN PHÍ 4–6 TUẦN
                   </span>
                   <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Tham Gia GreenLogix</h3>
                 </div>
               </div>
 
               <p className="text-xs text-slate-300 mb-5 leading-relaxed">
-                Dành riêng cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> (Viettel Post, GHN, phân phối FMCG/F&amp;B). Đội ngũ kỹ thuật hỗ trợ chuẩn hóa dữ liệu và vận hành trực tiếp.
+                Dành cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong>. Đội ngũ GreenLogix sẽ hỗ trợ chuẩn bị dữ liệu và hướng dẫn vận hành trực tiếp.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-3.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-300 mb-1">
                       Họ và tên người liên hệ *
                     </label>
                     <div className="relative">
                       <User className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
+                        id="contact-name"
                         type="text"
+                        autoComplete="name"
                         required
                         placeholder="VD: Nguyễn Văn A"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="company-name" className="block text-xs font-semibold text-slate-300 mb-1">
                       Doanh nghiệp / Bưu cục *
                     </label>
                     <div className="relative">
                       <Building2 className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
+                        id="company-name"
                         type="text"
+                        autoComplete="organization"
                         required
                         placeholder="VD: Bưu cục GHN Q. Bình Thạnh"
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                       />
                     </div>
                   </div>
@@ -102,35 +106,39 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="contact-phone" className="block text-xs font-semibold text-slate-300 mb-1">
                       Số điện thoại *
                     </label>
                     <div className="relative">
                       <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
+                        id="contact-phone"
                         type="tel"
+                        autoComplete="tel"
                         required
                         placeholder="09xx xxx xxx"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="contact-email" className="block text-xs font-semibold text-slate-300 mb-1">
                       Email công việc *
                     </label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
+                        id="contact-email"
                         type="email"
+                        autoComplete="email"
                         required
                         placeholder="name@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                       />
                     </div>
                   </div>
@@ -138,18 +146,19 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="fleet-size" className="block text-xs font-semibold text-slate-300 mb-1">
                       Quy mô đội xe giao hàng
                     </label>
                     <div className="relative">
                       <Truck className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <select
+                        id="fleet-size"
                         value={formData.fleetSize}
                         onChange={(e) => setFormData({ ...formData, fleetSize: e.target.value })}
-                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                        className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                       >
                         <option value="Dưới 5 xe">Dưới 5 xe</option>
-                        <option value="5-15 xe">5–15 xe (Phù hợp Pilot)</option>
+                        <option value="5-15 xe">5–15 xe (Phù hợp để dùng thử)</option>
                         <option value="15-50 xe">15–50 xe</option>
                         <option value="Trên 50 xe">Trên 50 xe</option>
                       </select>
@@ -157,13 +166,14 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label htmlFor="operation-area" className="block text-xs font-semibold text-slate-300 mb-1">
                       Khu vực vận hành chính
                     </label>
                     <select
+                      id="operation-area"
                       value={formData.area}
                       onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#ffda00]"
+                      className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
                     >
                       <option value="TP. Hồ Chí Minh (Ưu tiên đợt 1)">TP. Hồ Chí Minh (Đợt 1)</option>
                       <option value="Hà Nội (Đợt 2)">Hà Nội (Đợt 2)</option>
@@ -175,9 +185,9 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
 
                 <button
                   type="submit"
-                  className="w-full mt-2 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full mt-2 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Gửi Thông Tin Đăng Ký Pilot Miễn Phí</span>
+                  <span>Gửi Thông Tin Đăng Ký Dùng Thử</span>
                 </button>
 
                 <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
@@ -191,7 +201,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
               <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Đăng Ký Pilot Thành Công!</h3>
+              <h3 className="text-xl font-bold text-white mb-2">Đăng Ký Dùng Thử Thành Công!</h3>
               <p className="text-xs text-slate-300 mb-6 leading-relaxed max-w-sm mx-auto">
                 Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để khảo sát mô hình bưu cục và kích hoạt môi trường trải nghiệm.
               </p>
@@ -200,7 +210,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
                   setSubmitted(false);
                   onClose();
                 }}
-                className="px-6 py-2.5 rounded-xl font-bold text-xs text-slate-950 bg-[#ffda00] hover:bg-yellow-300 transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl font-bold text-xs text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 transition-all cursor-pointer"
               >
                 Hoàn Tất &amp; Đóng
               </button>

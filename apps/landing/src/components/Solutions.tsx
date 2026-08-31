@@ -5,19 +5,19 @@ export const Solutions: React.FC = () => {
   const solutions = [
     {
       id: '01',
-      icon: <Route className="w-6 h-6 text-[#ffda00]" />,
-      badge: 'Thuật Toán Cốt Lõi',
-      title: 'Tối Ưu Tuyến Đường Đa Ràng Buộc (VRPTW)',
+      icon: <Route className="w-6 h-6 text-greenlogix-lime" />,
+      badge: 'Tự Động Sắp Tuyến',
+      title: 'Sắp Xếp Tuyến Giao Hàng Hiệu Quả',
       description:
-        'Tự động gom nhóm đơn hàng theo cụm địa lý, tính toán tải trọng phương tiện (500kg - 2 tấn) và khung giờ giao hàng cam kết để tạo lộ trình tối ưu chỉ trong vài giây.',
+        'Tự động gom các điểm giao gần nhau, tính theo tải trọng xe và khung giờ đã hẹn để tạo lộ trình hợp lý chỉ trong vài giây.',
       metrics: ['Giảm 8–15% tổng quãng đường', 'Tránh chồng chéo điểm giao', 'Tiết kiệm 5–10% nhiên liệu'],
-      gradient: 'from-amber-500/10 to-yellow-500/5',
+      gradient: 'from-yellow-400/10 to-emerald-400/5',
     },
     {
       id: '02',
       icon: <Clock className="w-6 h-6 text-emerald-400" />,
-      badge: 'Thời Gian Thực',
-      title: 'Tích Hợp Dữ Liệu Giao Thông Trực Tuyến Live',
+      badge: 'Cập Nhật Liên Tục',
+      title: 'Chủ Động Tránh Đường Ùn Tắc',
       description:
         'Cập nhật mật độ xe và điểm ùn tắc thời gian thực theo từng cung đường đô thị tại TP.HCM & Hà Nội, chủ động đề xuất lộ trình thay thế tránh kẹt xe giờ cao điểm.',
       metrics: ['Tăng tỷ lệ giao đúng hẹn 98.8%', 'Giảm thời gian chờ tài xế', 'Cảnh báo lệch tuyến tức thì'],
@@ -25,43 +25,43 @@ export const Solutions: React.FC = () => {
     },
     {
       id: '03',
-      icon: <RefreshCw className="w-6 h-6 text-cyan-400" />,
-      badge: 'Logistics Tuần Hoàn',
-      title: 'Tự Động Ghép Đơn Hàng Chiều Về (Backhaul)',
+      icon: <RefreshCw className="w-6 h-6 text-emerald-300" />,
+      badge: 'Tận Dụng Chiều Về',
+      title: 'Ghép Thêm Đơn Khi Xe Quay Về',
       description:
         'Phát hiện và ghép các đơn lấy hàng chiều về ngay khi xe vừa hoàn thành tuyến giao tại điểm đích, giải quyết triệt để vấn đề xe chạy rỗng lãng phí.',
       metrics: ['Giảm 10–20% xe chạy rỗng', 'Tận dụng 100% tải trọng xe', 'Tăng thu nhập chuyến xe'],
-      gradient: 'from-cyan-500/10 to-blue-500/5',
+      gradient: 'from-emerald-500/10 to-teal-500/5',
     },
     {
       id: '04',
-      icon: <BarChart3 className="w-6 h-6 text-[#ffda00]" />,
-      badge: 'ESG & Kiểm Kê',
-      title: 'Đo Lường Phát Thải CO₂ Chuẩn Quốc Tế ISO 14083',
+      icon: <BarChart3 className="w-6 h-6 text-greenlogix-lime" />,
+      badge: 'Theo Dõi Phát Thải',
+      title: 'Biết Mỗi Chuyến Xe Phát Thải Bao Nhiêu CO₂',
       description:
-        'Tự động định lượng lượng khí CO₂ phát thải trên từng chuyến xe và đơn hàng theo chuẩn GLEC Framework, sẵn sàng xuất báo cáo ESG cho đối tác chuỗi cung ứng.',
-      metrics: ['Cắt giảm 5–12% CO₂ / đơn hàng', 'Báo cáo chuẩn ESG xuất khẩu', 'Chuẩn hóa lộ trình chuyển đổi xe điện'],
-      gradient: 'from-amber-500/10 to-emerald-500/5',
+        'Tự động tính lượng CO₂ của từng chuyến xe và đơn hàng theo phương pháp quốc tế, giúp doanh nghiệp dễ tổng hợp báo cáo phát triển bền vững.',
+      metrics: ['Cắt giảm 5–12% CO₂ / đơn hàng', 'Dễ tổng hợp báo cáo môi trường', 'Lập kế hoạch chuyển đổi xe điện'],
+      gradient: 'from-yellow-400/10 to-emerald-500/5',
     },
   ];
 
   return (
-    <section id="solutions" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-950/80 border-t border-white/5 scroll-mt-24">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#ffda00]/5 rounded-full blur-[140px] pointer-events-none" />
+    <section id="solutions" className="relative overflow-hidden py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-950/80 border-t border-white/5 scroll-mt-24">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[min(600px,100vw)] h-[300px] bg-greenlogix-lime/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-white/10 text-xs font-bold text-[#ffda00] mb-4 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-white/10 text-xs font-bold text-greenlogix-lime mb-4 shadow-sm">
             <Cpu className="w-3.5 h-3.5" />
-            <span>NỀN TẢNG CÔNG NGHỆ B2B TIÊN PHONG</span>
+            <span>GIẢI PHÁP DÀNH CHO DOANH NGHIỆP GIAO NHẬN</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            Giải Quyết Triệt Để Lãng Phí Vận Hành Với <span className="text-[#ffda00]">4 Trụ Cột Đột Phá</span>
+            4 Cách GreenLogix Giúp <span className="text-greenlogix-lime">Vận Hành Hiệu Quả Hơn</span>
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
-            Chuyển đổi từ phương thức điều phối thủ công trên Excel/Google Sheets sang mô hình điều hành tự động hóa thông minh, giúp doanh nghiệp vận chuyển ít lãng phí hơn, tiết kiệm nhiều hơn và phát triển xanh hơn.
+            Thay việc chia tuyến thủ công trên bảng tính bằng một quy trình tự động, dễ theo dõi và dễ sử dụng — giúp giao hàng đúng hẹn, giảm chi phí và giảm phát thải.
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export const Solutions: React.FC = () => {
           {solutions.map((item) => (
             <div
               key={item.id}
-              className={`relative rounded-3xl p-8 sm:p-9 bg-gradient-to-br ${item.gradient} bg-slate-900/60 backdrop-blur-xl border border-white/10 hover:border-[#ffda00]/40 transition-all duration-300 group hover:-translate-y-1 shadow-xl shadow-black/30 flex flex-col justify-between`}
+              className={`relative rounded-3xl p-8 sm:p-9 bg-gradient-to-br ${item.gradient} bg-slate-900/60 backdrop-blur-xl border border-white/10 hover:border-greenlogix-lime/40 transition-all duration-300 group hover:-translate-y-1 shadow-xl shadow-black/30 flex flex-col justify-between`}
             >
               <div>
                 <div className="flex items-center justify-between mb-6">
@@ -81,7 +81,7 @@ export const Solutions: React.FC = () => {
                   </span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-[#ffda00] transition-colors leading-snug">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-greenlogix-lime transition-colors leading-snug">
                   {item.title}
                 </h3>
                 <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6">
@@ -92,7 +92,7 @@ export const Solutions: React.FC = () => {
               <div className="pt-5 border-t border-white/10 space-y-2.5">
                 {item.metrics.map((metric, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-                    <CheckCircle className="w-4 h-4 text-[#ffda00] shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-greenlogix-lime shrink-0" />
                     <span>{metric}</span>
                   </div>
                 ))}

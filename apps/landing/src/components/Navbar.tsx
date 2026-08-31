@@ -5,25 +5,26 @@ interface NavbarProps {
   onOpenPilotModal: () => void;
 }
 
+const NAV_LINKS = [
+  { name: 'Giải pháp', href: '#solutions', id: 'solutions' },
+  { name: 'Mức tiết kiệm', href: '#calculator', id: 'calculator' },
+  { name: 'Quy trình', href: '#workflow', id: 'workflow' },
+  { name: 'Sản phẩm', href: '#showcase', id: 'showcase' },
+  { name: 'Đội ngũ', href: '#team', id: 'team' },
+  { name: 'Dùng thử', href: '#pricing', id: 'pricing' },
+];
+
 export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navLinks = [
-    { name: 'Giải Pháp VRPTW', href: '#solutions', id: 'solutions' },
-    { name: 'Tính ROI & CO₂', href: '#calculator', id: 'calculator' },
-    { name: 'Quy Trình 8 Bước', href: '#workflow', id: 'workflow' },
-    { name: 'Web & App', href: '#showcase', id: 'showcase' },
-    { name: 'Bảng Giá & Pilot', href: '#pricing', id: 'pricing' },
-  ];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
       // Active Section Spy
-      const sections = navLinks.map((link) => document.getElementById(link.id));
+      const sections = NAV_LINKS.map((link) => document.getElementById(link.id));
       const scrollPosition = window.scrollY + 220; // Offset for navbar
 
       let current = '';
@@ -58,43 +59,45 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
         >
           {/* Left: Brand Emblem & Logo */}
           <a
-            href="#"
+            href="#main-content"
             onClick={() => setActiveSection('')}
             className="flex items-center gap-2.5 group shrink-0"
+            aria-label="GreenLogix — về đầu trang"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-[#ffda00] to-emerald-500 flex items-center justify-center text-slate-950 shadow-md group-hover:scale-105 transition-transform duration-300">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-greenlogix-lime to-emerald-500 flex items-center justify-center text-slate-950 shadow-md group-hover:scale-105 transition-transform duration-300">
               <Leaf className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-slate-950/20 stroke-slate-950" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5 leading-none">
                 <span className="font-extrabold text-base sm:text-lg tracking-tight text-white">
-                  GREEN<span className="text-[#ffda00]">LOGIX</span>
+                  GREEN<span className="text-greenlogix-lime">LOGIX</span>
                 </span>
                 <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               </div>
               <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
-                Powered by <strong className="text-slate-200">CargoX Engine</strong>
+                Công nghệ từ <strong className="text-slate-200">CargoX</strong>
               </span>
             </div>
           </a>
 
           {/* Center: Desktop Navigation Links with Active Scroll Spy Focus */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
-            {navLinks.map((link) => {
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1" aria-label="Điều hướng chính">
+            {NAV_LINKS.map((link) => {
               const isActive = activeSection === link.id;
               return (
                 <a
                   key={link.name}
                   href={link.href}
-                  className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all duration-300 relative ${
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`relative whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-semibold transition-all duration-300 xl:px-3 ${
                     isActive
-                      ? 'bg-[#ffda00] text-slate-950 font-bold shadow-md shadow-[#ffda00]/20'
-                      : 'text-slate-300 hover:text-[#ffda00] hover:bg-white/5 active:bg-white/10'
+                      ? 'bg-greenlogix-lime text-slate-950 font-bold shadow-md shadow-greenlogix-lime/20'
+                      : 'text-slate-300 hover:text-greenlogix-lime hover:bg-white/5 active:bg-white/10'
                   }`}
                 >
                   {link.name}
                   {isActive && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#ffda00] shadow-[0_0_8px_#ffda00]" />
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-greenlogix-lime shadow-[0_0_8px_#ffd400]" />
                   )}
                 </a>
               );
@@ -107,19 +110,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
               href="#calculator"
               className={`whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeSection === 'calculator'
-                  ? 'bg-[#ffda00] text-slate-950 shadow-md'
-                  : 'text-[#ffda00] bg-[#ffda00]/10 border border-[#ffda00]/20 hover:bg-[#ffda00]/20'
+                  ? 'bg-greenlogix-lime text-slate-950 shadow-md'
+                  : 'text-greenlogix-lime bg-greenlogix-lime/10 border border-greenlogix-lime/20 hover:bg-greenlogix-lime/20'
               }`}
             >
               <Calculator className="w-3.5 h-3.5" />
-              <span>Tính ROI</span>
+              <span>Tính tiết kiệm</span>
             </a>
 
             <button
               onClick={onOpenPilotModal}
-              className="whitespace-nowrap px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-lg shadow-[#ffda00]/20 hover:shadow-xl hover:shadow-[#ffda00]/30 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="whitespace-nowrap px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-lg shadow-greenlogix-lime/20 hover:shadow-xl hover:shadow-greenlogix-lime/30 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Đăng Ký Pilot</span>
+              <span>Đăng ký dùng thử</span>
               <ArrowRight className="w-3.5 h-3.5 text-slate-950" />
             </button>
           </div>
@@ -128,14 +131,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
           <div className="lg:hidden flex items-center gap-2">
             <button
               onClick={onOpenPilotModal}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-sm sm:hidden"
+              className="px-3 py-1.5 rounded-full text-xs font-bold text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-sm sm:hidden"
             >
-              Pilot Free
+              Dùng thử
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded-full text-slate-300 hover:bg-white/10 focus:outline-none"
-              aria-label="Toggle Navigation Menu"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-slate-300 hover:bg-white/10"
+              aria-label={mobileMenuOpen ? 'Đóng menu điều hướng' : 'Mở menu điều hướng'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -144,19 +149,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
 
         {/* Mobile Dropdown Menu (Glass Card) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-2 p-4 bg-slate-950/95 backdrop-blur-2xl rounded-3xl border border-white/15 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+          <div id="mobile-navigation" className="lg:hidden mt-2 p-4 bg-slate-950/95 backdrop-blur-2xl rounded-3xl border border-white/15 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => {
+              {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.id;
                 return (
                   <a
                     key={link.name}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       isActive
-                        ? 'bg-[#ffda00] text-slate-950 font-bold'
-                        : 'text-slate-200 hover:text-[#ffda00] hover:bg-white/5'
+                        ? 'bg-greenlogix-lime text-slate-950 font-bold'
+                        : 'text-slate-200 hover:text-greenlogix-lime hover:bg-white/5'
                     }`}
                   >
                     {link.name}
@@ -167,19 +173,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
                 <a
                   href="#calculator"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 rounded-xl text-center text-xs font-bold text-[#ffda00] bg-[#ffda00]/10 flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 rounded-xl text-center text-xs font-bold text-greenlogix-lime bg-greenlogix-lime/10 flex items-center justify-center gap-1.5"
                 >
-                  <Calculator className="w-3.5 h-3.5 text-[#ffda00]" />
-                  <span>Bộ Tính Mức Tiết Kiệm ROI &amp; CO₂</span>
+                  <Calculator className="w-3.5 h-3.5 text-greenlogix-lime" />
+                  <span>Tính mức tiết kiệm và lượng CO₂ giảm</span>
                 </a>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     onOpenPilotModal();
                   }}
-                  className="w-full py-3 rounded-xl text-center text-xs font-bold text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-md flex items-center justify-center gap-1.5"
+                  className="w-full py-3 rounded-xl text-center text-xs font-bold text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-md flex items-center justify-center gap-1.5"
                 >
-                  <span>Đăng Ký Tham Gia Pilot Miễn Phí</span>
+                  <span>Đăng ký dùng thử miễn phí</span>
                   <ArrowRight className="w-4 h-4 text-slate-950" />
                 </button>
               </div>
