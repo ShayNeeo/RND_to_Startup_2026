@@ -9,7 +9,7 @@ export const InteractiveSavingsCalculator: React.FC<CalculatorProps> = ({ onOpen
   const [fleetSize, setFleetSize] = useState<number>(12);
   const [dailyKm, setDailyKm] = useState<number>(85);
   const [fuelConsumption, setFuelConsumption] = useState<number>(11); // L/100km
-  const [savingsRate, setSavingsRate] = useState<number>(12); // %
+  const [savingsRate, setSavingsRate] = useState<number>(25); // %
 
   // Calculations
   const workingDays = 26; // days/month
@@ -136,17 +136,17 @@ export const InteractiveSavingsCalculator: React.FC<CalculatorProps> = ({ onOpen
                 <input
                   aria-label="Tỷ lệ quãng đường dự kiến cắt giảm"
                   type="range"
-                  min="8"
-                  max="18"
+                  min="20"
+                  max="30"
                   step="1"
                   value={savingsRate}
                   onChange={(e) => setSavingsRate(Number(e.target.value))}
                   className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
                 />
                 <div className="flex justify-between text-[11px] text-slate-500 mt-1">
-                  <span>8% (Mức cơ sở)</span>
-                  <span>12% (Mức thường gặp)</span>
-                  <span>18% (Tối ưu ghép đơn)</span>
+                  <span>20% (Mức cơ sở)</span>
+                  <span>25% (Mức mục tiêu)</span>
+                  <span>30% (Tối ưu tốt)</span>
                 </div>
               </div>
             </div>

@@ -20,7 +20,7 @@
 │   │   │   └── main.tsx
 │   │   └── package.json      # @greenlogix/landing
 │   ├── web-portal/           # [Future] Web Portal điều phối viên bưu cục (Dispatcher Console)
-│   └── mobile-driver/        # [Future] Mobile App dành cho tài xế giao nhận (Flutter/React Native)
+│   └── mobile-driver/        # [Legacy placeholder] Luồng tài xế được triển khai trên web responsive
 ├── packages/
 │   └── shared-types/         # [Future] Shared TypeScript types, VRPTW contracts & ESG schemas
 ├── docs/

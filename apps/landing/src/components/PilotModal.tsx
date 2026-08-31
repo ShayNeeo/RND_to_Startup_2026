@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, CheckCircle2, ShieldCheck, Sparkles, Building2, Phone, Mail, User, Truck } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, Sparkles, Building2, Phone, Mail, User, Truck, ClipboardList } from 'lucide-react';
 
 interface PilotModalProps {
   isOpen: boolean;
@@ -14,6 +14,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
     company: '',
     phone: '',
     email: '',
+    interest: 'Dùng thử miễn phí 4–6 tuần',
     fleetSize: '5-15 xe',
     area: 'TP. Hồ Chí Minh (Ưu tiên đợt 1)',
     notes: '',
@@ -53,17 +54,38 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 <div>
                   <span className="text-[10px] font-bold tracking-wider text-greenlogix-lime uppercase bg-greenlogix-lime/10 px-2.5 py-0.5 rounded-full border border-greenlogix-lime/20">
-                    DÙNG THỬ MIỄN PHÍ 4–6 TUẦN
+                    TƯ VẤN GIẢI PHÁP &amp; DÙNG THỬ
                   </span>
-                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Tham Gia GreenLogix</h3>
+                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Nhu Cầu Với GreenLogix</h3>
                 </div>
               </div>
 
               <p className="text-xs text-slate-300 mb-5 leading-relaxed">
-                Dành cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong>. Đội ngũ GreenLogix sẽ hỗ trợ chuẩn bị dữ liệu và hướng dẫn vận hành trực tiếp.
+                Chọn nội dung doanh nghiệp quan tâm. Chương trình dùng thử 4–6 tuần ưu tiên <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong>.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-3.5">
+                <div>
+                  <label htmlFor="interest" className="block text-xs font-semibold text-slate-300 mb-1">
+                    Nhu cầu quan tâm
+                  </label>
+                  <div className="relative">
+                    <ClipboardList className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                    <select
+                      id="interest"
+                      value={formData.interest}
+                      onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-greenlogix-lime"
+                    >
+                      <option>Dùng thử miễn phí 4–6 tuần</option>
+                      <option>Đăng ký gói thuê bao</option>
+                      <option>Báo cáo CO₂ &amp; tư vấn theo năm</option>
+                      <option>Kết nối đơn chiều về</option>
+                      <option>Triển khai &amp; tích hợp hệ thống</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-300 mb-1">
@@ -187,7 +209,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
                   type="submit"
                   className="w-full mt-2 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Gửi Thông Tin Đăng Ký Dùng Thử</span>
+                  <span>Gửi Thông Tin Đăng Ký</span>
                 </button>
 
                 <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
@@ -201,9 +223,9 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
               <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Đăng Ký Dùng Thử Thành Công!</h3>
+              <h3 className="text-xl font-bold text-white mb-2">Đã Gửi Thông Tin Thành Công!</h3>
               <p className="text-xs text-slate-300 mb-6 leading-relaxed max-w-sm mx-auto">
-                Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để khảo sát mô hình bưu cục và kích hoạt môi trường trải nghiệm.
+                Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để trao đổi nhu cầu và đề xuất phương án phù hợp.
               </p>
               <button
                 onClick={() => {

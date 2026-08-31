@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Monitor, Smartphone, Check } from 'lucide-react';
+import { Monitor, Globe2, Check } from 'lucide-react';
 
 export const DriverAndDispatcherShowcase: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dispatcher' | 'driver'>('dispatcher');
@@ -23,7 +23,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
           </p>
 
           {/* Tab Switcher */}
-          <div className="inline-flex p-1.5 rounded-2xl bg-slate-950 border border-white/10 mt-8">
+          <div className="inline-flex max-w-full flex-col p-1.5 rounded-2xl bg-slate-950 border border-white/10 mt-8 sm:flex-row">
             <button
               onClick={() => setActiveTab('dispatcher')}
               aria-pressed={activeTab === 'dispatcher'}
@@ -46,8 +46,8 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Smartphone className="w-4 h-4" />
-              <span>Ứng Dụng Điện Thoại Cho Tài Xế</span>
+              <Globe2 className="w-4 h-4" />
+              <span>Web Dành Cho Tài Xế</span>
             </button>
           </div>
         </div>
@@ -137,15 +137,15 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
             {/* Left Info */}
             <div className="lg:col-span-6 space-y-6">
               <div className="inline-block px-3 py-1 rounded-full text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 uppercase tracking-wider">
-                Ứng Dụng Di Động Dành Cho Tài Xế
+                Web Responsive Dành Cho Tài Xế
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Ứng Dụng Tài Xế Đơn Giản, Dễ Dùng
+                Mở Trên Trình Duyệt, Không Cần Cài Ứng Dụng
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed">
-                Tài xế mở ứng dụng là thấy ngay thứ tự các điểm cần giao. Ứng dụng chỉ đường từng chặng, báo khi có đơn phù hợp cho chiều về và cho phép chụp ảnh xác nhận giao hàng chỉ bằng một chạm.
+                Tài xế mở đường dẫn GreenLogix trên trình duyệt là thấy ngay thứ tự các điểm cần giao. Web chỉ đường từng chặng, báo đơn chiều về và hỗ trợ lưu xác nhận giao hàng.
               </p>
 
               <div className="space-y-3 text-xs sm:text-sm text-slate-200">
@@ -153,7 +153,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
-                  <span>Giao diện tiếng Việt đơn giản, dễ dùng cho mọi tài xế xe tải / xe máy</span>
+                  <span>Dùng trực tiếp trên trình duyệt điện thoại, máy tính bảng hoặc máy tính</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
@@ -170,19 +170,28 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Mobile Mockup */}
+            {/* Right Driver Web Mockup */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="relative w-full max-w-72 rounded-[2.5rem] border-4 border-slate-800 bg-slate-900 p-4 shadow-2xl">
-                <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-4"></div>
+              <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
+                <div className="flex items-center gap-3 border-b border-white/10 bg-slate-800/80 px-4 py-3">
+                  <div className="flex gap-1.5" aria-hidden="true">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                  </div>
+                  <div className="min-w-0 flex-1 rounded-lg border border-white/10 bg-slate-950 px-3 py-1.5 text-left font-mono text-[10px] text-slate-400">
+                    driver.greenlogix.vn/tuyen-hom-nay
+                  </div>
+                </div>
 
-                <div className="space-y-3 text-xs">
-                  <div className="p-3 bg-slate-950 rounded-2xl border border-white/5 text-center">
+                <div className="grid gap-3 p-4 text-xs sm:grid-cols-2 sm:p-5">
+                  <div className="p-4 bg-slate-950 rounded-2xl border border-white/5 text-center sm:col-span-2">
                     <span className="text-[10px] text-slate-400 uppercase font-bold">Nhiệm Vụ Hôm Nay</span>
                     <div className="text-xl font-extrabold text-greenlogix-lime mt-0.5">20 Điểm Giao</div>
                     <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">Đã hoàn thành 14/20</div>
                   </div>
 
-                  <div className="p-3 bg-slate-950 rounded-2xl border border-greenlogix-lime/30">
+                  <div className="p-4 bg-slate-950 rounded-2xl border border-greenlogix-lime/30">
                     <div className="flex justify-between items-center text-[10px] text-slate-400 mb-1">
                       <span>ĐIỂM GIAO TIẾP THEO</span>
                       <span className="text-greenlogix-lime font-bold">14:15</span>
@@ -191,7 +200,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                     <div className="text-[11px] text-slate-400 mt-1">241 QL13, Hiệp Bình Chánh, Thủ Đức</div>
                   </div>
 
-                  <div className="p-3 bg-emerald-950/60 rounded-2xl border border-emerald-500/30 text-[11px] text-emerald-300">
+                  <div className="p-4 bg-emerald-950/60 rounded-2xl border border-emerald-500/30 text-[11px] text-emerald-300">
                     <strong>Đơn chiều về sẵn sàng:</strong> Nhận 50kg hàng từ Thủ Đức về kho trung tâm (+120.000đ).
                   </div>
                 </div>
