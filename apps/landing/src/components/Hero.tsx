@@ -34,7 +34,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
   ];
 
   return (
-    <section className="relative w-full min-h-screen h-screen overflow-hidden flex flex-col justify-between select-none bg-[#1a1a2e]">
+    <section className="relative flex min-h-[100dvh] w-full select-none flex-col justify-between overflow-hidden bg-cargox-fallback">
       {/* Background Video */}
       <video
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260620_185230_f7f71ef4-6655-469f-b9c6-efbdc1f7684a.mp4"
@@ -44,11 +44,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
         playsInline
         onCanPlay={() => setVideoReady(true)}
         onLoadedData={() => setVideoReady(true)}
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none brightness-95"
+        className="absolute inset-0 z-0 h-full w-full object-cover brightness-[0.72] saturate-[0.78] contrast-[1.06] pointer-events-none"
       />
 
       {/* Contrast Vignette Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-slate-950/85 z-0 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,rgba(2,9,5,0.72)_0%,rgba(4,21,13,0.16)_42%,rgba(7,17,12,0.96)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-slate-950/35 mix-blend-multiply" />
 
       {/* Main Hero Content Layer */}
       <AnimatePresence>
@@ -70,104 +71,43 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                 gap: 'clamp(20px, 4vh, 48px)',
               }}
             >
-              {/* Left Column: Giant Headline */}
-              <div className="overflow-clip flex flex-col justify-center text-left">
-                <div
-                  className="font-barlow font-extrabold uppercase leading-[0.78] tracking-[-0.01em] flex flex-col"
-                  style={{
-                    fontSize: 'clamp(84px, min(13.5vh, 10.5vw), 210px)',
-                  }}
-                >
-                  {/* Line 1: BEYOND */}
-                  <motion.div
+              {/* Left Column: Main Slogan */}
+              <div className="flex min-w-0 flex-col justify-center text-left">
+                <h1 className="flex w-full max-w-none flex-col gap-2 text-balance font-barlow text-[clamp(34px,9.5vw,48px)] font-extrabold uppercase leading-[0.96] tracking-[0.025em] sm:gap-3 sm:text-[clamp(48px,7.3vw,72px)] lg:text-[clamp(54px,5vw,92px)]">
+                  {/* Line 1 */}
+                  <motion.span
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0, ease: EXPO_OUT }}
-                    className="text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+                    className="block text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] sm:whitespace-nowrap"
                   >
-                    BEYOND
-                  </motion.div>
+                    Tối ưu vận chuyển
+                  </motion.span>
 
-                  {/* Line 2: BORDERS */}
-                  <motion.div
+                  {/* Line 2 */}
+                  <motion.span
                     initial={{ x: 900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.13, ease: EXPO_OUT }}
-                    className="text-[#002a35] drop-shadow-[0_3px_12px_rgba(255,255,255,0.4)]"
-                    style={{ marginLeft: '0.524em' }}
+                    className="block text-greenlogix-lime drop-shadow-[0_4px_18px_rgba(7,17,12,0.55)] sm:whitespace-nowrap"
                   >
-                    BORDERS
-                  </motion.div>
+                    Tiết kiệm chi phí
+                  </motion.span>
 
-                  {/* Line 3: AND LIMITS */}
-                  <motion.div
+                  {/* Line 3 */}
+                  <motion.span
                     initial={{ x: -900, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.85, delay: 0.26, ease: EXPO_OUT }}
-                    className="text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+                    className="block text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] sm:whitespace-nowrap"
                   >
-                    AND LIMITS
-                  </motion.div>
-                </div>
+                    Kiến tạo tương lai xanh
+                  </motion.span>
+                </h1>
               </div>
 
-              {/* Right Column: Tagline & Interactive Route Map */}
-              <div
-                className="flex flex-col justify-center w-full max-w-[540px] lg:max-w-none"
-                style={{
-                  gap: 'clamp(16px, 2.66vh, 32px)',
-                }}
-              >
-                {/* Tagline Text */}
-                <div
-                  className="font-sans font-normal leading-[0.92] tracking-[-0.02em] flex flex-col drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
-                  style={{
-                    fontSize: 'clamp(24px, min(4vh, 3vw), 52px)',
-                  }}
-                >
-                  {/* Line 1: Logistics */}
-                  <div className="overflow-hidden" style={{ marginLeft: 0 }}>
-                    <motion.span
-                      initial={{ y: '100%', rotateX: 45 }}
-                      animate={{ y: 0, rotateX: 0 }}
-                      transition={{ duration: 0.6, delay: 0.3, ease: EXPO_OUT }}
-                      className="inline-block origin-bottom font-extrabold text-white"
-                    >
-                      Logistics
-                    </motion.span>
-                  </div>
-
-                  {/* Line 2: shaped by scale */}
-                  <div className="overflow-hidden" style={{ marginLeft: '1.5em' }}>
-                    {['shaped', 'by', 'scale'].map((word, i) => (
-                      <motion.span
-                        key={word}
-                        initial={{ y: '100%', rotateX: 45 }}
-                        animate={{ y: 0, rotateX: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em] font-bold text-white/95"
-                      >
-                        {word}
-                      </motion.span>
-                    ))}
-                  </div>
-
-                  {/* Line 3: powered by precision */}
-                  <div className="overflow-hidden" style={{ marginLeft: 0 }}>
-                    {['powered', 'by', 'precision'].map((word, i) => (
-                      <motion.span
-                        key={word}
-                        initial={{ y: '100%', rotateX: 45 }}
-                        animate={{ y: 0, rotateX: 0 }}
-                        transition={{ duration: 0.6, delay: 0.7 + i * 0.08, ease: EXPO_OUT }}
-                        className="inline-block origin-bottom mr-[0.25em] font-extrabold text-[#ffda00]"
-                      >
-                        {word}
-                      </motion.span>
-                    ))}
-                  </div>
-                </div>
-
+              {/* Right Column: Interactive Route Map */}
+              <div className="mx-auto flex w-full min-w-0 max-w-[540px] flex-col justify-center lg:mx-0 lg:max-w-none">
                 {/* Map Section */}
                 <div
                   className="relative w-full overflow-visible"
@@ -176,7 +116,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                   {/* Map Image Base */}
                   <img
                     src="https://polo-pecan-73837341.figma.site/_assets/v11/b6d561167283e799453232309bd13dd78b2d1afa.png"
-                    alt="VRPTW Urban & Regional Route Network"
+                    alt="Bản đồ các tuyến giao hàng được sắp xếp tự động"
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]"
                   />
 
@@ -200,7 +140,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                           <motion.path
                             d={pathD}
                             fill="none"
-                            stroke="#FFDA00"
+                            stroke="#D6F65A"
                             strokeWidth="2.8"
                             strokeLinecap="round"
                             initial={{ pathLength: 0 }}
@@ -211,7 +151,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                               ease: EXPO_OUT,
                             }}
                           />
-                          <polygon points="0,-4 8,0 0,4" fill="#FFDA00">
+                          <polygon points="0,-4 8,0 0,4" fill="#D6F65A">
                             <animateMotion
                               path={pathD}
                               dur={`${2.5 + idx * 0.3}s`}
@@ -235,8 +175,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                             delay: 0.9 + idx * 0.1,
                           }}
                         >
-                          <circle cx={dot.cx} cy={dot.cy} r={9.519} fill="#FFDA00" />
-                          <circle cx={dot.cx} cy={dot.cy} r={3.389} fill="#002A35" />
+                          <circle cx={dot.cx} cy={dot.cy} r={9.519} fill="#D6F65A" />
+                          <circle cx={dot.cx} cy={dot.cy} r={3.389} fill="#07110C" />
                         </motion.g>
                       ))}
                     </svg>
@@ -253,7 +193,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                       delay: 2.1,
                     }}
                     whileHover={{ scale: 1.15, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-greenlogix-lime/50 cursor-pointer"
                     style={{
                       left: '26.0%',
                       top: '28.9%',
@@ -263,7 +203,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/08d6a37375d428e07c59e24a8529de89bfee157e.08d6a373.png"
-                      alt="Maritime Logistics"
+                      alt="Vận chuyển đường thủy"
                       className="w-[60%] h-[60%] object-contain"
                     />
                   </motion.div>
@@ -278,7 +218,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                       delay: 2.2,
                     }}
                     whileHover={{ scale: 1.15, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-greenlogix-lime/50 cursor-pointer"
                     style={{
                       left: '70.8%',
                       top: '15.6%',
@@ -289,7 +229,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/7d6f50a87e1427d9b4d1a9c9f1c064ff04b2b3f9.7d6f50a8.png"
-                      alt="Urban Delivery Van"
+                      alt="Xe giao hàng đô thị"
                       className="w-[60%] h-[60%] object-contain"
                     />
                   </motion.div>
@@ -304,7 +244,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                       delay: 2.3,
                     }}
                     whileHover={{ scale: 1.15, y: -4 }}
-                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-[#ffda00]/50 cursor-pointer"
+                    className="absolute bg-white rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] ring-2 ring-greenlogix-lime/50 cursor-pointer"
                     style={{
                       left: '55.2%',
                       top: '52.1%',
@@ -315,7 +255,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/0e0282ab1c70db03d437b0d01875ce45557d49f6.0e0282ab.png"
-                      alt="Air Cargo Freight"
+                      alt="Vận chuyển hàng không"
                       className="w-[60%] h-[60%] object-contain"
                     />
                   </motion.div>
@@ -333,9 +273,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                       fontSize: 'clamp(11px, min(1.5vh, 1.1vw), 14px)',
                     }}
                   >
-                    <span className="w-2 h-2 rounded-full bg-[#ffda00] shrink-0 animate-pulse"></span>
+                    <span className="w-2 h-2 rounded-full bg-greenlogix-lime shrink-0 animate-pulse"></span>
                     <span className="text-white/95">
-                      Tối ưu VRPTW đa ràng buộc &amp; đo CO₂ chuẩn <strong>ISO 14083</strong>.
+                      Tự động sắp xếp tuyến giao hàng và đo lượng CO₂ theo <strong>chuẩn quốc tế</strong>.
                     </span>
                   </motion.div>
                 </div>
@@ -357,7 +297,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                 className="flex items-center gap-3 sm:gap-4 text-left bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/15 shadow-xl"
               >
                 <div
-                  className="font-barlow font-extrabold uppercase text-[#ffda00] leading-none drop-shadow-[0_2px_8px_rgba(255,218,0,0.3)]"
+                  className="font-barlow font-extrabold uppercase text-greenlogix-lime leading-none drop-shadow-[0_2px_8px_rgba(214,246,90,0.28)]"
                   style={{
                     fontSize: 'clamp(50px, min(7.5vh, 5.5vw), 92px)',
                   }}
@@ -386,7 +326,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                   >
                     <img
                       src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/b343ed71e721488b90c407df666fd6dc3f5f70b1.b343ed71.png"
-                      alt="Cargo Delivered Icon"
+                      alt="Hàng hóa đã giao"
                       className="w-[55%] h-[55%] object-contain"
                     />
                   </div>
@@ -403,7 +343,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                 whileTap={{ scale: 0.97 }}
                 onHoverStart={() => setIsCtaHovered(true)}
                 onHoverEnd={() => setIsCtaHovered(false)}
-                className="relative cursor-pointer flex items-center justify-center focus:outline-none w-full sm:w-auto drop-shadow-2xl"
+                className="relative flex w-full cursor-pointer items-center justify-center drop-shadow-2xl sm:w-auto"
                 style={{
                   height: 'clamp(46px, min(5.5vh, 4.2vw), 64px)',
                   aspectRatio: '434 / 68',
@@ -418,17 +358,17 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                 >
                   <path
                     d="M316 0C329.08 0 340.435 7.38674 346.121 18.2162C348.618 22.9736 353.086 26.8535 358.459 26.8535H359.252C364.667 26.8535 369.155 22.9169 371.63 18.1007C377.159 7.34039 388.205 0.00015843 400.931 0C419.195 0 434.001 15.1191 434.001 33.7695L433.99 34.6416C433.537 52.8891 418.909 67.5391 400.931 67.5391C387.96 67.5389 376.734 59.9132 371.317 48.8128C368.923 43.9077 364.427 39.873 358.969 39.873C353.492 39.873 348.986 43.9356 346.589 48.8605C341.074 60.1913 329.449 68 316 68H34.001C15.2233 68 0 52.7777 0 34C0 15.2223 15.2233 0 34.001 0H316ZM400.931 2.44141C384.063 2.44163 370.303 16.419 370.303 33.7695C370.303 51.1201 384.063 65.0974 400.931 65.0977C417.798 65.0977 431.56 51.1202 431.56 33.7695C431.56 16.4189 417.798 2.44141 400.931 2.44141Z"
-                    fill="#FFDA00"
+                    fill="#D6F65A"
                   />
                 </svg>
 
                 <div
-                  className="absolute left-0 right-[20%] inset-y-0 flex items-center justify-center font-sans font-extrabold text-[#002a35] tracking-tight whitespace-nowrap"
+                  className="absolute left-0 right-[20%] inset-y-0 flex items-center justify-center font-sans font-extrabold text-greenlogix-ink tracking-tight whitespace-nowrap"
                   style={{
                     fontSize: 'clamp(13px, min(1.5vh, 1.15vw), 18px)',
                   }}
                 >
-                  Đăng Ký Pilot Free
+                  Đăng ký dùng thử miễn phí
                 </div>
 
                 <div

@@ -9,43 +9,45 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-white/10 text-xs font-bold text-[#ffda00] mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950 border border-white/10 text-xs font-bold text-greenlogix-lime mb-4">
             <Monitor className="w-3.5 h-3.5" />
             <span>HỆ SINH THÁI SẢN PHẨM TOÀN DIỆN</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            Giao Diện Chuyên Biệt Cho <span className="text-[#ffda00]">Điều Phối Viên &amp; Tài Xế</span>
+            Công Cụ Dễ Dùng Cho <span className="text-greenlogix-lime">Người Quản Lý &amp; Tài Xế</span>
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300">
-            Kết nối thông suốt hai đầu vận hành: từ trung tâm điều hành Web Portal trên máy tính đến ứng dụng di động Flutter trên tay tài xế.
+            Kết nối liền mạch giữa người quản lý tại văn phòng và tài xế ngoài đường, giúp mọi người cùng nhìn thấy một kế hoạch giao hàng thống nhất.
           </p>
 
           {/* Tab Switcher */}
           <div className="inline-flex p-1.5 rounded-2xl bg-slate-950 border border-white/10 mt-8">
             <button
               onClick={() => setActiveTab('dispatcher')}
+              aria-pressed={activeTab === 'dispatcher'}
               className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'dispatcher'
-                  ? 'bg-[#ffda00] text-slate-950 shadow-md'
+                  ? 'bg-greenlogix-lime text-slate-950 shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Monitor className="w-4 h-4" />
-              <span>Web Portal Điều Phối Viên</span>
+              <span>Màn Hình Cho Người Quản Lý</span>
             </button>
 
             <button
               onClick={() => setActiveTab('driver')}
+              aria-pressed={activeTab === 'driver'}
               className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'driver'
-                  ? 'bg-[#ffda00] text-slate-950 shadow-md'
+                  ? 'bg-greenlogix-lime text-slate-950 shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Smartphone className="w-4 h-4" />
-              <span>Mobile App Tài Xế (Flutter)</span>
+              <span>Ứng Dụng Điện Thoại Cho Tài Xế</span>
             </button>
           </div>
         </div>
@@ -55,16 +57,16 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
           <div className="bg-slate-950/80 rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Info */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="inline-block px-3 py-1 rounded-full text-[11px] font-bold text-[#ffda00] bg-[#ffda00]/10 border border-[#ffda00]/20 uppercase tracking-wider">
+              <div className="inline-block px-3 py-1 rounded-full text-[11px] font-bold text-greenlogix-lime bg-greenlogix-lime/10 border border-greenlogix-lime/20 uppercase tracking-wider">
                 Trung Tâm Điều Hành Bưu Cục
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Web Portal Điều Phối Thông Minh
+                Màn Hình Điều Hành Dễ Theo Dõi
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed">
-                Cho phép người quản lý bưu cục nhập danh sách đơn hàng từ Excel, trực quan hóa các cụm giao hàng trên bản đồ nhiệt, kích hoạt thuật toán tối ưu VRPTW và giám sát đội xe theo thời gian thực.
+                Người quản lý chỉ cần tải danh sách đơn hàng lên, hệ thống sẽ nhóm các điểm giao, đề xuất tuyến phù hợp và hiển thị tiến độ của từng xe trên bản đồ.
               </p>
 
               <div className="space-y-3 text-xs sm:text-sm text-slate-200">
@@ -72,19 +74,19 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
-                  <span>Nhập đơn hàng nhanh chóng từ file Excel / Google Sheets</span>
+                  <span>Nhập đơn hàng nhanh từ bảng tính quen thuộc</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
-                  <span>Bản đồ nhiệt giám sát GPS vị trí xe và tiến độ giao từng phút</span>
+                  <span>Theo dõi vị trí xe và tiến độ giao hàng trên bản đồ</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
-                  <span>Báo cáo kiểm kê CO₂ và nhiên liệu xuất định dạng PDF / Excel</span>
+                  <span>Tải báo cáo nhiên liệu và lượng CO₂ dưới dạng bảng hoặc tài liệu</span>
                 </div>
               </div>
             </div>
@@ -105,7 +107,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
                     <div className="text-[10px] text-slate-400">Đơn hàng hôm nay</div>
-                    <div className="text-lg font-extrabold text-[#ffda00]">80 / 80</div>
+                    <div className="text-lg font-extrabold text-greenlogix-lime">80 / 80</div>
                   </div>
                   <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
                     <div className="text-[10px] text-slate-400">Đội xe hoạt động</div>
@@ -113,7 +115,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   </div>
                   <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
                     <div className="text-[10px] text-slate-400">CO₂ Tiết giảm</div>
-                    <div className="text-lg font-extrabold text-cyan-400">-142.8 kg</div>
+                    <div className="text-lg font-extrabold text-emerald-300">-142.8 kg</div>
                   </div>
                 </div>
 
@@ -124,7 +126,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   </div>
                   <div className="text-[11px] text-slate-400 space-y-1">
                     <div>Kho Tân Bình → Cụm Bình Thạnh (8 đơn) → Thủ Đức (12 đơn)</div>
-                    <div className="text-[#ffda00]">Đã ghép 1 đơn lấy hàng chiều về (Thủ Đức → Bình Thạnh)</div>
+                    <div className="text-greenlogix-lime">Đã ghép 1 đơn lấy hàng chiều về (Thủ Đức → Bình Thạnh)</div>
                   </div>
                 </div>
               </div>
@@ -139,11 +141,11 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Mobile App Flutter Thân Thiện &amp; Nhanh Chóng
+                Ứng Dụng Tài Xế Đơn Giản, Dễ Dùng
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed">
-                Tài xế mở ứng dụng là thấy ngay danh sách đơn hàng đã được xếp theo thứ tự tối ưu nhất. Chỉ dẫn turn-by-turn, thông báo khi có đơn ghép chiều về và chụp ảnh POD giao hàng thành công chỉ bằng 1 chạm.
+                Tài xế mở ứng dụng là thấy ngay thứ tự các điểm cần giao. Ứng dụng chỉ đường từng chặng, báo khi có đơn phù hợp cho chiều về và cho phép chụp ảnh xác nhận giao hàng chỉ bằng một chạm.
               </p>
 
               <div className="space-y-3 text-xs sm:text-sm text-slate-200">
@@ -157,7 +159,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                     <Check className="w-3.5 h-3.5" />
                   </div>
-                  <span>Chụp ảnh chữ ký &amp; chứng từ giao hàng POD trực tiếp lưu lên đám mây</span>
+                  <span>Chụp ảnh, chữ ký và lưu xác nhận giao hàng ngay trên hệ thống</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
@@ -170,20 +172,20 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
 
             {/* Right Mobile Mockup */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-72 bg-slate-900 rounded-[2.5rem] p-4 border-4 border-slate-800 shadow-2xl relative">
+              <div className="relative w-full max-w-72 rounded-[2.5rem] border-4 border-slate-800 bg-slate-900 p-4 shadow-2xl">
                 <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-4"></div>
 
                 <div className="space-y-3 text-xs">
                   <div className="p-3 bg-slate-950 rounded-2xl border border-white/5 text-center">
                     <span className="text-[10px] text-slate-400 uppercase font-bold">Nhiệm Vụ Hôm Nay</span>
-                    <div className="text-xl font-extrabold text-[#ffda00] mt-0.5">20 Điểm Giao</div>
+                    <div className="text-xl font-extrabold text-greenlogix-lime mt-0.5">20 Điểm Giao</div>
                     <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">Đã hoàn thành 14/20</div>
                   </div>
 
-                  <div className="p-3 bg-slate-950 rounded-2xl border border-[#ffda00]/30">
+                  <div className="p-3 bg-slate-950 rounded-2xl border border-greenlogix-lime/30">
                     <div className="flex justify-between items-center text-[10px] text-slate-400 mb-1">
                       <span>ĐIỂM GIAO TIẾP THEO</span>
-                      <span className="text-[#ffda00] font-bold">14:15</span>
+                      <span className="text-greenlogix-lime font-bold">14:15</span>
                     </div>
                     <div className="font-bold text-white text-xs">Siêu thị Co.opmart Bình Triệu</div>
                     <div className="text-[11px] text-slate-400 mt-1">241 QL13, Hiệp Bình Chánh, Thủ Đức</div>

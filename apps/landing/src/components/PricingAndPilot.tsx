@@ -8,50 +8,55 @@ interface PricingProps {
 export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) => {
   const tiers = [
     {
-      name: 'Starter (Khởi Động)',
-      desc: 'Phù hợp cho bưu cục nhỏ & đơn vị giao hàng nội thành bước đầu số hóa.',
-      price: '1.500.000',
-      unit: 'VNĐ / tháng',
-      vehicles: 'Tối đa 5 xe hoạt động',
+      name: 'Gói Starter',
+      desc: 'Mức khởi đầu dễ tiếp cận cho đơn vị mới đưa hoạt động giao nhận lên hệ thống.',
+      price: '1,5 – 2,5 triệu',
+      unit: '/ tháng',
+      vehicles: 'Tối đa 10 tài xế',
       features: [
-        'Thuật toán tối ưu tuyến VRPTW cơ bản',
-        'Nhập đơn hàng từ file Excel / Google Sheets',
-        'Web Console điều phối viên',
-        'Ứng dụng di động Driver App cho 5 tài xế',
-        'Báo cáo tổng kết quãng đường & nhiên liệu',
+        'Tự động sắp xếp tuyến giao hàng cơ bản',
+        'Nhập đơn hàng từ bảng tính',
+        'Hỗ trợ thiết lập và bắt đầu sử dụng',
       ],
       highlight: false,
     },
     {
-      name: 'Professional (Chuyên Nghiệp)',
-      desc: 'Dành cho doanh nghiệp phân phối & bưu cục giao nhận có quy mô trung bình.',
-      price: '3.500.000',
-      unit: 'VNĐ / tháng',
-      vehicles: 'Từ 6 – 20 xe hoạt động',
+      name: 'Gói Nhỏ',
+      desc: 'Phù hợp với đội giao nhận nhỏ cần theo dõi đơn hàng và tài xế tập trung.',
+      price: '3 – 5 triệu',
+      unit: '/ tháng',
+      vehicles: 'Từ 11 – 20 tài xế',
       features: [
         'Tất cả tính năng của gói Starter',
         'Tích hợp dữ liệu giao thông thời gian thực',
-        'Tự động ghép đơn lấy hàng chiều về (Backhaul)',
-        'Giám sát GPS Live & cảnh báo trễ hẹn tức thì',
-        'Xuất báo cáo kiểm kê CO₂ chuẩn ISO 14083 / ESG',
-        'Hỗ trợ kỹ thuật ưu tiên 24/7',
+        'Theo dõi tài xế và tiến độ đơn hàng',
       ],
       highlight: true,
       badge: 'PHỔ BIẾN NHẤT',
     },
     {
-      name: 'Enterprise (Doanh Nghiệp)',
-      desc: 'Giải pháp tùy biến quy mô lớn cho tập đoàn logistics & chuỗi bán lẻ.',
-      price: 'Tùy Chỉnh',
-      unit: 'Theo quy mô đội xe',
-      vehicles: 'Không giới hạn số lượng xe',
+      name: 'Gói Vừa',
+      desc: 'Dành cho doanh nghiệp có nhiều tuyến và cần kiểm soát hiệu quả vận hành sâu hơn.',
+      price: '8 – 15 triệu',
+      unit: '/ tháng',
+      vehicles: 'Từ 21 – 100 tài xế',
       features: [
-        'Tất cả tính năng của gói Professional',
-        'Tích hợp API hai chiều với hệ thống ERP / WMS / TMS',
-        'Triển khai Private Cloud hoặc On-Premise',
-        'Tư vấn tối ưu hóa mạng lưới kho và bưu cục',
-        'Cam kết chất lượng dịch vụ SLA 99.9%',
-        'Chuyên viên tư vấn & đào tạo onsite riêng biệt',
+        'Tất cả tính năng của gói Nhỏ',
+        'Tự động ghép đơn cho chiều xe quay về',
+        'Báo cáo nhiên liệu và lượng CO₂',
+      ],
+      highlight: false,
+    },
+    {
+      name: 'Gói Lớn',
+      desc: 'Giải pháp linh hoạt cho mạng lưới giao nhận lớn hoặc có yêu cầu vận hành riêng.',
+      price: '20 – 40 triệu',
+      unit: '/ tháng',
+      vehicles: 'Trên 100 tài xế • Có thể thỏa thuận',
+      features: [
+        'Tùy chỉnh kết nối với hệ thống hiện có',
+        'Hạ tầng vận hành theo nhu cầu doanh nghiệp',
+        'Hỗ trợ kỹ thuật và đào tạo ưu tiên',
       ],
       highlight: false,
     },
@@ -59,51 +64,51 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
 
   return (
     <section id="pricing" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-950 border-t border-white/5 scroll-mt-24">
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-white/10 text-xs font-bold text-[#ffda00] mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-white/10 text-xs font-bold text-greenlogix-lime mb-4">
             <Tag className="w-3.5 h-3.5" />
             <span>BẢNG GIÁ MINH BẠCH &amp; LINH HOẠT</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            Đầu Tư Thông Minh, <span className="text-[#ffda00]">Thu Hồi Vốn Nhanh Chóng</span>
+            Đầu Tư Thông Minh, <span className="text-greenlogix-lime">Thu Hồi Vốn Nhanh Chóng</span>
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300">
-            Mô hình SaaS linh hoạt theo Monthly Active Drivers. Doanh nghiệp chỉ chi trả khi thực sự tạo ra giá trị tiết kiệm.
+            Chọn gói theo số lượng tài xế hoạt động mỗi tháng. Doanh nghiệp có thể bắt đầu nhỏ và nâng cấp khi nhu cầu tăng.
           </p>
         </div>
 
-        {/* 3 Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-16">
-          {tiers.map((tier, idx) => (
+        {/* Pricing Cards Grid */}
+        <div className="mb-16 grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {tiers.map((tier) => (
             <div
-              key={idx}
-              className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 ${
+              key={tier.name}
+              className={`rounded-3xl p-6 sm:p-8 xl:p-6 flex flex-col justify-between transition-all duration-300 ${
                 tier.highlight
-                  ? 'bg-slate-900 border-2 border-[#ffda00] shadow-2xl shadow-[#ffda00]/10 scale-105 relative'
+                  ? 'bg-slate-900 border-2 border-greenlogix-lime shadow-2xl shadow-greenlogix-lime/10 relative'
                   : 'bg-slate-900/60 border border-white/10 hover:border-white/20'
               }`}
             >
               {tier.badge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 bg-[#ffda00] text-slate-950 font-extrabold text-[10px] tracking-wider rounded-full shadow-md uppercase">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 bg-greenlogix-lime text-slate-950 font-extrabold text-[10px] tracking-wider rounded-full shadow-md uppercase">
                   {tier.badge}
                 </div>
               )}
 
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">{tier.name}</h3>
-                <p className="text-xs text-slate-400 mb-6 leading-relaxed min-h-[36px]">{tier.desc}</p>
+                <p className="mb-6 text-xs leading-relaxed text-slate-400">{tier.desc}</p>
 
                 {/* Price Display */}
                 <div className="pb-6 mb-6 border-b border-white/10">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl sm:text-4xl font-extrabold text-white">{tier.price}</span>
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-white">{tier.price}</span>
                     <span className="text-xs text-slate-400 font-semibold">{tier.unit}</span>
                   </div>
-                  <div className="text-xs font-bold text-[#ffda00] mt-1.5">{tier.vehicles}</div>
+                  <div className="text-xs font-bold text-greenlogix-lime mt-1.5">{tier.vehicles}</div>
                 </div>
 
                 {/* Features List */}
@@ -121,7 +126,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
                 onClick={onOpenPilotModal}
                 className={`w-full py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   tier.highlight
-                    ? 'bg-[#ffda00] hover:bg-yellow-300 text-slate-950 shadow-lg'
+                    ? 'bg-greenlogix-lime hover:bg-yellow-300 text-slate-950 shadow-lg'
                     : 'bg-slate-800 hover:bg-slate-700 text-white border border-white/10'
                 }`}
               >
@@ -133,25 +138,25 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
         </div>
 
         {/* Free Pilot Callout Banner */}
-        <div className="rounded-3xl p-8 sm:p-10 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 border border-[#ffda00]/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="rounded-3xl p-8 sm:p-10 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 border border-greenlogix-lime/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffda00]/10 border border-[#ffda00]/30 text-xs font-bold text-[#ffda00]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-greenlogix-lime/10 border border-greenlogix-lime/30 text-xs font-bold text-greenlogix-lime">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>CHƯƠNG TRÌNH DÙNG THỬ PILOT 4–6 TUẦN</span>
+              <span>CHƯƠNG TRÌNH DÙNG THỬ MIỄN PHÍ 4–6 TUẦN</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
               Trải Nghiệm Miễn Phí Trên Dữ Liệu Thực Tế
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Dành riêng cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> (đội xe 5–15 phương tiện). Đội ngũ GreenLogix hỗ trợ chuẩn hóa dữ liệu trực tiếp, đo lường chính xác ROI trước khi ký kết.
+              Dành cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> có đội xe từ 5–15 phương tiện. GreenLogix sẽ hỗ trợ chuẩn bị dữ liệu và đo mức tiết kiệm thực tế trước khi doanh nghiệp quyết định sử dụng.
             </p>
           </div>
 
           <button
             onClick={onOpenPilotModal}
-            className="px-6 sm:px-8 py-3.5 rounded-2xl font-extrabold text-xs sm:text-sm text-slate-950 bg-[#ffda00] hover:bg-yellow-300 shadow-xl shrink-0 transition-all flex items-center gap-2 cursor-pointer"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-greenlogix-lime px-6 py-3.5 text-xs font-extrabold text-slate-950 shadow-xl transition-all hover:bg-yellow-300 sm:w-auto sm:px-8 sm:text-sm md:shrink-0"
           >
-            <span>Đăng Ký Tham Gia Pilot (Free)</span>
+            <span>Đăng Ký Dùng Thử Miễn Phí</span>
             <ArrowRight className="w-4 h-4 text-slate-950" />
           </button>
         </div>
