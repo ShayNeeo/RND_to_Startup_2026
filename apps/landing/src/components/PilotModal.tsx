@@ -5,20 +5,27 @@ import { X, CheckCircle2, ShieldCheck, Sparkles, Building2, Phone, Mail, User, T
 interface PilotModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialInterest?: string;
 }
 
-export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose }) => {
+export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initialInterest }) => {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     company: '',
     phone: '',
     email: '',
-    interest: 'Dùng thử miễn phí 4–6 tuần',
+    interest: initialInterest || 'Dùng thử miễn phí 4–6 tuần',
     fleetSize: '5-15 xe',
     area: 'TP. Hồ Chí Minh (Ưu tiên đợt 1)',
     notes: '',
   });
+
+  React.useEffect(() => {
+    if (initialInterest) {
+      setFormData((prev) => ({ ...prev, interest: initialInterest }));
+    }
+  }, [initialInterest, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

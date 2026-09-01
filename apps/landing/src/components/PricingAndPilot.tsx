@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tag, Check, Sparkles, ArrowRight, FileText, RefreshCw, Calculator, Info, Plug } from 'lucide-react';
 
 interface PricingProps {
-  onOpenPilotModal: () => void;
+  onOpenPilotModal: (interest?: string) => void;
 }
 
 export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) => {
@@ -132,7 +132,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               </div>
 
               <button
-                onClick={onOpenPilotModal}
+                onClick={() => onOpenPilotModal(`Đăng ký gói thuê bao - ${tier.name}`)}
                 className={`w-full py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   tier.highlight
                     ? 'bg-greenlogix-lime hover:bg-yellow-300 text-slate-950 shadow-lg'
@@ -191,8 +191,8 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               </div>
 
               <button
-                onClick={onOpenPilotModal}
-                className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 py-3 text-xs font-bold text-emerald-300 transition-colors hover:bg-emerald-500/20"
+                onClick={() => onOpenPilotModal('Báo cáo CO₂ & tư vấn theo năm')}
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 py-3 text-xs font-bold text-emerald-300 transition-colors hover:bg-emerald-500/20 cursor-pointer"
               >
                 <span>Đăng Ký Tư Vấn Theo Năm</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -270,8 +270,8 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               </div>
 
               <button
-                onClick={onOpenPilotModal}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-greenlogix-lime py-3 text-xs font-bold text-slate-950 transition-colors hover:bg-yellow-300"
+                onClick={() => onOpenPilotModal('Kết nối đơn chiều về')}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-greenlogix-lime py-3 text-xs font-bold text-slate-950 transition-colors hover:bg-yellow-300 cursor-pointer"
               >
                 <span>Đăng Ký Kết Nối Đơn Chiều Về</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -291,6 +291,15 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               <p className="mt-2 text-sm leading-relaxed text-slate-300">
                 Khoản phí onboarding được báo giá trước khi ký hợp đồng và tách riêng khỏi phí thuê bao hàng tháng.
               </p>
+              <div className="mt-5">
+                <button
+                  onClick={() => onOpenPilotModal('Triển khai & tích hợp hệ thống')}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-greenlogix-lime px-5 py-3 text-xs font-bold text-slate-950 shadow-lg shadow-greenlogix-lime/10 transition-all hover:bg-yellow-300 cursor-pointer"
+                >
+                  <span>Đăng Ký Tư Vấn &amp; Nhận Báo Giá Triển Khai</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-slate-950" />
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -329,7 +338,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
           </div>
 
           <button
-            onClick={onOpenPilotModal}
+            onClick={() => onOpenPilotModal('Dùng thử miễn phí 4–6 tuần')}
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-greenlogix-lime px-6 py-3.5 text-xs font-extrabold text-slate-950 shadow-xl transition-all hover:bg-yellow-300 sm:w-auto sm:px-8 sm:text-sm md:shrink-0"
           >
             <span>Đăng Ký Dùng Thử Miễn Phí</span>
