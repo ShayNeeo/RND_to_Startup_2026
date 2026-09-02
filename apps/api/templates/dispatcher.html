@@ -19,9 +19,18 @@
     <button id="btn-seed" type="button">Seed</button>
     <button id="btn-optimize" type="button">Optimize</button>
     <button id="btn-publish" type="button">Publish</button>
+    <form id="import-form">
+      <input id="xlsx" type="file" name="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+      <button type="submit">Upload xlsx</button>
+    </form>
   </div>
   <div id="totals">km: <span id="km">0</span> · litres: <span id="litres">0</span> · kg_co2: <span id="kg_co2">0</span></div>
   <p id="status"></p>
+  <ul id="import-errors"></ul>
+  <h2>Orders</h2>
+  <table id="orders"><thead><tr><th>id</th><th>address</th><th>kg</th><th>window</th></tr></thead><tbody></tbody></table>
+  <h2>Vehicles</h2>
+  <table id="vehicles"><thead><tr><th>plate</th><th>capacity_kg</th><th>status</th></tr></thead><tbody></tbody></table>
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -80,6 +89,55 @@
         setStatus("published=" + (body || []).length);
       } catch (err) { setStatus(String(err)); }
     };
+    async function refreshTables() {
+      const orders = await api("/orders");
+      const ot = document.querySelector("#orders tbody");
+      ot.innerHTML = "";
+      for (const o of orders) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + o.id + "</td><td>" + o.address + "</td><td>" + o.kg + "</td><td>" + o.window_start + "–" + o.window_end + "</td>";
+        ot.appendChild(tr);
+      }
+      const vehicles = await api("/vehicles");
+      const vt = document.querySelector("#vehicles tbody");
+      vt.innerHTML = "";
+      for (const v of vehicles) {
+        const tr = document.createElement("tr");
+        const sel = document.createElement("select");
+        ["ready", "maintenance"].forEach((st) => {
+          const opt = document.createElement("option");
+          opt.value = st; opt.textContent = st; if (v.status === st) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = async () => {
+          await api("/vehicles/" + v.id, { method: "PATCH", body: JSON.stringify({ status: sel.value }) });
+        };
+        tr.innerHTML = "<td>" + v.plate + "</td><td>" + v.capacity_kg + "</td>";
+        const td = document.createElement("td");
+        td.appendChild(sel);
+        tr.appendChild(td);
+        vt.appendChild(tr);
+      }
+    }
+    document.getElementById("import-form").onsubmit = async (ev) => {
+      ev.preventDefault();
+      const file = document.getElementById("xlsx").files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/orders/import", { method: "POST", headers: AUTH, body: fd });
+      const body = await res.json();
+      const ul = document.getElementById("import-errors");
+      ul.innerHTML = "";
+      for (const err of body.errors || []) {
+        const li = document.createElement("li");
+        li.textContent = "row " + err.excel_row + " " + err.field + ": " + err.message;
+        ul.appendChild(li);
+      }
+      setStatus("imported=" + (body.imported || 0));
+      await refreshTables();
+    };
+    refreshTables().catch(() => {});
   </script>
 </body>
 </html>

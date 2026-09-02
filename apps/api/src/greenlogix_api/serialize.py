@@ -2,9 +2,39 @@
 
 from __future__ import annotations
 
-from greenlogix_api.models import Route, Stop
-from greenlogix_api.schemas import RouteOut, StopOut
+from greenlogix_api.models import Order, Route, Stop, Vehicle
+from greenlogix_api.schemas import OrderOut, RouteOut, StopOut, VehicleOut
 from greenlogix_api.solver import PlannedRoute, PlannedStop
+
+
+def order_out(order: Order) -> OrderOut:
+    return OrderOut(
+        id=order.id or 0,
+        address=order.address,
+        lat=order.lat,
+        lng=order.lng,
+        receiver=order.receiver,
+        phone=order.phone,
+        kg=order.kg,
+        window_start=order.window_start,
+        window_end=order.window_end,
+        cargo_type=order.cargo_type,
+        notes=order.notes,
+        excel_row=order.excel_row,
+        status=order.status,
+    )
+
+
+def vehicle_out(vehicle: Vehicle) -> VehicleOut:
+    return VehicleOut(
+        id=vehicle.id or 0,
+        plate=vehicle.plate,
+        type=vehicle.type,
+        capacity_kg=vehicle.capacity_kg,
+        fuel=vehicle.fuel,
+        l_per_100km=vehicle.l_per_100km,
+        status=vehicle.status,
+    )
 
 
 def stop_out(stop: Stop) -> StopOut:
