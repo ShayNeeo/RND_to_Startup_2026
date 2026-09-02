@@ -1,13 +1,28 @@
-# GreenLogix Driver Web
+# GreenLogix Driver (Flutter)
 
-## Overview
-Giao diện web responsive dành riêng cho tài xế giao nhận, không yêu cầu cài ứng dụng:
-- **Nhận tuyến giao hàng**: Xem danh sách điểm giao đã được sắp xếp theo thứ tự tối ưu nhất.
-- **Chỉ dẫn Turn-by-Turn**: Dẫn đường tránh điểm ùn tắc theo thời gian thực.
-- **Xác thực giao hàng (POD)**: Chụp ảnh kiện hàng, chữ ký điện tử khách hàng, cập nhật trạng thái đơn.
-- **Ghép đơn chiều về (Backhaul)**: Nhận thông báo lấy hàng chiều về trên đường quay về kho để tăng thu nhập.
+Native Flutter app for tài xế. Replaces the stale React PWA README (D-12).
 
-## Tech Stack (Planned)
-- React + TypeScript, triển khai dưới dạng Progressive Web App khi cần.
-- Web Geolocation API và kết nối GPS theo quyền người dùng.
-- Cache trình duyệt để duy trì các tác vụ thiết yếu khi kết nối không ổn định.
+## Run
+
+API must bind `0.0.0.0` (see `apps/api/README.md`):
+
+```bash
+GREENLOGIX_DEMO=1 uv run uvicorn greenlogix_api.main:app --host 0.0.0.0 --port 8000
+```
+
+Linux desktop:
+
+```bash
+cd apps/mobile-driver
+flutter run --dart-define=API_BASE=http://127.0.0.1:8000 -d linux
+```
+
+Android emulator (host loopback is the emulator itself — use `10.0.2.2`):
+
+```bash
+flutter run --dart-define=API_BASE=http://10.0.2.2:8000
+```
+
+Physical phone: use the LAN IP of the host running uvicorn, e.g. `http://192.168.1.10:8000`.
+
+Demo PIN is `0000` when `GREENLOGIX_DEMO=1`. Login calls `GET /health` then `GET /driver/route` with header `X-Driver-Pin`.
