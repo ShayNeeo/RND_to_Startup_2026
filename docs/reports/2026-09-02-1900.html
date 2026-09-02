@@ -38,7 +38,9 @@
         <tr><td>GSD 01-00 FastAPI + Flutter scaffold</td><td class="ok">DONE</td><td>34 pytest later in the chain. <code>GET /health {"status":"ok"}</code>.</td></tr>
         <tr><td>GSD 01-01 Excel → OSM → Flutter list</td><td class="ok">DONE</td><td>Seed 80/10. Optimize 5 routes, 0 unassigned. OSM polylines. PIN 0000 → 5 published routes.</td></tr>
         <tr><td>GSD 01-02 Chỉ đường + status</td><td class="ok">DONE</td><td><code>POST /stops/2/status {"status":"delivered"}</code> → 200. maps_link Google→Apple→geo. flutter test 8 passed. No AVD.</td></tr>
-        <tr><td>GSD 01-03 report + jury README + photo</td><td class="ok">DONE</td><td><code>GET /report</code> baseline 810.58 km vs optimized 94.74 km, Δ −88.31%. 34 pytest. Cost-freeze scan ok.</td></tr>
+        <tr><td>GSD 01-03 report + jury README + photo</td><td class="ok">DONE</td><td><code>GET /report</code> baseline vs optimized.</td></tr>
+        <tr><td>GSD 02-00 Chiến filter/late/xlsx</td><td class="ok">DONE</td><td>44 pytest. q=Q1 → 14. late@demo 08:00 → 0. report.xlsx 200.</td></tr>
+        <tr><td>GSD 02-01 Thanh Flutter late badge</td><td class="ok">DONE</td><td>flutter test 15 passed. Chip Muộn from late_risk.</td></tr>
         <tr><td>Pages production (<code>stable</code>)</td><td class="no">NOT DEPLOYED</td><td>Live still <a href="https://cargox-group-3qm.pages.dev/">cargox-group-3qm.pages.dev</a>. Landing fixes need PR → dev → QA → stable.</td></tr>
         <tr><td>Lead form inbox</td><td class="no">NOT DONE</td><td>Modal success is local-only. No Formspree/API invented.</td></tr>
         <tr><td>Android Maps tap</td><td class="warn">HUMAN</td><td>URI unit-tested. <code>flutter devices</code> was Linux only.</td></tr>
@@ -74,6 +76,8 @@
   <img src="2026-09-02-landing-qa/14-dispatcher-report.jpg" alt="TTW before after" />
   <p>QA pass: map + KPI above the fold (contest layout)</p>
   <img src="2026-09-02-landing-qa/15-dispatcher-contest.jpg" alt="Contest dispatcher" />
+  <p>Phase 2: search, Chỉ trễ, Tải báo cáo xlsx, status dots on OSM</p>
+  <img src="2026-09-02-landing-qa/16-dispatcher-phase2.jpg" alt="Phase 2 dispatcher" />
 
   <div class="card">
     <p><strong>GET /report</strong> (live curl 18:08)</p>
