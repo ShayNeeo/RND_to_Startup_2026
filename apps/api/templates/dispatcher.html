@@ -2,50 +2,107 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8"/>
-  <title>GreenLogix dispatcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>GreenLogix — Điều hành tuyến</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
   <style>
-    body { font-family: sans-serif; margin: 16px; }
-    #map { height: 480px; margin-top: 12px; }
+    :root {
+      --ink: #07110c;
+      --panel: #0f1a16;
+      --line: #1f3d32;
+      --text: #e8f0e4;
+      --mut: #9bb5a8;
+      --lime: #ffd400;
+      --mint: #36d9a5;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+    header {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--line); background: #0b1612;
+      position: sticky; top: 0; z-index: 20;
+    }
+    h1 { margin: 0; font-size: 1.15rem; letter-spacing: .02em; }
+    h1 span { color: var(--lime); }
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    #totals { margin-top: 8px; }
+    button, .file-btn {
+      background: var(--lime); color: #07110c; border: 0; border-radius: 999px;
+      padding: 8px 14px; font-weight: 700; cursor: pointer;
+    }
+    button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    button:hover { filter: brightness(1.08); }
+    #status { color: var(--mint); min-height: 1.2em; margin: 0; }
+    main { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; min-height: calc(100dvh - 62px); }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    aside { padding: 16px; border-right: 1px solid var(--line); overflow: auto; }
+    #map { min-height: 420px; height: calc(100dvh - 62px); }
+    @media (max-width: 900px) { #map { height: 52vh; } }
+    .kpis { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+    .kpi b { display: block; font-size: 1.15rem; color: var(--lime); }
+    .kpi span { color: var(--mut); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+    th { color: var(--mut); font-size: 11px; }
+    .delta { color: var(--mint); font-weight: 700; }
+    .note { color: var(--mut); font-size: 12px; margin: 8px 0 16px; }
+    details { margin-top: 16px; }
+    summary { cursor: pointer; color: var(--lime); font-weight: 700; }
+    input, select { background: #07110c; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; max-width: 100%; }
+    #import-errors { color: #ff8a8a; }
+    .leaflet-container { background: #0b1612; }
   </style>
 </head>
 <body>
-  <h1>GreenLogix dispatcher</h1>
-  <div class="row">
-    <button id="btn-seed" type="button">Seed</button>
-    <button id="btn-optimize" type="button">Optimize</button>
-    <button id="btn-publish" type="button">Publish</button>
-    <button id="btn-refresh" type="button">Refresh</button>
-    <form id="import-form">
-      <input id="xlsx" type="file" name="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
-      <button type="submit">Upload xlsx</button>
-    </form>
-  </div>
-  <div id="totals">km: <span id="km">0</span> · litres: <span id="litres">0</span> · kg_co2: <span id="kg_co2">0</span></div>
-  <section id="report-strip">
-    <h2>ước tính TTW CO₂ (IPCC/GLEC factors)</h2>
-    <table>
-      <thead><tr><th></th><th>km</th><th>litres</th><th>kg_co2</th></tr></thead>
-      <tbody>
-        <tr><th>Trước</th><td id="base-km">0</td><td id="base-litres">0</td><td id="base-co2">0</td></tr>
-        <tr><th>Sau</th><td id="opt-km">0</td><td id="opt-litres">0</td><td id="opt-co2">0</td></tr>
-        <tr><th>Δ %</th><td id="pct-km">0</td><td id="pct-litres">0</td><td id="pct-co2">0</td></tr>
-      </tbody>
-    </table>
-  </section>
-  <p id="status"></p>
-  <ul id="import-errors"></ul>
-  <h2>Orders</h2>
-  <table id="orders"><thead><tr><th>id</th><th>address</th><th>kg</th><th>window</th><th>notes</th><th></th></tr></thead><tbody></tbody></table>
-  <h2>Vehicles</h2>
-  <table id="vehicles"><thead><tr><th>plate</th><th>capacity_kg</th><th>status</th></tr></thead><tbody></tbody></table>
-  <h2>Stops</h2>
-  <ul id="route-stops"></ul>
-  <div id="map"></div>
+  <header>
+    <h1>GREEN<span>LOGIX</span> điều hành</h1>
+    <div class="row">
+      <button id="btn-seed" type="button">Seed 80/10</button>
+      <button id="btn-optimize" type="button">Tối ưu tuyến</button>
+      <button id="btn-publish" type="button">Publish cho tài xế</button>
+      <button id="btn-refresh" class="ghost" type="button">Làm mới</button>
+      <form id="import-form" class="row">
+        <input id="xlsx" type="file" name="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+        <button type="submit">Tải Excel</button>
+      </form>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <p id="status"></p>
+      <div class="kpis">
+        <div class="kpi"><span>Km tối ưu</span><b id="km">0</b></div>
+        <div class="kpi"><span>Lít</span><b id="litres">0</b></div>
+        <div class="kpi"><span>kg CO₂</span><b id="kg_co2">0</b></div>
+      </div>
+      <h2 style="font-size:14px;margin:8px 0">Trước / sau (TTW · IPCC/GLEC)</h2>
+      <table>
+        <thead><tr><th></th><th>km</th><th>lít</th><th>kg CO₂</th></tr></thead>
+        <tbody>
+          <tr><th>Zig-zag cơ sở</th><td id="base-km">0</td><td id="base-litres">0</td><td id="base-co2">0</td></tr>
+          <tr><th>GreenLogix</th><td id="opt-km">0</td><td id="opt-litres">0</td><td id="opt-co2">0</td></tr>
+          <tr><th>Δ %</th><td id="pct-km" class="delta">0</td><td id="pct-litres" class="delta">0</td><td id="pct-co2" class="delta">0</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Cơ sở là tuyến zig-zag D-17 trên cùng 80 điểm, không phải lịch sử SME. Hệ số: xăng 2.31 / diesel 2.68 kg/L. Bản đồ OSM, $0 API.</p>
+      <ul id="import-errors"></ul>
+      <details>
+        <summary>Đơn hàng (sửa / xóa trước khi tối ưu)</summary>
+        <table id="orders"><thead><tr><th>id</th><th>địa chỉ</th><th>kg</th><th>cửa sổ</th><th></th></tr></thead><tbody></tbody></table>
+      </details>
+      <details>
+        <summary>Xe</summary>
+        <table id="vehicles"><thead><tr><th>biển</th><th>tải</th><th>trạng thái</th></tr></thead><tbody></tbody></table>
+      </details>
+      <details open>
+        <summary>Điểm giao / trạng thái tài xế</summary>
+        <ul id="route-stops"></ul>
+      </details>
+    </aside>
+    <div id="map" aria-label="Bản đồ tuyến OSM"></div>
+  </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
@@ -54,7 +111,7 @@
     const map = L.map("map").setView([10.776, 106.700], 12);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
     let polylines = [];
 
@@ -80,6 +137,7 @@
       document.getElementById("pct-km").textContent = num(d.km_pct);
       document.getElementById("pct-litres").textContent = num(d.litres_pct);
       document.getElementById("pct-co2").textContent = num(d.kg_co2_pct);
+      if (o.km) setTotals(o);
     }
     function esc(s) {
       return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
@@ -87,12 +145,16 @@
     function drawRoutes(routes) {
       polylines.forEach((p) => map.removeLayer(p));
       polylines = [];
+      const bounds = [];
       for (const route of routes || []) {
         const latlngs = (route.stops || []).map((s) => [s.lat, s.lng]);
         if (latlngs.length) {
-          polylines.push(L.polyline(latlngs, { color: route.color || "blue" }).addTo(map));
+          polylines.push(L.polyline(latlngs, { color: route.color || "#36d9a5", weight: 3 }).addTo(map));
+          latlngs.forEach((ll) => bounds.push(ll));
         }
       }
+      if (bounds.length) map.fitBounds(bounds, { padding: [24, 24] });
+      setTimeout(() => map.invalidateSize(), 50);
     }
     function renderStopStatus(routes) {
       const ul = document.getElementById("route-stops");
@@ -100,7 +162,7 @@
       for (const route of routes || []) {
         for (const stop of route.stops || []) {
           const li = document.createElement("li");
-          li.textContent = (stop.address || "") + " — " + (stop.status || "");
+          li.textContent = (route.plate || "") + " · " + (stop.address || "") + " — " + (stop.status || "");
           ul.appendChild(li);
         }
       }
@@ -122,6 +184,7 @@
       try {
         const body = await api("/seed", { method: "POST" });
         setStatus("seeded orders=" + body.orders + " vehicles=" + body.vehicles);
+        await refreshTables();
       } catch (err) { setStatus(String(err)); }
     };
     document.getElementById("btn-optimize").onclick = async () => {
@@ -130,7 +193,7 @@
         setTotals(body.totals);
         await refreshRoutes();
         await refreshReport();
-        setStatus("optimized routes=" + (body.routes || []).length);
+        setStatus("đã tối ưu " + (body.routes || []).length + " tuyến");
       } catch (err) { setStatus(String(err)); }
     };
     document.getElementById("btn-publish").onclick = async () => {
@@ -143,7 +206,7 @@
       try {
         await refreshRoutes();
         await refreshReport();
-        setStatus("refreshed");
+        setStatus("đã làm mới");
       } catch (err) { setStatus(String(err)); }
     };
     async function refreshTables() {
@@ -158,13 +221,13 @@
           "<td><input data-f=\"kg\" type=\"number\" value=\"" + esc(o.kg) + "\"/></td>" +
           "<td><input data-f=\"window_start\" value=\"" + esc(o.window_start) + "\"/>" +
           "<input data-f=\"window_end\" value=\"" + esc(o.window_end) + "\"/></td>" +
-          "<td><input data-f=\"notes\" value=\"" + esc(o.notes) + "\"/></td>" +
           "<td><button type=\"button\" class=\"patch\">PATCH</button> " +
-          "<button type=\"button\" class=\"del\">DELETE</button></td>";
+          "<button type=\"button\" class=\"del ghost\">Xóa</button></td>";
         tr.querySelector(".patch").onclick = async () => {
           const payload = {};
           tr.querySelectorAll("[data-f]").forEach((el) => { payload[el.getAttribute("data-f")] = el.value; });
           payload.kg = Number(payload.kg);
+          payload.notes = (o.notes || "");
           try {
             await api("/orders/" + o.id, { method: "PATCH", body: JSON.stringify(payload) });
             setStatus("patched " + o.id);
@@ -219,7 +282,7 @@
       setStatus("imported=" + (body.imported || 0));
       await refreshTables();
     };
-    refreshTables().catch(() => {});
+    Promise.all([refreshTables(), refreshReport(), refreshRoutes()]).catch(() => {});
   </script>
 </body>
 </html>
