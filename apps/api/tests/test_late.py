@@ -9,7 +9,7 @@ import pytest
 from sqlmodel import Session
 
 from greenlogix_api import db as dbmod
-from greenlogix_api.late import SPEED_KMH, eta_minutes, late_risk, matches_q
+from greenlogix_api.late import SPEED_KMH, eta_minutes, late_risk, matches_q, now_hcmc
 from greenlogix_api.models import Order
 from greenlogix_api.seed import DEPOT_LAT, DEPOT_LNG
 from greenlogix_api.solver.distance import HCMC_CIRCUITY, haversine_km, road_km
@@ -47,6 +47,13 @@ def test_late_risk_vs_window_end_with_frozen_clock() -> None:
     wide_end = (NOON + timedelta(minutes=minutes + 30)).strftime("%H:%M")
     assert late_risk(FAR[0], FAR[1], tight_end, now=NOON) is True
     assert late_risk(FAR[0], FAR[1], wide_end, now=NOON) is False
+
+
+def test_demo_clock_defaults_to_0800(monkeypatch) -> None:
+    monkeypatch.setenv("GREENLOGIX_DEMO", "1")
+    monkeypatch.delenv("GREENLOGIX_DEMO_NOW", raising=False)
+    clock = now_hcmc()
+    assert clock.hour == 8 and clock.minute == 0
 
 
 def test_matches_q_address_phone_receiver_case_insensitive() -> None:

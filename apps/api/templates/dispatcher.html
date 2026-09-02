@@ -147,6 +147,7 @@
     function esc(s) {
       return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
     }
+    const STATUS_COLOR = { pending: "#94a3b8", arrived: "#ffd400", delivered: "#36d9a5", failed: "#ff6b6b" };
     function drawRoutes(routes) {
       polylines.forEach((p) => map.removeLayer(p));
       polylines = [];
@@ -156,6 +157,15 @@
         if (latlngs.length) {
           polylines.push(L.polyline(latlngs, { color: route.color || "#36d9a5", weight: 3 }).addTo(map));
           latlngs.forEach((ll) => bounds.push(ll));
+        }
+        for (const stop of route.stops || []) {
+          if (stop.lat == null || stop.lng == null) continue;
+          const color = STATUS_COLOR[stop.status] || "#94a3b8";
+          polylines.push(
+            L.circleMarker([stop.lat, stop.lng], { radius: 6, color: color, fillColor: color, fillOpacity: 0.9, weight: 1 })
+              .bindTooltip((stop.address || "") + " — " + (stop.status || "pending"))
+              .addTo(map)
+          );
         }
       }
       if (bounds.length) map.fitBounds(bounds, { padding: [24, 24] });

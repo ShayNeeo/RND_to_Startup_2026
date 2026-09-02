@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
@@ -13,7 +14,18 @@ HCMC_TZ = ZoneInfo("Asia/Ho_Chi_Minh")
 
 
 def now_hcmc() -> datetime:
-    return datetime.now(HCMC_TZ)
+    """Wall clock, or 08:00 on the demo day so evening jury loops are not 80/80 late."""
+    clock = datetime.now(HCMC_TZ)
+    stamp = os.environ.get("GREENLOGIX_DEMO_NOW", "").strip()
+    if stamp:
+        try:
+            hour, minute = (int(p) for p in stamp.split(":", 1))
+            return clock.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        except ValueError:
+            pass
+    if os.environ.get("GREENLOGIX_DEMO") == "1":
+        return clock.replace(hour=8, minute=0, second=0, microsecond=0)
+    return clock
 
 
 def eta_minutes(
