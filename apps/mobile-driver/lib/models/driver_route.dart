@@ -1,5 +1,7 @@
 /// Hand-written from apps/api/openapi.json StopOut / DriverRouteOut (D-15).
-/// Wire keys stay snake_case: window_start, order_id, fail_reason.
+/// Wire keys stay snake_case: window_start, order_id, fail_reason, late_risk.
+const lateRiskLabel = 'Muộn';
+
 class DriverStop {
   const DriverStop({
     required this.id,
@@ -16,6 +18,7 @@ class DriverStop {
     required this.kg,
     required this.status,
     required this.failReason,
+    this.lateRisk = false,
   });
 
   final int id;
@@ -32,6 +35,7 @@ class DriverStop {
   final double kg;
   final String status;
   final String? failReason;
+  final bool lateRisk;
 
   factory DriverStop.fromJson(Map<String, dynamic> json) {
     return DriverStop(
@@ -49,6 +53,7 @@ class DriverStop {
       kg: (json['kg'] as num).toDouble(),
       status: json['status'] as String,
       failReason: json['fail_reason'] as String?,
+      lateRisk: json['late_risk'] as bool? ?? false,
     );
   }
 }
