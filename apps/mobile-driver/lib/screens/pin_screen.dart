@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../api/client.dart';
+import '../models/driver_route.dart';
+import 'route_list.dart';
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({super.key});
+  const PinScreen({super.key, this.createClient});
+
+  final ApiClient Function(String pin)? createClient;
 
   @override
   State<PinScreen> createState() => _PinScreenState();
@@ -25,22 +29,26 @@ class _PinScreenState extends State<PinScreen> {
       _loading = true;
       _message = null;
     });
-    final client = ApiClient(pin: _pin.text);
+    final client = widget.createClient?.call(_pin.text) ?? ApiClient(pin: _pin.text);
     try {
       await client.getHealth();
-      final routes = await client.getDriverRoute();
+      final DriverRouteList routes = await client.getDriverRoute();
       if (!mounted) {
         return;
       }
-      setState(() {
-        _message = 'Tuyến: ${routes.routes.length}';
-      });
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => RouteListScreen(routes: routes),
+        ),
+      );
     } on ApiException catch (err) {
       if (!mounted) {
         return;
       }
       setState(() {
-        _message = '${err.statusCode}';
+        _message = err.statusCode == 401
+            ? 'PIN không đúng'
+            : '${err.statusCode}';
       });
     } catch (err) {
       if (!mounted) {
