@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../api/client.dart';
 import '../api/maps_link.dart';
@@ -13,10 +14,16 @@ const failReasons = <String>[
 ];
 
 class StopDetailScreen extends StatefulWidget {
-  const StopDetailScreen({super.key, required this.stop, this.client});
+  const StopDetailScreen({
+    super.key,
+    required this.stop,
+    this.client,
+    this.pickPhoto,
+  });
 
   final DriverStop stop;
   final ApiClient? client;
+  final Future<XFile?> Function()? pickPhoto;
 
   @override
   State<StopDetailScreen> createState() => _StopDetailScreenState();
@@ -85,6 +92,66 @@ class _StopDetailScreenState extends State<StopDetailScreen> {
     }
   }
 
+  Future<XFile?> _pickPhoto() async {
+    try {
+      if (widget.pickPhoto != null) {
+        return await widget.pickPhoto!();
+      }
+      return await ImagePicker().pickImage(source: ImageSource.camera);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _deliver() async {
+    final client = widget.client;
+    if (client == null) {
+      return;
+    }
+    setState(() {
+      busy = true;
+      message = null;
+    });
+    try {
+      XFile? file;
+      try {
+        file = await _pickPhoto();
+      } catch (_) {
+        file = null;
+      }
+      if (file != null) {
+        try {
+          await client.postPhoto(stop.id, await file.readAsBytes());
+        } catch (_) {
+          // Photo is optional; status still proceeds (D-20).
+        }
+      }
+      await client.postStatus(stop.id, const StatusIn(status: 'delivered'));
+      final updated = _copyStatus('delivered', null);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('status saved')),
+        );
+        setState(() {
+          stop = updated;
+        });
+        Navigator.of(context).pop(updated);
+      }
+    } on ApiException catch (err) {
+      if (mounted) {
+        setState(() {
+          message = '${err.statusCode}';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          busy = false;
+        });
+      }
+    }
+  }
+
   Future<void> _fail() async {
     final picked = await showDialog<String>(
       context: context,
@@ -130,7 +197,7 @@ class _StopDetailScreenState extends State<StopDetailScreen> {
             child: const Text('Đã đến'),
           ),
           ElevatedButton(
-            onPressed: busy ? null : () => _post('delivered'),
+            onPressed: busy ? null : _deliver,
             child: const Text('Đã giao'),
           ),
           ElevatedButton(

@@ -28,3 +28,5 @@ Physical phone: use the LAN IP of the host running uvicorn, e.g. `http://192.168
 Linux desktop can list published stops after PIN `0000` but **cannot prove OS Maps**. Chỉ đường uses `url_launcher` `LaunchMode.externalApplication` (Google Maps dir → Apple Maps `daddr` → `geo:`). No Maps SDK key. Start an Android emulator or plug a phone (`flutter devices` must list android) to tap Chỉ đường.
 
 Demo PIN is `0000` when `GREENLOGIX_DEMO=1`. Login calls `GET /health` then `GET /driver/route` with header `X-Driver-Pin`.
+
+**Jury steps:** `flutter devices` → run with `API_BASE` `http://127.0.0.1:8000` (linux), `http://10.0.2.2:8000` (Android emulator), or the host LAN IP (phone). PIN `0000`. Open a stop → **Chỉ đường** → **Đã giao**. Photo is optional: if the camera is denied or cancelled, status still POSTs delivered with no `/photo` multipart.

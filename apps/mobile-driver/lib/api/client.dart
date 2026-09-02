@@ -73,4 +73,23 @@ class ApiClient {
     }
     return StatusOut.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
+
+  Future<void> postPhoto(
+    int id,
+    List<int> bytes, {
+    String filename = 'pod.jpg',
+  }) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/stops/$id/photo'),
+    );
+    request.headers['X-Driver-Pin'] = pin;
+    request.files.add(
+      http.MultipartFile.fromBytes('photo', bytes, filename: filename),
+    );
+    final streamed = await _http.send(request);
+    if (streamed.statusCode != 200) {
+      throw ApiException(streamed.statusCode);
+    }
+  }
 }
