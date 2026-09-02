@@ -19,6 +19,7 @@
     <button id="btn-seed" type="button">Seed</button>
     <button id="btn-optimize" type="button">Optimize</button>
     <button id="btn-publish" type="button">Publish</button>
+    <button id="btn-refresh" type="button">Refresh</button>
     <form id="import-form">
       <input id="xlsx" type="file" name="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
       <button type="submit">Upload xlsx</button>
@@ -31,6 +32,8 @@
   <table id="orders"><thead><tr><th>id</th><th>address</th><th>kg</th><th>window</th></tr></thead><tbody></tbody></table>
   <h2>Vehicles</h2>
   <table id="vehicles"><thead><tr><th>plate</th><th>capacity_kg</th><th>status</th></tr></thead><tbody></tbody></table>
+  <h2>Stops</h2>
+  <ul id="route-stops"></ul>
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -61,6 +64,23 @@
         }
       }
     }
+    function renderStopStatus(routes) {
+      const ul = document.getElementById("route-stops");
+      ul.innerHTML = "";
+      for (const route of routes || []) {
+        for (const stop of route.stops || []) {
+          const li = document.createElement("li");
+          li.textContent = (stop.address || "") + " — " + (stop.status || "");
+          ul.appendChild(li);
+        }
+      }
+    }
+    async function refreshRoutes() {
+      const routes = await api("/routes");
+      drawRoutes(routes);
+      renderStopStatus(routes);
+      return routes;
+    }
     async function api(path, opts) {
       const res = await fetch(path, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
       if (!res.ok) throw new Error(path + " " + res.status);
@@ -78,8 +98,7 @@
       try {
         const body = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
         setTotals(body.totals);
-        const routes = await api("/routes");
-        drawRoutes(routes);
+        await refreshRoutes();
         setStatus("optimized routes=" + (body.routes || []).length);
       } catch (err) { setStatus(String(err)); }
     };
@@ -87,6 +106,12 @@
       try {
         const body = await api("/routes/publish", { method: "POST", body: JSON.stringify({ route_ids: [] }) });
         setStatus("published=" + (body || []).length);
+      } catch (err) { setStatus(String(err)); }
+    };
+    document.getElementById("btn-refresh").onclick = async () => {
+      try {
+        await refreshRoutes();
+        setStatus("refreshed");
       } catch (err) { setStatus(String(err)); }
     };
     async function refreshTables() {

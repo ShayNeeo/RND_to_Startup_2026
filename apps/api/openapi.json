@@ -1478,12 +1478,23 @@
         "properties": {
           "status": {
             "type": "string",
+            "enum": [
+              "arrived",
+              "delivered",
+              "failed"
+            ],
             "title": "Status"
           },
           "reason": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "khach_vang",
+                  "sai_dia_chi",
+                  "hang_hong",
+                  "tu_choi"
+                ]
               },
               {
                 "type": "null"

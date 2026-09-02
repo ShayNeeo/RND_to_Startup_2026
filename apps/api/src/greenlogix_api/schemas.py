@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import BaseModel, Field, model_validator
+
+StatusName = Literal["arrived", "delivered", "failed"]
+FailReason = Literal["khach_vang", "sai_dia_chi", "hang_hong", "tu_choi"]
 
 
 class HealthOut(BaseModel):
@@ -127,8 +132,14 @@ class DriverRouteList(BaseModel):
 
 
 class StatusIn(BaseModel):
-    status: str
-    reason: str | None = None
+    status: StatusName
+    reason: FailReason | None = None
+
+    @model_validator(mode="after")
+    def failed_requires_reason(self) -> StatusIn:
+        if self.status == "failed" and self.reason is None:
+            raise ValueError("failed requires reason")
+        return self
 
 
 class StatusOut(BaseModel):

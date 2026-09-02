@@ -9,7 +9,7 @@ from sqlmodel import Session, select
 
 from greenlogix_api.auth import require_driver
 from greenlogix_api.db import get_session
-from greenlogix_api.models import Route, Stop
+from greenlogix_api.models import Order, Route, Stop
 from greenlogix_api.schemas import DriverRouteList, DriverRouteOut, StatusIn, StatusOut
 from greenlogix_api.serialize import stop_out
 
@@ -43,10 +43,27 @@ def driver_route(
 def stop_status(
     id: int,
     body: StatusIn,
+    session: Session = Depends(get_session),
     _: None = Depends(require_driver),
 ) -> StatusOut:
     log.info("path=/stops/%s/status", id)
-    raise HTTPException(status_code=503, detail="not_implemented")
+    stop = session.get(Stop, id)
+    if stop is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    route = session.get(Route, stop.route_id) if stop.route_id is not None else None
+    if route is None or not route.published:
+        raise HTTPException(status_code=404, detail="not_found")
+    stop.status = body.status
+    stop.fail_reason = body.reason if body.status == "failed" else None
+    session.add(stop)
+    if stop.kind == "stop" and body.status in ("delivered", "failed") and stop.order_id is not None:
+        order = session.get(Order, stop.order_id)
+        if order is not None:
+            order.status = body.status
+            session.add(order)
+    session.commit()
+    session.refresh(stop)
+    return StatusOut(id=stop.id or 0, status=stop.status, reason=stop.fail_reason)
 
 
 @router.post("/stops/{id}/photo", response_model=StatusOut)
