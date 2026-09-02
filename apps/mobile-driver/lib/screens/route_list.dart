@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../api/client.dart';
 import '../models/driver_route.dart';
+import 'stop_detail.dart';
 
 /// Ordered stop list. OpenAPI fields: address, phone, window_start, notes (DRV-01).
 class RouteListScreen extends StatelessWidget {
-  const RouteListScreen({super.key, required this.routes});
+  const RouteListScreen({super.key, required this.routes, this.client});
 
   final DriverRouteList routes;
+  final ApiClient? client;
 
   static const String emptyLabel = 'Chưa có tuyến đã xuất bản';
 
@@ -44,6 +47,13 @@ class RouteListScreen extends StatelessWidget {
               ],
             ),
             isThreeLine: true,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => StopDetailScreen(stop: stop, client: client),
+                ),
+              );
+            },
           ),
         );
       }
