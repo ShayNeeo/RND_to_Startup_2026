@@ -62,7 +62,8 @@
       <button id="btn-seed" type="button">Seed 80/10</button>
       <button id="btn-optimize" type="button">Tối ưu tuyến</button>
       <button id="btn-publish" type="button">Publish cho tài xế</button>
-      <button id="btn-refresh" class="ghost" type="button">Làm mới</button>
+      <button id="btn-refresh" class="ghost" type="button" title="Refresh">Làm mới</button>
+      <button id="btn-xlsx" class="ghost" type="button">Tải báo cáo xlsx</button>
       <form id="import-form" class="row">
         <input id="xlsx" type="file" name="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
         <button type="submit">Tải Excel</button>
@@ -86,8 +87,12 @@
           <tr><th>Δ %</th><td id="pct-km" class="delta">0</td><td id="pct-litres" class="delta">0</td><td id="pct-co2" class="delta">0</td></tr>
         </tbody>
       </table>
-      <p class="note">Cơ sở là tuyến zig-zag D-17 trên cùng 80 điểm, không phải lịch sử SME. Hệ số: xăng 2.31 / diesel 2.68 kg/L. Bản đồ OSM, $0 API.</p>
+      <p class="note">ước tính TTW CO₂ (IPCC/GLEC factors). Cơ sở là tuyến zig-zag D-17 trên cùng 80 điểm, không phải lịch sử SME. Hệ số: xăng 2.31 / diesel 2.68 kg/L. Bản đồ OSM, $0 API.</p>
       <ul id="import-errors"></ul>
+      <div class="row" style="margin:12px 0">
+        <input id="q" type="search" placeholder="Tìm địa chỉ, SĐT, người nhận"/>
+        <label class="row"><input id="late" type="checkbox"/> Chỉ trễ</label>
+      </div>
       <details>
         <summary>Đơn hàng (sửa / xóa trước khi tối ưu)</summary>
         <table id="orders"><thead><tr><th>id</th><th>địa chỉ</th><th>kg</th><th>cửa sổ</th><th></th></tr></thead><tbody></tbody></table>
@@ -206,11 +211,34 @@
       try {
         await refreshRoutes();
         await refreshReport();
+        await refreshTables();
         setStatus("đã làm mới");
       } catch (err) { setStatus(String(err)); }
     };
+    document.getElementById("btn-xlsx").onclick = async () => {
+      try {
+        const res = await fetch("/report.xlsx", { headers: AUTH });
+        if (!res.ok) throw new Error("/report.xlsx " + res.status);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "report.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus("đã tải report.xlsx");
+      } catch (err) { setStatus(String(err)); }
+    };
+    function ordersUrl() {
+      const params = new URLSearchParams();
+      const q = (document.getElementById("q").value || "").trim();
+      if (q) params.set("q", q);
+      if (document.getElementById("late").checked) params.set("late", "1");
+      const qs = params.toString();
+      return "/orders" + (qs ? "?" + qs : "");
+    }
     async function refreshTables() {
-      const orders = await api("/orders");
+      const orders = await api(ordersUrl());
       const ot = document.querySelector("#orders tbody");
       ot.innerHTML = "";
       for (const o of orders) {
@@ -264,6 +292,12 @@
         vt.appendChild(tr);
       }
     }
+    document.getElementById("q").oninput = () => {
+      refreshTables().catch((err) => setStatus(String(err)));
+    };
+    document.getElementById("late").onchange = () => {
+      refreshTables().catch((err) => setStatus(String(err)));
+    };
     document.getElementById("import-form").onsubmit = async (ev) => {
       ev.preventDefault();
       const file = document.getElementById("xlsx").files[0];

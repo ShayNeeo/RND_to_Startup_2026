@@ -138,3 +138,25 @@ def test_orders_q_and_late_and_seed_q1_subset(demo_client, frozen_noon) -> None:
 def test_orders_filter_still_requires_bearer(demo_client) -> None:
     assert demo_client.get("/orders?q=Q1").status_code == 401
     assert demo_client.get("/orders?late=1").status_code == 401
+
+
+def test_dispatcher_has_search_late_toggle_xlsx_and_keeps_map(demo_client) -> None:
+    page = demo_client.get("/dispatcher", headers=AUTH)
+    assert page.status_code == 200
+    html = page.text
+    assert 'id="q"' in html
+    assert 'id="late"' in html
+    assert "Tải báo cáo xlsx" in html
+    assert "/report.xlsx" in html
+    assert 'params.set("q"' in html
+    assert 'params.set("late"' in html
+    assert "tile.openstreetmap.org" in html
+    assert 'id="map"' in html
+    assert 'id="km"' in html
+    assert 'id="btn-seed"' in html
+    assert 'id="btn-optimize"' in html
+    assert 'id="btn-publish"' in html
+    assert "PATCH" in html
+    assert "DELETE" in html
+    assert "mapbox" not in html.lower()
+    assert "goong" not in html.lower()
