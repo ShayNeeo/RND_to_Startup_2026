@@ -56,6 +56,7 @@ class _StopDetailScreenState extends State<StopDetailScreen> {
       kg: stop.kg,
       status: status,
       failReason: reason,
+      lateRisk: stop.lateRisk,
     );
   }
 
@@ -183,6 +184,11 @@ class _StopDetailScreenState extends State<StopDetailScreen> {
         children: [
           Text(stop.address),
           Text('${stop.windowStart}–${stop.windowEnd}'),
+          if (stop.lateRisk)
+            Text(
+              lateRiskLabel,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           Text(stop.notes),
           Text(stop.status),
           if (stop.failReason != null) Text(stop.failReason!),

@@ -68,6 +68,13 @@ class _RouteListScreenState extends State<RouteListScreen> {
           ListTile(
             leading: Text('${stop.seq}'),
             title: Text(stop.address),
+            trailing: stop.lateRisk
+                ? Chip(
+                    label: const Text(lateRiskLabel),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                  )
+                : null,
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
