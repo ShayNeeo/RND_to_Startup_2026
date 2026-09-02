@@ -123,7 +123,7 @@ export const WorkflowShowcase: React.FC = () => {
     <section
       ref={sectionRef}
       id="workflow"
-      className="relative overflow-hidden border-t border-white/5 bg-slate-950 px-4 py-24 sm:px-6 sm:py-32 lg:px-8 scroll-mt-24"
+      className="relative overflow-hidden border-t border-white/5 bg-slate-950 px-4 py-24 sm:px-6 sm:py-32 lg:px-8 scroll-mt-32"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px bg-white/5" aria-hidden="true">
         <motion.div
@@ -136,7 +136,7 @@ export const WorkflowShowcase: React.FC = () => {
         <motion.div
           initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
-          viewport={{ once: true, amount: 0.45 }}
+          viewport={{ once: true, amount: 0.15, margin: '0px 0px -8% 0px' }}
           variants={revealItem}
           className="text-center max-w-3xl mx-auto mb-16"
         >
@@ -157,7 +157,7 @@ export const WorkflowShowcase: React.FC = () => {
         <motion.div
           initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
-          viewport={{ once: true, amount: 0.25 }}
+          viewport={{ once: true, amount: 0.12, margin: '0px 0px -8% 0px' }}
           variants={stepGrid}
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10"
         >
@@ -207,7 +207,7 @@ export const WorkflowShowcase: React.FC = () => {
         <motion.div
           initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1, margin: '0px 0px -8% 0px' }}
           variants={revealItem}
           className="min-h-[360px] bg-slate-900/90 backdrop-blur-2xl rounded-3xl p-6 sm:min-h-[320px] sm:p-10 lg:min-h-[285px] border border-white/10 shadow-2xl mb-16"
         >
@@ -278,7 +278,7 @@ export const WorkflowShowcase: React.FC = () => {
         <motion.div
           initial={shouldReduceMotion ? false : 'hidden'}
           whileInView="visible"
-          viewport={{ once: true, amount: 0.18 }}
+          viewport={{ once: true, amount: 0.1, margin: '0px 0px -8% 0px' }}
           variants={revealItem}
           className="bg-slate-900/60 rounded-3xl p-6 sm:p-9 border border-white/10"
         >

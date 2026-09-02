@@ -5,31 +5,31 @@ const members = [
   {
     name: 'Tống Ngọc Khang',
     role: 'Mô Hình Kinh Doanh và Chiến Lược',
-    image: '/team/khang.jpg',
+    image: '/team/khang.webp',
     imagePosition: 'center 28%',
   },
   {
     name: 'Phạm Quốc Thanh',
     role: 'Phụ Trách Công Nghệ và Kiến Trúc Hệ Thống',
-    image: '/team/thanh.jpg',
-    imagePosition: 'center 32%',
+    image: '/team/thanh.webp',
+    imagePosition: 'center 18%',
   },
   {
     name: 'Nguyễn Ngọc Khánh Phương',
     role: 'Nghiên Cứu Thị Trường và Phát Triển Bền Vững',
-    image: '/team/phuong.jpg',
+    image: '/team/phuong.webp',
     imagePosition: 'center 28%',
   },
   {
     name: 'Nguyễn Hồng Phúc',
     role: 'Mô Hình Tài Chính và Kế Hoạch Vốn',
-    image: '/team/phuc.jpg',
+    image: '/team/phuc.webp',
     imagePosition: 'center 24%',
   },
   {
     name: 'Nguyễn Quang Chiến',
     role: 'Thuật Toán và Tối Ưu Tuyến Đường',
-    image: '/team/chien.jpg',
+    image: '/team/chien.webp',
     imagePosition: 'center 22%',
   },
 ];
@@ -39,7 +39,7 @@ export const Team: React.FC = () => {
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="relative isolate overflow-hidden bg-greenlogix-ink px-4 py-24 text-white sm:px-6 sm:py-32 lg:px-8 scroll-mt-24"
+      className="relative isolate overflow-hidden bg-greenlogix-ink px-4 py-24 text-white sm:px-6 sm:py-32 lg:px-8 scroll-mt-32"
     >
       <div className="pointer-events-none absolute inset-0 team-grid opacity-35" aria-hidden="true" />
       <div
@@ -101,6 +101,7 @@ export const Team: React.FC = () => {
                     height="440"
                     loading="lazy"
                     decoding="async"
+                    sizes="(max-width: 640px) 42vw, 240px"
                     className="h-full w-full object-cover saturate-[0.82] transition duration-500 group-hover:scale-[1.035] group-hover:saturate-100"
                     style={{ objectPosition: member.imagePosition }}
                   />

@@ -54,7 +54,7 @@ export const Solutions: React.FC = () => {
   ];
 
   return (
-    <section id="solutions" className="relative overflow-hidden py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-950/80 border-t border-white/5 scroll-mt-24">
+    <section id="solutions" className="relative overflow-hidden py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-950/80 border-t border-white/5 scroll-mt-32">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[min(600px,100vw)] h-[300px] bg-greenlogix-lime/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">

@@ -5,7 +5,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dispatcher' | 'driver'>('dispatcher');
 
   return (
-    <section id="showcase" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-900/90 border-t border-white/5 scroll-mt-24">
+    <section id="showcase" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-900/90 border-t border-white/5 scroll-mt-32">
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

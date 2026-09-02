@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 const EXPO_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -44,20 +44,20 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
         playsInline
         onCanPlay={() => setVideoReady(true)}
         onLoadedData={() => setVideoReady(true)}
-        className="absolute inset-0 z-0 h-full w-full object-cover brightness-[0.72] saturate-[0.78] contrast-[1.06] pointer-events-none"
+        poster="/hero/map.webp"
+        preload="metadata"
+        className={`absolute inset-0 z-0 h-full w-full object-cover brightness-[0.72] saturate-[0.78] contrast-[1.06] pointer-events-none transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
       />
 
       {/* Contrast Vignette Gradient */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,rgba(2,9,5,0.72)_0%,rgba(4,21,13,0.16)_42%,rgba(7,17,12,0.96)_100%)]" />
       <div className="pointer-events-none absolute inset-0 z-0 bg-slate-950/35 mix-blend-multiply" />
 
-      {/* Main Hero Content Layer */}
-      <AnimatePresence>
-        {videoReady && (
-          <motion.div
+      {/* Main Hero Content Layer — never wait on the 11MB CloudFront loop */}
+      <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35 }}
             className="relative z-10 flex flex-col flex-1 w-full h-full justify-between overflow-hidden"
           >
             {/* Top Spacing for Floating Navbar */}
@@ -115,8 +115,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                 >
                   {/* Map Image Base */}
                   <img
-                    src="https://polo-pecan-73837341.figma.site/_assets/v11/b6d561167283e799453232309bd13dd78b2d1afa.png"
+                    src="/hero/map.webp"
                     alt="Bản đồ các tuyến giao hàng được sắp xếp tự động"
+                    width={870}
+                    height={526}
+                    fetchPriority="high"
+                    decoding="async"
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)]"
                   />
 
@@ -202,7 +206,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                     }}
                   >
                     <img
-                      src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/08d6a37375d428e07c59e24a8529de89bfee157e.08d6a373.png"
+                      src="/hero/icon-water.webp"
                       alt="Vận chuyển đường thủy"
                       className="w-[60%] h-[60%] object-contain"
                     />
@@ -228,7 +232,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                     }}
                   >
                     <img
-                      src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/7d6f50a87e1427d9b4d1a9c9f1c064ff04b2b3f9.7d6f50a8.png"
+                      src="/hero/icon-van.webp"
                       alt="Xe giao hàng đô thị"
                       className="w-[60%] h-[60%] object-contain"
                     />
@@ -254,7 +258,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                     }}
                   >
                     <img
-                      src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/0e0282ab1c70db03d437b0d01875ce45557d49f6.0e0282ab.png"
+                      src="/hero/icon-air.webp"
                       alt="Vận chuyển hàng không"
                       className="w-[60%] h-[60%] object-contain"
                     />
@@ -325,7 +329,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
                     }}
                   >
                     <img
-                      src="https://image-bottom-92901062.figma.site/_components/v2/142c6a6f3074dd8aee013fa440ff4ff369649d48/b343ed71e721488b90c407df666fd6dc3f5f70b1.b343ed71.png"
+                      src="/hero/icon-cargo.webp"
                       alt="Hàng hóa đã giao"
                       className="w-[55%] h-[55%] object-contain"
                     />
@@ -398,8 +402,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPilotModal }) => {
               </motion.button>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };

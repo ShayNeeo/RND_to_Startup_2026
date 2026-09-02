@@ -25,7 +25,22 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initial
     if (initialInterest) {
       setFormData((prev) => ({ ...prev, interest: initialInterest }));
     }
+    if (isOpen) setSubmitted(false);
   }, [initialInterest, isOpen]);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen, onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,12 +51,20 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initial
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div
+        className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+        onClick={onClose}
+        role="presentation"
+      >
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pilot-modal-title"
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={(event) => event.stopPropagation()}
           className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative border border-white/10 max-h-[90vh] overflow-y-auto"
         >
           {/* Close Button */}
@@ -63,7 +86,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initial
                   <span className="text-[10px] font-bold tracking-wider text-greenlogix-lime uppercase bg-greenlogix-lime/10 px-2.5 py-0.5 rounded-full border border-greenlogix-lime/20">
                     TƯ VẤN GIẢI PHÁP &amp; DÙNG THỬ
                   </span>
-                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Nhu Cầu Với GreenLogix</h3>
+                  <h3 id="pilot-modal-title" className="text-xl font-bold text-white mt-1">Đăng Ký Nhu Cầu Với GreenLogix</h3>
                 </div>
               </div>
 
