@@ -6,6 +6,8 @@ Python **3.12** FastAPI skeleton for the 72h walking skeleton. No commercial map
 
 ```bash
 cd apps/api
+uv python pin 3.12 && uv sync
+GREENLOGIX_DEMO=1 uv run python -m greenlogix_api.seed
 GREENLOGIX_DEMO=1 uv run uvicorn greenlogix_api.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -46,9 +48,15 @@ cd apps/api
 GREENLOGIX_DEMO=1 uv run python -m greenlogix_api.seed
 ```
 
-Writes 80 inner-HCMC orders + 10 trucks (one `maintenance`) into `data/greenlogix.db` and refreshes `data/seed/*.xlsx`. Depot: Tân Bình DC `10.801, 106.661`.
+Writes 80 inner-HCMC orders + 10 trucks (one `maintenance`) into `data/greenlogix.db` and refreshes `apps/api/data/seed/hcmc_80_orders.xlsx` (lat/lng already filled — Nominatim is not required). Depot: Tân Bình DC `10.801, 106.661`.
 
-Dispatcher (OSM tiles only): `GET /dispatcher` then Seed → Optimize → Publish. Driver PIN `0000` reads published routes only.
+Env: `GREENLOGIX_DEMO=1` and optional `TZ=Asia/Ho_Chi_Minh` only. No commercial geospatial credentials.
+
+Dispatcher (OSM tiles only): `GET /dispatcher` then Seed → Optimize → Leaflet OSM map → Publish. Driver PIN `0000` reads published routes only. After optimize, `GET /report` (or the dispatcher TTW strip) shows before/after km, litres, kg CO₂ using `HCMC_CIRCUITY=1.35` on both baseline and optimized.
+
+```bash
+curl -H 'Authorization: Bearer DEMO' http://127.0.0.1:8000/report
+```
 
 ## Tests
 
