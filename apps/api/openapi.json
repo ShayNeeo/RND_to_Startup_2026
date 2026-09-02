@@ -73,6 +73,38 @@
         "operationId": "list_orders_orders_get",
         "parameters": [
           {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "late",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Late"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -865,6 +897,22 @@
         }
       }
     },
+    "/favicon.ico": {
+      "get": {
+        "summary": "Favicon",
+        "operationId": "favicon_favicon_ico_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/dispatcher": {
       "get": {
         "summary": "Dispatcher",
@@ -1217,6 +1265,10 @@
           "status": {
             "type": "string",
             "title": "Status"
+          },
+          "late_risk": {
+            "type": "boolean",
+            "title": "Late Risk"
           }
         },
         "type": "object",
@@ -1233,7 +1285,8 @@
           "cargo_type",
           "notes",
           "excel_row",
-          "status"
+          "status",
+          "late_risk"
         ],
         "title": "OrderOut"
       },
@@ -1666,6 +1719,10 @@
               }
             ],
             "title": "Fail Reason"
+          },
+          "late_risk": {
+            "type": "boolean",
+            "title": "Late Risk"
           }
         },
         "type": "object",
@@ -1683,7 +1740,8 @@
           "notes",
           "kg",
           "status",
-          "fail_reason"
+          "fail_reason",
+          "late_risk"
         ],
         "title": "StopOut"
       },

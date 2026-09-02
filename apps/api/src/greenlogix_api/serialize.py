@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from greenlogix_api.late import late_risk
 from greenlogix_api.models import Order, Route, Stop, Vehicle
 from greenlogix_api.schemas import OrderOut, RouteOut, StopOut, VehicleOut
 from greenlogix_api.solver import PlannedRoute, PlannedStop
@@ -22,6 +23,7 @@ def order_out(order: Order) -> OrderOut:
         notes=order.notes,
         excel_row=order.excel_row,
         status=order.status,
+        late_risk=late_risk(order.lat, order.lng, order.window_end),
     )
 
 
@@ -53,6 +55,7 @@ def stop_out(stop: Stop) -> StopOut:
         kg=stop.kg,
         status=stop.status,
         fail_reason=stop.fail_reason,
+        late_risk=late_risk(stop.lat, stop.lng, stop.window_end),
     )
 
 

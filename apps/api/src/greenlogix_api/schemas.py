@@ -28,6 +28,7 @@ class OrderOut(BaseModel):
     notes: str
     excel_row: int | None
     status: str
+    late_risk: bool
 
 
 class OrderPatch(BaseModel):
@@ -91,6 +92,7 @@ class StopOut(BaseModel):
     kg: float
     status: str
     fail_reason: str | None
+    late_risk: bool
 
 
 class RouteOut(BaseModel):

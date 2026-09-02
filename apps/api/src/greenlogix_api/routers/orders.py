@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from sqlmodel import Session, select
 
 from greenlogix_api.auth import require_dispatcher
 from greenlogix_api.db import get_session
 from greenlogix_api.ingest_xlsx import MAX_UPLOAD_BYTES, IngestLimitError, parse_xlsx
+from greenlogix_api.late import matches_q
 from greenlogix_api.models import Order, Route, Stop
 from greenlogix_api.schemas import ImportResult, OrderOut, OrderPatch
 from greenlogix_api.serialize import order_out
@@ -64,12 +67,18 @@ def import_orders(
 
 @router.get("/orders", response_model=list[OrderOut])
 def list_orders(
+    q: Annotated[str | None, Query()] = None,
+    late: Annotated[int | None, Query()] = None,
     session: Session = Depends(get_session),
     _: None = Depends(require_dispatcher),
 ) -> list[OrderOut]:
-    log.info("path=/orders")
+    log.info("path=/orders q=%s late=%s", q, late)
     rows = list(session.exec(select(Order)).all())
-    return [order_out(o) for o in rows]
+    out = [order_out(o) for o in rows]
+    out = [o for o in out if matches_q(o.address, o.phone, o.receiver, q)]
+    if late == 1:
+        out = [o for o in out if o.late_risk]
+    return out
 
 
 @router.get("/orders/{id}", response_model=OrderOut)
