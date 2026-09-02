@@ -1,0 +1,1 @@
+Follow the root AGENTS.md and the files it points to under rules/. Branch from dev. Use a Change Request in changes/ before multi-agent or multi-person work. PRs to dev use the feature-to-dev template; promotions to stable use promote-to-stable and require QA sign-off.

@@ -1,48 +1,28 @@
-name: CI - Build & Verify Landing Page
+name: Deploy landing (stable)
 
 on:
   push:
-    branches:
-      - main
+    branches: [stable]
     paths:
-      - 'apps/landing/**'
-      - '.github/workflows/deploy-landing.yml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'apps/landing/**'
-      - '.github/workflows/deploy-landing.yml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
+      - "apps/landing/**"
+      - ".github/workflows/deploy-landing.yml"
+      - "pnpm-workspace.yaml"
+      - "package.json"
+      - "pnpm-lock.yaml"
   workflow_dispatch:
 
 jobs:
   verify:
-    name: 🏗️ Build & Typecheck Verification
+    name: Build landing
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: ⚡ Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.5.2
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
-
-      - name: 📦 Install Dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: 🏗️ Build Landing Page
-        run: pnpm run build:landing
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm run build:landing

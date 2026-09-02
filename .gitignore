@@ -26,3 +26,11 @@ Thumbs.db
 .serena/
 .loop-state/
 graphify-out/
+.worktrees/
+
+# Python / Flutter local
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+apps/mobile-driver/.dart_tool/
+apps/mobile-driver/build/

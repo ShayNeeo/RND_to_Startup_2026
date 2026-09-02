@@ -1,0 +1,13 @@
+# Standing reviewers. CR ownership tables may tighten this for one change.
+# GitHub: add teammates' @handles when they have repo access.
+
+*                       @ShayNeeo
+
+/apps/api/              @ShayNeeo
+/apps/mobile-driver/    @ShayNeeo
+/apps/landing/          @ShayNeeo
+/packages/              @ShayNeeo
+/rules/                 @ShayNeeo
+/.github/               @ShayNeeo
+/docs/planning/         @ShayNeeo
+/docs/contest/          @ShayNeeo

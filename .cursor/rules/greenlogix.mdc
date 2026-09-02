@@ -1,0 +1,6 @@
+---
+description: GreenLogix repo process — branching, CRs, agent isolation
+alwaysApply: true
+---
+
+Follow root `AGENTS.md` and `rules/README.md`. Cut branches from `dev`. Multi-person or multi-agent work requires `changes/CR-YYYYMMDD-NNN.md` with MUST KEEP / MUST CHANGE / MUST NOT TOUCH filled first. One agent per `.worktrees/` worktree. Python via `uv`, JS via `pnpm`. PRs: feature → `dev`, QA then `dev` → `stable`.

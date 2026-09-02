@@ -12,25 +12,27 @@
 
 ```text
 .
+├── AGENTS.md                 # Entry for every coding agent
+├── rules/                    # Branching, CR, PR, QA, ownership (source of truth)
+├── changes/                  # Filled change requests (feature → dev)
 ├── apps/
-│   ├── landing/              # CargoX / GreenLogix Full-Viewport & Scrolling Landing Page
-│   │   ├── src/
-│   │   │   ├── components/   # Navbar, Hero, Solutions, Calculator, Workflow, Showcase, Pricing, Modal
-│   │   │   ├── App.tsx
-│   │   │   └── main.tsx
-│   │   └── package.json      # @greenlogix/landing
-│   ├── web-portal/           # [Future] Web Portal điều phối viên bưu cục (Dispatcher Console)
-│   └── mobile-driver/        # [Legacy placeholder] Luồng tài xế được triển khai trên web responsive
-├── packages/
-│   └── shared-types/         # [Future] Shared TypeScript types, VRPTW contracts & ESG schemas
+│   ├── landing/              # Marketing site (live)
+│   ├── api/                  # FastAPI dispatcher + VRP (Phase 1)
+│   ├── web-portal/           # Placeholder — do not invent Next.js without a CR
+│   └── mobile-driver/        # Flutter driver (Phase 1)
+├── packages/shared-types/
 ├── docs/
-│   └── planning/             # Hồ sơ quy hoạch dự án, BRAINSTORM_IDEA.md, Mô hình tài chính CAPEX/OPEX
+│   ├── contest/              # RND to Startup packet
+│   └── planning/             # MVP, finance, brainstorm
 ├── .github/
-│   └── workflows/
-│       └── deploy-landing.yml # Tự động Build & Deploy Landing Page lên Cloudflare Pages
-├── pnpm-workspace.yaml       # Cấu hình không gian làm việc Monorepo
-└── package.json              # Scripts điều phối toàn bộ hệ thống
+│   ├── PULL_REQUEST_TEMPLATE/
+│   ├── CODEOWNERS
+│   └── workflows/            # CI on dev; landing verify on stable
+├── pnpm-workspace.yaml
+└── package.json
 ```
+
+**Git:** `feature/*` or `cr/*` → **`dev`** (Change Request + PR) → QA → **`stable`** (production). Details: [`rules/branching.md`](rules/branching.md). Humans and agents: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
@@ -59,7 +61,7 @@ pnpm run preview:landing
 
 ## 🚀 Hướng Dẫn Kích Hoạt CI/CD Tự Động (Cloudflare Pages)
 
-Mỗi khi bạn `git push` lên nhánh `main`, GitHub Actions sẽ tự động kích hoạt workflow `.github/workflows/deploy-landing.yml` để build và deploy lên Cloudflare Pages.
+Landing CI/verify runs on **`stable`** (production). Pull requests target **`dev`**. Promotion is `dev` → `stable` after QA (`rules/qa.md`). Do not push features to `main` (legacy alias of `stable`).
 
 Để workflow hoạt động thành công, bạn chỉ cần thêm **2 Secret** vào GitHub Repository:
 
