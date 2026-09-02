@@ -1,0 +1,1792 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GreenLogix API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/orders/import": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Import Orders",
+        "operationId": "import_orders_orders_import_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_orders_orders_import_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "List Orders",
+        "operationId": "list_orders_orders_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderOut"
+                  },
+                  "title": "Response List Orders Orders Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "patch": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Patch Order",
+        "operationId": "patch_order_orders__id__patch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Delete Order",
+        "operationId": "delete_order_orders__id__delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Delete Order Orders  Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "List Vehicles",
+        "operationId": "list_vehicles_vehicles_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VehicleOut"
+                  },
+                  "title": "Response List Vehicles Vehicles Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/{id}": {
+      "patch": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Patch Vehicle",
+        "operationId": "patch_vehicle_vehicles__id__patch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiclePatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/optimize": {
+      "post": {
+        "tags": [
+          "optimize"
+        ],
+        "summary": "Optimize",
+        "operationId": "optimize_optimize_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizeIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/routes": {
+      "get": {
+        "tags": [
+          "optimize"
+        ],
+        "summary": "List Routes",
+        "operationId": "list_routes_routes_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RouteOut"
+                  },
+                  "title": "Response List Routes Routes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/routes/publish": {
+      "post": {
+        "tags": [
+          "optimize"
+        ],
+        "summary": "Publish Routes",
+        "operationId": "publish_routes_routes_publish_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RouteOut"
+                  },
+                  "title": "Response Publish Routes Routes Publish Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/driver/route": {
+      "get": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Driver Route",
+        "operationId": "driver_route_driver_route_get",
+        "parameters": [
+          {
+            "name": "plate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Plate"
+            }
+          },
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverRouteList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stops/{id}/status": {
+      "post": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Stop Status",
+        "operationId": "stop_status_stops__id__status_post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stops/{id}/photo": {
+      "post": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Stop Photo",
+        "operationId": "stop_photo_stops__id__photo_post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_stop_photo_stops__id__photo_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report": {
+      "get": {
+        "tags": [
+          "report"
+        ],
+        "summary": "Report",
+        "operationId": "report_report_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dispatcher": {
+      "get": {
+        "summary": "Dispatcher",
+        "operationId": "dispatcher_dispatcher_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seed": {
+      "post": {
+        "summary": "Seed",
+        "operationId": "seed_seed_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_import_orders_orders_import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_orders_orders_import_post"
+      },
+      "Body_stop_photo_stops__id__photo_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_stop_photo_stops__id__photo_post"
+      },
+      "DepotOut": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lng",
+          "name"
+        ],
+        "title": "DepotOut"
+      },
+      "DriverRouteList": {
+        "properties": {
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/DriverRouteOut"
+            },
+            "type": "array",
+            "title": "Routes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "routes"
+        ],
+        "title": "DriverRouteList"
+      },
+      "DriverRouteOut": {
+        "properties": {
+          "plate": {
+            "type": "string",
+            "title": "Plate"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopOut"
+            },
+            "type": "array",
+            "title": "Stops"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plate",
+          "stops"
+        ],
+        "title": "DriverRouteOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthOut"
+      },
+      "ImportErrorItem": {
+        "properties": {
+          "excel_row": {
+            "type": "integer",
+            "title": "Excel Row"
+          },
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "excel_row",
+          "field",
+          "message"
+        ],
+        "title": "ImportErrorItem"
+      },
+      "ImportResult": {
+        "properties": {
+          "imported": {
+            "type": "integer",
+            "title": "Imported"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ImportErrorItem"
+            },
+            "type": "array",
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "imported",
+          "errors"
+        ],
+        "title": "ImportResult"
+      },
+      "OptimizeIn": {
+        "properties": {
+          "cluster_radius_km": {
+            "type": "number",
+            "title": "Cluster Radius Km",
+            "default": 3.0
+          }
+        },
+        "type": "object",
+        "title": "OptimizeIn"
+      },
+      "OptimizeOut": {
+        "properties": {
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/RouteOut"
+            },
+            "type": "array",
+            "title": "Routes"
+          },
+          "unassigned_order_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Unassigned Order Ids"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/TotalsOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "routes",
+          "unassigned_order_ids",
+          "totals"
+        ],
+        "title": "OptimizeOut"
+      },
+      "OrderOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "receiver": {
+            "type": "string",
+            "title": "Receiver"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone"
+          },
+          "kg": {
+            "type": "number",
+            "title": "Kg"
+          },
+          "window_start": {
+            "type": "string",
+            "title": "Window Start"
+          },
+          "window_end": {
+            "type": "string",
+            "title": "Window End"
+          },
+          "cargo_type": {
+            "type": "string",
+            "title": "Cargo Type"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "excel_row": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excel Row"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "address",
+          "lat",
+          "lng",
+          "receiver",
+          "phone",
+          "kg",
+          "window_start",
+          "window_end",
+          "cargo_type",
+          "notes",
+          "excel_row",
+          "status"
+        ],
+        "title": "OrderOut"
+      },
+      "OrderPatch": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "receiver": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receiver"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kg"
+          },
+          "window_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Start"
+          },
+          "window_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window End"
+          },
+          "cargo_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cargo Type"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "OrderPatch"
+      },
+      "PublishIn": {
+        "properties": {
+          "route_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Route Ids"
+          }
+        },
+        "type": "object",
+        "title": "PublishIn"
+      },
+      "ReportDelta": {
+        "properties": {
+          "km": {
+            "type": "number",
+            "title": "Km"
+          },
+          "litres": {
+            "type": "number",
+            "title": "Litres"
+          },
+          "kg_co2": {
+            "type": "number",
+            "title": "Kg Co2"
+          },
+          "km_pct": {
+            "type": "number",
+            "title": "Km Pct"
+          },
+          "litres_pct": {
+            "type": "number",
+            "title": "Litres Pct"
+          },
+          "kg_co2_pct": {
+            "type": "number",
+            "title": "Kg Co2 Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "km",
+          "litres",
+          "kg_co2",
+          "km_pct",
+          "litres_pct",
+          "kg_co2_pct"
+        ],
+        "title": "ReportDelta"
+      },
+      "ReportOut": {
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/ReportTotals"
+          },
+          "optimized": {
+            "$ref": "#/components/schemas/ReportTotals"
+          },
+          "delta": {
+            "$ref": "#/components/schemas/ReportDelta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "baseline",
+          "optimized",
+          "delta"
+        ],
+        "title": "ReportOut"
+      },
+      "ReportTotals": {
+        "properties": {
+          "km": {
+            "type": "number",
+            "title": "Km"
+          },
+          "litres": {
+            "type": "number",
+            "title": "Litres"
+          },
+          "kg_co2": {
+            "type": "number",
+            "title": "Kg Co2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "km",
+          "litres",
+          "kg_co2"
+        ],
+        "title": "ReportTotals"
+      },
+      "RouteOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "title": "Vehicle Id"
+          },
+          "plate": {
+            "type": "string",
+            "title": "Plate"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color"
+          },
+          "published": {
+            "type": "boolean",
+            "title": "Published"
+          },
+          "km": {
+            "type": "number",
+            "title": "Km"
+          },
+          "litres": {
+            "type": "number",
+            "title": "Litres"
+          },
+          "kg_co2": {
+            "type": "number",
+            "title": "Kg Co2"
+          },
+          "overload": {
+            "type": "boolean",
+            "title": "Overload"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/StopOut"
+            },
+            "type": "array",
+            "title": "Stops"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "vehicle_id",
+          "plate",
+          "color",
+          "published",
+          "km",
+          "litres",
+          "kg_co2",
+          "overload",
+          "stops"
+        ],
+        "title": "RouteOut"
+      },
+      "SeedOut": {
+        "properties": {
+          "orders": {
+            "type": "integer",
+            "title": "Orders"
+          },
+          "vehicles": {
+            "type": "integer",
+            "title": "Vehicles"
+          },
+          "depot": {
+            "$ref": "#/components/schemas/DepotOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "orders",
+          "vehicles",
+          "depot"
+        ],
+        "title": "SeedOut"
+      },
+      "StatusIn": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "StatusIn"
+      },
+      "StatusOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "reason"
+        ],
+        "title": "StatusOut"
+      },
+      "StopOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "seq": {
+            "type": "integer",
+            "title": "Seq"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "order_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Id"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone"
+          },
+          "window_start": {
+            "type": "string",
+            "title": "Window Start"
+          },
+          "window_end": {
+            "type": "string",
+            "title": "Window End"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "kg": {
+            "type": "number",
+            "title": "Kg"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "fail_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fail Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "seq",
+          "kind",
+          "order_id",
+          "lat",
+          "lng",
+          "address",
+          "phone",
+          "window_start",
+          "window_end",
+          "notes",
+          "kg",
+          "status",
+          "fail_reason"
+        ],
+        "title": "StopOut"
+      },
+      "TotalsOut": {
+        "properties": {
+          "km": {
+            "type": "number",
+            "title": "Km"
+          },
+          "litres": {
+            "type": "number",
+            "title": "Litres"
+          },
+          "kg_co2": {
+            "type": "number",
+            "title": "Kg Co2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "km",
+          "litres",
+          "kg_co2"
+        ],
+        "title": "TotalsOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VehicleOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "plate": {
+            "type": "string",
+            "title": "Plate"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "capacity_kg": {
+            "type": "number",
+            "title": "Capacity Kg"
+          },
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
+          "l_per_100km": {
+            "type": "number",
+            "title": "L Per 100Km"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "plate",
+          "type",
+          "capacity_kg",
+          "fuel",
+          "l_per_100km",
+          "status"
+        ],
+        "title": "VehicleOut"
+      },
+      "VehiclePatch": {
+        "properties": {
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "capacity_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Kg"
+          },
+          "fuel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fuel"
+          },
+          "l_per_100km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "L Per 100Km"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "title": "VehiclePatch"
+      }
+    }
+  }
+}
