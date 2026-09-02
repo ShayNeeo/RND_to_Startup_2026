@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GreenLogix — 19:00 status 2026-09-02</title>
+  <title>GreenLogix — 19:00 report 2026-09-02</title>
   <style>
     :root { color-scheme: dark; --bg:#07110c; --card:#0f1a16; --line:#1f3d32; --ink:#e8f0e4; --mut:#9bb5a8; --ok:#36d9a5; --warn:#ffd400; --no:#ff6b6b; }
     * { box-sizing: border-box; }
     body { margin: 0; font: 16px/1.5 "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
     main { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
-    h1 { font-size: 1.8rem; margin: 0 0 8px; }
+    h1 { font-size: 1.85rem; margin: 0 0 8px; }
     h2 { font-size: 1.2rem; margin: 32px 0 12px; color: var(--ok); }
-    p, li { color: var(--ink); }
     .mut { color: var(--mut); }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin: 12px 0; }
     table { width: 100%; border-collapse: collapse; }
@@ -20,76 +19,82 @@
     .ok { color: var(--ok); font-weight: 700; }
     .warn { color: var(--warn); font-weight: 700; }
     .no { color: var(--no); font-weight: 700; }
-    img { width: 100%; border-radius: 12px; border: 1px solid var(--line); margin: 8px 0 16px; }
+    img { width: 100%; border-radius: 12px; border: 1px solid var(--line); margin: 8px 0 18px; }
     code { font-size: .9em; background: #0006; padding: 1px 6px; border-radius: 6px; }
     a { color: var(--warn); }
   </style>
 </head>
 <body>
 <main>
-  <p class="mut">GreenLogix / CargoX · snapshot 2026-09-02 17:45 +07 · HTML will be refreshed at 19:00</p>
+  <p class="mut">GreenLogix / CargoX · written 2026-09-02 18:10 +07 · file kept as the 19:00 deliverable</p>
   <h1>What is done. What is not.</h1>
-  <p>Autonomous loop while Thanh is away. Landing QA on <code>feature/landing-qa-72h</code>. API/Flutter on isolated GSD worktree, backed up as <code>gsd/01-mvp-walking-skeleton</code>.</p>
+  <p>While you were out: landing visual QA loop + full GSD Phase 1 execute (01-00 → 01-03). Two git lines on purpose so landing and API do not smash each other.</p>
 
   <div class="card">
     <table>
-      <thead><tr><th>Workstream</th><th>Status</th><th>Evidence</th></tr></thead>
+      <thead><tr><th>Item</th><th>Status</th><th>Proof</th></tr></thead>
       <tbody>
-        <tr><td>Landing production QA</td><td class="ok">DONE</td><td>Commit <code>2b2c4a5</code>, pushed. Screenshots below.</td></tr>
-        <tr><td>GSD 01-00 scaffold</td><td class="ok">DONE</td><td>FastAPI 3.12 + Flutter PIN client. <code>cr/001-api</code> / <code>cr/001-flutter</code> pushed (wave 0 only).</td></tr>
-        <tr><td>GSD 01-01 tracer</td><td class="ok">DONE</td><td>18 pytest pass. Seed 80/10. Optimize 5 routes, 0 unassigned, 94.74 km / 24.53 kg CO₂. OSM map. PIN 0000 returns 5 published routes.</td></tr>
-        <tr><td>GSD 01-02 Chỉ đường + status</td><td class="warn">IN PROGRESS</td><td>Executor running in GSD worktree (~17:38 start).</td></tr>
-        <tr><td>GSD 01-03 CO₂ before/after + jury README</td><td class="no">NOT STARTED</td><td>Depends on 01-02.</td></tr>
-        <tr><td>Pages production deploy</td><td class="no">NOT THIS BRANCH</td><td>Live <a href="https://cargox-group-3qm.pages.dev/">cargox-group-3qm.pages.dev</a> is <code>stable</code>. Landing fixes are on feature branch.</td></tr>
-        <tr><td>Lead form inbox</td><td class="no">NOT DONE</td><td>Modal success is client-side only. Needs an endpoint or Formspree — not invented.</td></tr>
-        <tr><td>Android emulator Chỉ đường</td><td class="warn">HUMAN</td><td>Plan 01-02 unit-tests URL construction. Real Maps intent needs AVD/phone.</td></tr>
-        <tr><td>GitHub ruleset clicks</td><td class="warn">HUMAN</td><td>PDF review: rules still unchecked.</td></tr>
+        <tr><td>Landing QA (desktop + mobile + modal)</td><td class="ok">DONE</td><td><code>feature/landing-qa-72h</code> <code>2b2c4a5</code> + report commit. Screenshots in this file.</td></tr>
+        <tr><td>GSD 01-00 FastAPI + Flutter scaffold</td><td class="ok">DONE</td><td>34 pytest later in the chain. <code>GET /health {"status":"ok"}</code>.</td></tr>
+        <tr><td>GSD 01-01 Excel → OSM → Flutter list</td><td class="ok">DONE</td><td>Seed 80/10. Optimize 5 routes, 0 unassigned. OSM polylines. PIN 0000 → 5 published routes.</td></tr>
+        <tr><td>GSD 01-02 Chỉ đường + status</td><td class="ok">DONE</td><td><code>POST /stops/2/status {"status":"delivered"}</code> → 200. maps_link Google→Apple→geo. flutter test 8 passed. No AVD.</td></tr>
+        <tr><td>GSD 01-03 report + jury README + photo</td><td class="ok">DONE</td><td><code>GET /report</code> baseline 810.58 km vs optimized 94.74 km, Δ −88.31%. 34 pytest. Cost-freeze scan ok.</td></tr>
+        <tr><td>Pages production (<code>stable</code>)</td><td class="no">NOT DEPLOYED</td><td>Live still <a href="https://cargox-group-3qm.pages.dev/">cargox-group-3qm.pages.dev</a>. Landing fixes need PR → dev → QA → stable.</td></tr>
+        <tr><td>Lead form inbox</td><td class="no">NOT DONE</td><td>Modal success is local-only. No Formspree/API invented.</td></tr>
+        <tr><td>Android Maps tap</td><td class="warn">HUMAN</td><td>URI unit-tested. <code>flutter devices</code> was Linux only.</td></tr>
+        <tr><td>GitHub ruleset</td><td class="warn">HUMAN</td><td>PDF still had rules unchecked.</td></tr>
+        <tr><td>Merge API into landing branch</td><td class="warn">NOT MERGED</td><td>API/Flutter lives on <code>gsd/01-mvp-walking-skeleton</code>. Landing on <code>feature/landing-qa-72h</code>. Isolation <code>cr/001-api</code> / <code>cr/001-flutter</code> still wave-0 only.</td></tr>
+        <tr><td>Pretty dispatcher UI</td><td class="warn">TRACER</td><td>Works. Ugly. Map below 80-row table. Contest-functional, not contest-pretty.</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h2>1. Landing — user-facing (not code-only)</h2>
-  <p class="mut">Local Vite <code>http://127.0.0.1:5173/</code>. Zero console errors. Zero figma.site requests after self-host.</p>
-  <p>Desktop hero 1440×900</p>
+  <h2>1. Landing — actual pixels</h2>
+  <p class="mut">Local <code>http://127.0.0.1:5173/</code>. No console errors. Hero assets self-hosted WebP. Copy no longer waits on the 11MB CloudFront loop.</p>
+  <p>Desktop hero</p>
   <img src="2026-09-02-landing-qa/01-desktop-hero.jpg" alt="Desktop hero" />
-  <p>Solutions</p>
+  <p>Solutions · Calculator · Workflow · Team · Pricing</p>
   <img src="2026-09-02-landing-qa/02-desktop-solutions.jpg" alt="Solutions" />
-  <p>Calculator</p>
   <img src="2026-09-02-landing-qa/03-desktop-calculator.jpg" alt="Calculator" />
-  <p>8-step workflow</p>
   <img src="2026-09-02-landing-qa/04-desktop-workflow.jpg" alt="Workflow" />
-  <p>Team</p>
   <img src="2026-09-02-landing-qa/06-desktop-team.jpg" alt="Team" />
-  <p>Pricing</p>
   <img src="2026-09-02-landing-qa/07-desktop-pricing.jpg" alt="Pricing" />
-  <p>Mobile 390×844 hero — CTA in first viewport</p>
+  <p>Mobile 390×844 — CTA in first screen · modal · success</p>
   <img src="2026-09-02-landing-qa/08-mobile-hero.jpg" alt="Mobile hero" />
-  <p>Pilot modal + success</p>
   <img src="2026-09-02-landing-qa/10-mobile-modal.jpg" alt="Pilot modal" />
-  <img src="2026-09-02-landing-qa/11-mobile-success.jpg" alt="Modal success" />
+  <img src="2026-09-02-landing-qa/11-mobile-success.jpg" alt="Success" />
 
-  <h2>2. Tracer API — actually running</h2>
-  <p><code>GET /health</code> → <code>{"status":"ok"}</code>. Seed 80 orders / 10 trucks (1 maintenance). <code>POST /optimize</code> 75 ms → 5 routes. Publish → <code>GET /driver/route</code> PIN 0000 → 5 routes.</p>
-  <p>Dispatcher after Optimize (94.74 km · 9.85 L · 24.53 kg CO₂)</p>
+  <h2>2. Tracer — actually running on :8000</h2>
+  <p><code>GREENLOGIX_DEMO=1</code>. Auth <code>Bearer DEMO</code> / pin <code>0000</code>. Zero map API keys.</p>
+  <p>After Optimize: 94.74 km · 9.85 L · 24.53 kg CO₂ · 5 routes</p>
   <img src="2026-09-02-landing-qa/12-dispatcher-optimize.jpg" alt="Dispatcher totals" />
-  <p>OSM Leaflet polylines over HCMC (no paid map API)</p>
-  <img src="2026-09-02-landing-qa/13-dispatcher-map.jpg" alt="Dispatcher OSM map" />
-  <p class="mut">Honest: dispatcher HTML is a tracer, not a designed product UI. Map sits below the 80-row table. Good enough to prove Excel → km/CO₂ → OSM. Not contest-pretty.</p>
+  <p>OSM Leaflet over HCMC (one truck marked maintenance)</p>
+  <img src="2026-09-02-landing-qa/13-dispatcher-map.jpg" alt="OSM map" />
+  <p>Before/after strip from <code>GET /report</code> (computed, not BRAINSTORM constants). Baseline is the plan’s zig-zag D-17, so −88% is real vs that baseline, not vs a human dispatcher.</p>
+  <img src="2026-09-02-landing-qa/14-dispatcher-report.jpg" alt="TTW before after" />
 
-  <h2>3. Branches</h2>
+  <div class="card">
+    <p><strong>GET /report</strong> (live curl 18:08)</p>
+    <p class="mut">baseline 810.58 km / 79.37 L / 200.40 kg CO₂<br />
+    optimized 94.74 km / 9.85 L / 24.53 kg CO₂<br />
+    delta −715.84 km / −69.51 L / −175.87 kg · −88.31% km</p>
+  </div>
+
+  <h2>3. Git</h2>
   <ul>
-    <li><code>feature/landing-qa-72h</code> — landing QA. PR: <a href="https://github.com/ShayNeeo/RND_to_Startup_2026/pull/new/feature/landing-qa-72h">open PR into dev</a></li>
-    <li><code>gsd/01-mvp-walking-skeleton</code> — 01-00 + 01-01 API/Flutter (GSD worktree backup)</li>
-    <li><code>cr/001-api</code> / <code>cr/001-flutter</code> — wave 0 freeze only (01-01 not fast-forwarded onto them yet)</li>
-    <li><code>stable</code> — production Pages, unchanged this afternoon</li>
+    <li>Landing PR: <a href="https://github.com/ShayNeeo/RND_to_Startup_2026/pull/new/feature/landing-qa-72h">feature/landing-qa-72h → dev</a></li>
+    <li>API+Flutter backup: <a href="https://github.com/ShayNeeo/RND_to_Startup_2026/tree/gsd/01-mvp-walking-skeleton">gsd/01-mvp-walking-skeleton</a> (tip <code>2640ad7</code>)</li>
+    <li>Do not fast-forward <code>stable</code> tonight.</li>
   </ul>
 
-  <h2>4. Still working after 17:45</h2>
-  <ul>
-    <li>01-02 executor: maps deep-link + arrived/delivered/failed writeback</li>
-    <li>Then 01-03 if time: before/after CO₂ + jury README</li>
-    <li>Refresh this HTML at 19:00 with leftover vs done</li>
-  </ul>
+  <h2>4. When you sit down</h2>
+  <ol>
+    <li>Open this HTML locally: <code>docs/reports/2026-09-02-1900.html</code></li>
+    <li>PR landing into <code>dev</code>. After QA, promote <code>dev</code> → <code>stable</code> so Pages gets the new hero assets.</li>
+    <li>PR or merge <code>gsd/01-mvp-walking-skeleton</code> as the walking-skeleton (or split back onto <code>cr/001-api</code> / <code>cr/001-flutter</code>).</li>
+    <li>If you want a real lead inbox, say which: mailto, Formspree, or FastAPI POST. I did not invent one.</li>
+    <li>AVD or phone for the Maps intent. Unit tests already prove the URL.</li>
+  </ol>
 </main>
 </body>
 </html>
