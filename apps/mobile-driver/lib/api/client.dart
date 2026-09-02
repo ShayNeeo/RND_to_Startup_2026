@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/driver_route.dart';
 import '../models/health.dart';
+import '../models/status_update.dart';
 
 class ApiException implements Exception {
   const ApiException(this.statusCode);
@@ -54,5 +55,22 @@ class ApiClient {
     return DriverRouteList.fromJson(
       jsonDecode(res.body) as Map<String, dynamic>,
     );
+  }
+
+  Future<StatusOut> postStatus(int id, StatusIn body) async {
+    final res = await _http
+        .post(
+          Uri.parse('$baseUrl/stops/$id/status'),
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Driver-Pin': pin,
+          },
+          body: jsonEncode(body.toJson()),
+        )
+        .timeout(timeout);
+    if (res.statusCode != 200) {
+      throw ApiException(res.statusCode);
+    }
+    return StatusOut.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
 }

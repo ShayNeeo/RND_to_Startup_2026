@@ -38,7 +38,7 @@ class _PinScreenState extends State<PinScreen> {
       }
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => RouteListScreen(routes: routes),
+          builder: (_) => RouteListScreen(routes: routes, client: client),
         ),
       );
     } on ApiException catch (err) {

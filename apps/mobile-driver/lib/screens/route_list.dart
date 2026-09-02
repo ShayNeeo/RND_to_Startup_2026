@@ -5,7 +5,7 @@ import '../models/driver_route.dart';
 import 'stop_detail.dart';
 
 /// Ordered stop list. OpenAPI fields: address, phone, window_start, notes (DRV-01).
-class RouteListScreen extends StatelessWidget {
+class RouteListScreen extends StatefulWidget {
   const RouteListScreen({super.key, required this.routes, this.client});
 
   final DriverRouteList routes;
@@ -14,11 +14,41 @@ class RouteListScreen extends StatelessWidget {
   static const String emptyLabel = 'Chưa có tuyến đã xuất bản';
 
   @override
+  State<RouteListScreen> createState() => _RouteListScreenState();
+}
+
+class _RouteListScreenState extends State<RouteListScreen> {
+  late DriverRouteList routes;
+
+  @override
+  void initState() {
+    super.initState();
+    routes = widget.routes;
+  }
+
+  void _replaceStop(DriverStop updated) {
+    setState(() {
+      routes = DriverRouteList(
+        routes: [
+          for (final route in routes.routes)
+            DriverRoute(
+              plate: route.plate,
+              stops: [
+                for (final stop in route.stops)
+                  if (stop.id == updated.id) updated else stop,
+              ],
+            ),
+        ],
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (routes.routes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Tuyến giao')),
-        body: const Center(child: Text(emptyLabel)),
+        body: const Center(child: Text(RouteListScreen.emptyLabel)),
       );
     }
     final tiles = <Widget>[];
@@ -44,15 +74,22 @@ class RouteListScreen extends StatelessWidget {
                 Text(stop.phone),
                 Text('${stop.windowStart}–${stop.windowEnd}'),
                 Text(stop.notes),
+                Text(stop.status),
               ],
             ),
             isThreeLine: true,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => StopDetailScreen(stop: stop, client: client),
+            onTap: () async {
+              final updated = await Navigator.of(context).push<DriverStop>(
+                MaterialPageRoute<DriverStop>(
+                  builder: (_) => StopDetailScreen(
+                    stop: stop,
+                    client: widget.client,
+                  ),
                 ),
               );
+              if (updated != null) {
+                _replaceStop(updated);
+              }
             },
           ),
         );
