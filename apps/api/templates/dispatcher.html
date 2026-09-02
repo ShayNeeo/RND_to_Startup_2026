@@ -26,10 +26,21 @@
     </form>
   </div>
   <div id="totals">km: <span id="km">0</span> · litres: <span id="litres">0</span> · kg_co2: <span id="kg_co2">0</span></div>
+  <section id="report-strip">
+    <h2>ước tính TTW CO₂ (IPCC/GLEC factors)</h2>
+    <table>
+      <thead><tr><th></th><th>km</th><th>litres</th><th>kg_co2</th></tr></thead>
+      <tbody>
+        <tr><th>Trước</th><td id="base-km">0</td><td id="base-litres">0</td><td id="base-co2">0</td></tr>
+        <tr><th>Sau</th><td id="opt-km">0</td><td id="opt-litres">0</td><td id="opt-co2">0</td></tr>
+        <tr><th>Δ %</th><td id="pct-km">0</td><td id="pct-litres">0</td><td id="pct-co2">0</td></tr>
+      </tbody>
+    </table>
+  </section>
   <p id="status"></p>
   <ul id="import-errors"></ul>
   <h2>Orders</h2>
-  <table id="orders"><thead><tr><th>id</th><th>address</th><th>kg</th><th>window</th></tr></thead><tbody></tbody></table>
+  <table id="orders"><thead><tr><th>id</th><th>address</th><th>kg</th><th>window</th><th>notes</th><th></th></tr></thead><tbody></tbody></table>
   <h2>Vehicles</h2>
   <table id="vehicles"><thead><tr><th>plate</th><th>capacity_kg</th><th>status</th></tr></thead><tbody></tbody></table>
   <h2>Stops</h2>
@@ -53,6 +64,25 @@
       document.getElementById("km").textContent = Number(tot.km).toFixed(2);
       document.getElementById("litres").textContent = Number(tot.litres).toFixed(2);
       document.getElementById("kg_co2").textContent = Number(tot.kg_co2).toFixed(2);
+    }
+    function num(v) { return Number(v || 0).toFixed(2); }
+    async function refreshReport() {
+      const r = await api("/report");
+      const b = r.baseline || {};
+      const o = r.optimized || {};
+      const d = r.delta || {};
+      document.getElementById("base-km").textContent = num(b.km);
+      document.getElementById("base-litres").textContent = num(b.litres);
+      document.getElementById("base-co2").textContent = num(b.kg_co2);
+      document.getElementById("opt-km").textContent = num(o.km);
+      document.getElementById("opt-litres").textContent = num(o.litres);
+      document.getElementById("opt-co2").textContent = num(o.kg_co2);
+      document.getElementById("pct-km").textContent = num(d.km_pct);
+      document.getElementById("pct-litres").textContent = num(d.litres_pct);
+      document.getElementById("pct-co2").textContent = num(d.kg_co2_pct);
+    }
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
     }
     function drawRoutes(routes) {
       polylines.forEach((p) => map.removeLayer(p));
@@ -99,6 +129,7 @@
         const body = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
         setTotals(body.totals);
         await refreshRoutes();
+        await refreshReport();
         setStatus("optimized routes=" + (body.routes || []).length);
       } catch (err) { setStatus(String(err)); }
     };
@@ -111,6 +142,7 @@
     document.getElementById("btn-refresh").onclick = async () => {
       try {
         await refreshRoutes();
+        await refreshReport();
         setStatus("refreshed");
       } catch (err) { setStatus(String(err)); }
     };
@@ -120,7 +152,32 @@
       ot.innerHTML = "";
       for (const o of orders) {
         const tr = document.createElement("tr");
-        tr.innerHTML = "<td>" + o.id + "</td><td>" + o.address + "</td><td>" + o.kg + "</td><td>" + o.window_start + "–" + o.window_end + "</td>";
+        tr.innerHTML =
+          "<td>" + o.id + "</td>" +
+          "<td><input data-f=\"address\" value=\"" + esc(o.address) + "\"/></td>" +
+          "<td><input data-f=\"kg\" type=\"number\" value=\"" + esc(o.kg) + "\"/></td>" +
+          "<td><input data-f=\"window_start\" value=\"" + esc(o.window_start) + "\"/>" +
+          "<input data-f=\"window_end\" value=\"" + esc(o.window_end) + "\"/></td>" +
+          "<td><input data-f=\"notes\" value=\"" + esc(o.notes) + "\"/></td>" +
+          "<td><button type=\"button\" class=\"patch\">PATCH</button> " +
+          "<button type=\"button\" class=\"del\">DELETE</button></td>";
+        tr.querySelector(".patch").onclick = async () => {
+          const payload = {};
+          tr.querySelectorAll("[data-f]").forEach((el) => { payload[el.getAttribute("data-f")] = el.value; });
+          payload.kg = Number(payload.kg);
+          try {
+            await api("/orders/" + o.id, { method: "PATCH", body: JSON.stringify(payload) });
+            setStatus("patched " + o.id);
+            await refreshTables();
+          } catch (err) { setStatus(String(err)); }
+        };
+        tr.querySelector(".del").onclick = async () => {
+          try {
+            await api("/orders/" + o.id, { method: "DELETE" });
+            setStatus("deleted " + o.id);
+            await refreshTables();
+          } catch (err) { setStatus(String(err)); }
+        };
         ot.appendChild(tr);
       }
       const vehicles = await api("/vehicles");

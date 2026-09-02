@@ -118,6 +118,62 @@
       }
     },
     "/orders/{id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get Order",
+        "operationId": "get_order_orders__id__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "tags": [
           "orders"
@@ -920,15 +976,15 @@
       },
       "Body_stop_photo_stops__id__photo_post": {
         "properties": {
-          "file": {
+          "photo": {
             "type": "string",
             "contentMediaType": "application/octet-stream",
-            "title": "File"
+            "title": "Photo"
           }
         },
         "type": "object",
         "required": [
-          "file"
+          "photo"
         ],
         "title": "Body_stop_photo_stops__id__photo_post"
       },

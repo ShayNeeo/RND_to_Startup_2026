@@ -67,21 +67,26 @@ def load_report(path: Path | None = None) -> ReportOut | None:
     raw = json.loads(target.read_text(encoding="utf-8"))
     baseline = ReportTotals(**raw["baseline"])
     optimized = ReportTotals(**raw["optimized"])
-    bkm = baseline.km or 0.0
-    delta = ReportDelta(
-        km=baseline.km - optimized.km,
-        litres=baseline.litres - optimized.litres,
-        kg_co2=baseline.kg_co2 - optimized.kg_co2,
-        km_pct=((baseline.km - optimized.km) / bkm * 100.0) if bkm else 0.0,
-        litres_pct=(
-            ((baseline.litres - optimized.litres) / baseline.litres * 100.0)
-            if baseline.litres
-            else 0.0
-        ),
-        kg_co2_pct=(
-            ((baseline.kg_co2 - optimized.kg_co2) / baseline.kg_co2 * 100.0)
-            if baseline.kg_co2
-            else 0.0
-        ),
+    return ReportOut(
+        baseline=baseline,
+        optimized=optimized,
+        delta=delta_from_totals(baseline, optimized),
     )
-    return ReportOut(baseline=baseline, optimized=optimized, delta=delta)
+
+
+def delta_from_totals(baseline: ReportTotals, optimized: ReportTotals) -> ReportDelta:
+    """delta.km = optimized.km - baseline.km (negative when the plan is shorter)."""
+    dkm = optimized.km - baseline.km
+    dlit = optimized.litres - baseline.litres
+    dco2 = optimized.kg_co2 - baseline.kg_co2
+    km_pct = (dkm / baseline.km * 100.0) if baseline.km else 0.0
+    litres_pct = (dlit / baseline.litres * 100.0) if baseline.litres else 0.0
+    kg_co2_pct = (dco2 / baseline.kg_co2 * 100.0) if baseline.kg_co2 else 0.0
+    return ReportDelta(
+        km=dkm,
+        litres=dlit,
+        kg_co2=dco2,
+        km_pct=km_pct,
+        litres_pct=litres_pct,
+        kg_co2_pct=kg_co2_pct,
+    )

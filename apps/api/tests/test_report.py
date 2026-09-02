@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from sqlmodel import Session
 
 from greenlogix_api import db as dbmod
@@ -90,10 +91,10 @@ def test_report_delta_is_optimized_minus_baseline_and_negative(demo_client) -> N
         assert delta[key] not in MARKETING_PCTS
         assert round(delta[key]) not in MARKETING_PCTS or abs(delta[key]) > 20
     assert body["delta"] != {"km": 8, "litres": 5, "kg_co2": 10, "km_pct": 15, "litres_pct": 10, "kg_co2_pct": 12}
-    assert opt["litres"] == opt["km"] * 10.0 / 100.0
-    assert opt["kg_co2"] == opt["litres"] * 2.31
-    assert base["litres"] == base["km"] * 10.0 / 100.0
-    assert base["kg_co2"] == base["litres"] * 2.31
+    assert opt["litres"] == pytest.approx(opt["km"] * 10.0 / 100.0)
+    assert opt["kg_co2"] == pytest.approx(opt["litres"] * 2.31)
+    assert base["litres"] == pytest.approx(base["km"] * 10.0 / 100.0)
+    assert base["kg_co2"] == pytest.approx(base["litres"] * 2.31)
 
 
 def test_dispatcher_has_ttw_strip_and_order_edit_delete(demo_client) -> None:

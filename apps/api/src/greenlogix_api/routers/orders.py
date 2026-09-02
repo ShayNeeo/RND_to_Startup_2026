@@ -10,13 +10,29 @@ from sqlmodel import Session, select
 from greenlogix_api.auth import require_dispatcher
 from greenlogix_api.db import get_session
 from greenlogix_api.ingest_xlsx import MAX_UPLOAD_BYTES, IngestLimitError, parse_xlsx
-from greenlogix_api.models import Order
+from greenlogix_api.models import Order, Route, Stop
 from greenlogix_api.schemas import ImportResult, OrderOut, OrderPatch
 from greenlogix_api.serialize import order_out
 
 log = logging.getLogger("greenlogix")
 
 router = APIRouter(tags=["orders"])
+
+
+def _published_assignment(session: Session, order_id: int) -> bool:
+    stops = session.exec(select(Stop).where(Stop.order_id == order_id)).all()
+    for stop in stops:
+        if stop.route_id is None:
+            continue
+        route = session.get(Route, stop.route_id)
+        if route is not None and route.published:
+            return True
+    return False
+
+
+def _reject_if_published(session: Session, order: Order) -> None:
+    if order.id is not None and _published_assignment(session, order.id):
+        raise HTTPException(status_code=409, detail="published")
 
 
 @router.post("/orders/import", response_model=ImportResult)
@@ -56,6 +72,19 @@ def list_orders(
     return [order_out(o) for o in rows]
 
 
+@router.get("/orders/{id}", response_model=OrderOut)
+def get_order(
+    id: int,
+    session: Session = Depends(get_session),
+    _: None = Depends(require_dispatcher),
+) -> OrderOut:
+    log.info("path=/orders/%s", id)
+    order = session.get(Order, id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    return order_out(order)
+
+
 @router.patch("/orders/{id}", response_model=OrderOut)
 def patch_order(
     id: int,
@@ -67,6 +96,7 @@ def patch_order(
     order = session.get(Order, id)
     if order is None:
         raise HTTPException(status_code=404, detail="not_found")
+    _reject_if_published(session, order)
     data = body.model_dump(exclude_unset=True)
     for key, value in data.items():
         setattr(order, key, value)
@@ -86,6 +116,7 @@ def delete_order(
     order = session.get(Order, id)
     if order is None:
         raise HTTPException(status_code=404, detail="not_found")
+    _reject_if_published(session, order)
     session.delete(order)
     session.commit()
     return {"id": id}
