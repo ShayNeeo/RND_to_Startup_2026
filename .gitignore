@@ -36,6 +36,7 @@ graphify-out/
 apps/api/.venv/
 apps/api/.ruff_cache/
 apps/api/data/greenlogix.db
+apps/api/data/last_report.json
 apps/api/data/uploads/
 apps/mobile-driver/.dart_tool/
 apps/mobile-driver/build/

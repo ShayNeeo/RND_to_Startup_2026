@@ -8,19 +8,23 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from sqlmodel import Session
 
 from greenlogix_api.auth import require_dispatcher
-from greenlogix_api.db import DATA_DIR, init_db
+from greenlogix_api.db import DATA_DIR, get_session, init_db
 from greenlogix_api.routers import driver, optimize, orders, report, vehicles
-from greenlogix_api.schemas import DepotOut, HealthOut, SeedOut
+from greenlogix_api.schemas import HealthOut, SeedOut
+from greenlogix_api.seed import seed_database
 
 log = logging.getLogger("greenlogix")
 
 API_ROOT = Path(__file__).resolve().parents[2]
 OPENAPI_PATH = API_ROOT / "openapi.json"
+templates = Jinja2Templates(directory=str(API_ROOT / "templates"))
 
 
 @asynccontextmanager
@@ -54,15 +58,18 @@ def health() -> HealthOut:
 
 
 @app.get("/dispatcher", response_class=HTMLResponse)
-def dispatcher(_: None = Depends(require_dispatcher)) -> str:
+def dispatcher(request: Request, _: None = Depends(require_dispatcher)) -> HTMLResponse:
     log.info("path=/dispatcher")
-    return "GreenLogix dispatcher"
+    return templates.TemplateResponse(request, "dispatcher.html")
 
 
 @app.post("/seed", response_model=SeedOut)
-def seed(_: None = Depends(require_dispatcher)) -> SeedOut:
+def seed(
+    session: Session = Depends(get_session),
+    _: None = Depends(require_dispatcher),
+) -> SeedOut:
     log.info("path=/seed")
-    return SeedOut(orders=0, vehicles=0, depot=DepotOut(lat=0.0, lng=0.0, name=""))
+    return seed_database(session)
 
 
 def dump_openapi(path: Path = OPENAPI_PATH) -> None:

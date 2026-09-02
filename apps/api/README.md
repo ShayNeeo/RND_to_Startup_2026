@@ -33,9 +33,27 @@ This is a contest demo flag, not a product identity provider.
 
 Checked-in [`openapi.json`](./openapi.json) is the frozen D-15 contract. `GET /openapi.json` is public.
 
+## Distances (D-07)
+
+Road km = haversine × `HCMC_CIRCUITY` **1.35** (`greenlogix_api.solver.distance`). Same factor on the spreadsheet-order baseline and the clustered NN+2-opt plan. Times are naive local `HH:MM` (`TZ=Asia/Ho_Chi_Minh`); no pytz.
+
+CO₂ is tank-to-wheel: `kg_co2 = road_km * (l_per_100km/100) * kg_co2_per_litre` from `data/emission_factors.json` (petrol 2.31, diesel 2.68). Contest estimate, not an ISO 14083 pack.
+
+## Seed
+
+```bash
+cd apps/api
+GREENLOGIX_DEMO=1 uv run python -m greenlogix_api.seed
+```
+
+Writes 80 inner-HCMC orders + 10 trucks (one `maintenance`) into `data/greenlogix.db` and refreshes `data/seed/*.xlsx`. Depot: Tân Bình DC `10.801, 106.661`.
+
+Dispatcher (OSM tiles only): `GET /dispatcher` then Seed → Optimize → Publish. Driver PIN `0000` reads published routes only.
+
 ## Tests
 
 ```bash
 cd apps/api
 uv run pytest -x tests/test_health.py tests/test_auth.py
+GREENLOGIX_DEMO=1 uv run pytest -x tests/test_distance.py tests/test_solver.py tests/test_carbon.py tests/test_baseline.py tests/test_tracer_e2e.py
 ```

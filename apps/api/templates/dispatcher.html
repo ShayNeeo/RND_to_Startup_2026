@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <title>GreenLogix dispatcher</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+  <style>
+    body { font-family: sans-serif; margin: 16px; }
+    #map { height: 480px; margin-top: 12px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    #totals { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>GreenLogix dispatcher</h1>
+  <div class="row">
+    <button id="btn-seed" type="button">Seed</button>
+    <button id="btn-optimize" type="button">Optimize</button>
+    <button id="btn-publish" type="button">Publish</button>
+  </div>
+  <div id="totals">km: <span id="km">0</span> · litres: <span id="litres">0</span> · kg_co2: <span id="kg_co2">0</span></div>
+  <p id="status"></p>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script>
+    const AUTH = { "Authorization": "Bearer DEMO" };
+    const map = L.map("map").setView([10.776, 106.700], 12);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    let polylines = [];
+
+    function setStatus(text) { document.getElementById("status").textContent = text; }
+    function setTotals(t) {
+      const tot = t || { km: 0, litres: 0, kg_co2: 0 };
+      document.getElementById("km").textContent = Number(tot.km).toFixed(2);
+      document.getElementById("litres").textContent = Number(tot.litres).toFixed(2);
+      document.getElementById("kg_co2").textContent = Number(tot.kg_co2).toFixed(2);
+    }
+    function drawRoutes(routes) {
+      polylines.forEach((p) => map.removeLayer(p));
+      polylines = [];
+      for (const route of routes || []) {
+        const latlngs = (route.stops || []).map((s) => [s.lat, s.lng]);
+        if (latlngs.length) {
+          polylines.push(L.polyline(latlngs, { color: route.color || "blue" }).addTo(map));
+        }
+      }
+    }
+    async function api(path, opts) {
+      const res = await fetch(path, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
+      if (!res.ok) throw new Error(path + " " + res.status);
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      return res.text();
+    }
+    document.getElementById("btn-seed").onclick = async () => {
+      try {
+        const body = await api("/seed", { method: "POST" });
+        setStatus("seeded orders=" + body.orders + " vehicles=" + body.vehicles);
+      } catch (err) { setStatus(String(err)); }
+    };
+    document.getElementById("btn-optimize").onclick = async () => {
+      try {
+        const body = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
+        setTotals(body.totals);
+        const routes = await api("/routes");
+        drawRoutes(routes);
+        setStatus("optimized routes=" + (body.routes || []).length);
+      } catch (err) { setStatus(String(err)); }
+    };
+    document.getElementById("btn-publish").onclick = async () => {
+      try {
+        const body = await api("/routes/publish", { method: "POST", body: JSON.stringify({ route_ids: [] }) });
+        setStatus("published=" + (body || []).length);
+      } catch (err) { setStatus(String(err)); }
+    };
+  </script>
+</body>
+</html>

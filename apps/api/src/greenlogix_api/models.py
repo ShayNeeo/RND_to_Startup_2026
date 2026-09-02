@@ -53,6 +53,7 @@ class Stop(SQLModel, table=True):
     __tablename__ = "stops"
 
     id: int | None = Field(default=None, primary_key=True)
+    route_id: int | None = Field(default=None, foreign_key="routes.id", index=True)
     seq: int = 0
     kind: str = "stop"
     order_id: int | None = None
