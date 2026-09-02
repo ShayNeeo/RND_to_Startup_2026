@@ -20,7 +20,7 @@ Map<String, dynamic> _stopJson({bool? lateRisk}) {
     'kg': 10,
     'status': 'pending',
     'fail_reason': null,
-    if (lateRisk != null) 'late_risk': lateRisk,
+    'late_risk': ?lateRisk,
   };
 }
 
