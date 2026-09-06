@@ -36,7 +36,7 @@ def stop_status(
 @router.post("/stops/{id}/photo", response_model=StatusOut)
 def stop_photo(
     id: int,
-    file: UploadFile,
+    photo: UploadFile,
     _: None = Depends(require_driver),
 ) -> StatusOut:
     log.info("path=/stops/%s/photo", id)
