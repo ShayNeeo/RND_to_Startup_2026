@@ -26,6 +26,9 @@ Thumbs.db
 .serena/
 .loop-state/
 graphify-out/
+.graphify/
+.graphifyrc
+thanh.jpeg
 .worktrees/
 
 # Python / Flutter local

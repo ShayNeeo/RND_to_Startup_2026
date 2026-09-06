@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "greenlogix-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "routes": [
+    {
+      "pattern": "greenlogix.w9.nu/*",
+      "zone_name": "w9.nu"
+    }
+  ],
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "greenlogix-db",
+      "database_id": "0a651690-6d39-4996-82fc-60d27f0db937"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production"
+  }
+}

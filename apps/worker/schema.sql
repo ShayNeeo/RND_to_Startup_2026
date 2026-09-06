@@ -1,0 +1,64 @@
+-- GreenLogix Cloudflare D1 Schema
+
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  address TEXT NOT NULL,
+  lat REAL NOT NULL,
+  lng REAL NOT NULL,
+  receiver TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  kg REAL NOT NULL,
+  window_start TEXT NOT NULL,
+  window_end TEXT NOT NULL,
+  cargo_type TEXT NOT NULL DEFAULT 'thuong',
+  notes TEXT NOT NULL DEFAULT '',
+  excel_row INTEGER,
+  status TEXT NOT NULL DEFAULT 'pending',
+  late_risk INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS vehicles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  plate TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'xe_tai_nho',
+  capacity_kg REAL NOT NULL,
+  fuel TEXT NOT NULL DEFAULT 'petrol',
+  l_per_100km REAL NOT NULL,
+  status TEXT NOT NULL DEFAULT 'ready'
+);
+
+CREATE TABLE IF NOT EXISTS routes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  vehicle_id INTEGER NOT NULL,
+  plate TEXT NOT NULL,
+  color TEXT NOT NULL,
+  published INTEGER NOT NULL DEFAULT 0,
+  km REAL NOT NULL,
+  litres REAL NOT NULL,
+  kg_co2 REAL NOT NULL,
+  overload INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS stops (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  route_id INTEGER REFERENCES routes(id),
+  seq INTEGER NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'stop',
+  order_id INTEGER REFERENCES orders(id),
+  lat REAL NOT NULL,
+  lng REAL NOT NULL,
+  address TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  window_start TEXT NOT NULL DEFAULT '',
+  window_end TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  kg REAL NOT NULL DEFAULT 0.0,
+  status TEXT NOT NULL DEFAULT 'pending',
+  fail_reason TEXT,
+  late_risk INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+  id TEXT PRIMARY KEY,
+  data TEXT NOT NULL
+);

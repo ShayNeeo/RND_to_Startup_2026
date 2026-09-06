@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Menu, X, ArrowRight, Calculator } from 'lucide-react';
+import { Leaf, Menu, X, ArrowRight, Calculator, LayoutDashboard } from 'lucide-react';
 
 interface NavbarProps {
   onOpenPilotModal: () => void;
+  onOpenPortalModal?: () => void;
 }
 
 const NAV_LINKS = [
@@ -14,7 +15,7 @@ const NAV_LINKS = [
   { name: 'Dùng thử', href: '#pricing', id: 'pricing' },
 ];
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal, onOpenPortalModal }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -119,6 +120,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
             </a>
 
             <button
+              type="button"
+              onClick={onOpenPortalModal}
+              className="whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 text-slate-200 bg-white/10 hover:bg-white/15 border border-white/10 hover:border-white/20 active:scale-95 cursor-pointer"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-greenlogix-lime" />
+              <span>Vào ứng dụng</span>
+            </button>
+
+            <button
               onClick={onOpenPilotModal}
               className="whitespace-nowrap px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-lg shadow-greenlogix-lime/20 hover:shadow-xl hover:shadow-greenlogix-lime/30 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
             >
@@ -129,6 +139,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
 
           {/* Mobile Right Controls */}
           <div className="lg:hidden flex items-center gap-2">
+            <button
+              onClick={onOpenPortalModal}
+              className="px-2.5 py-1.5 rounded-full text-xs font-bold text-slate-200 bg-white/10 hover:bg-white/15 border border-white/10 flex items-center gap-1 sm:hidden cursor-pointer"
+            >
+              <LayoutDashboard className="w-3 h-3 text-greenlogix-lime" />
+              <span>App</span>
+            </button>
             <button
               onClick={onOpenPilotModal}
               className="px-3 py-1.5 rounded-full text-xs font-bold text-slate-950 bg-greenlogix-lime hover:bg-yellow-300 shadow-sm sm:hidden"
@@ -178,6 +195,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal }) => {
                   <Calculator className="w-3.5 h-3.5 text-greenlogix-lime" />
                   <span>Tính mức tiết kiệm và lượng CO₂ giảm</span>
                 </a>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenPortalModal?.();
+                  }}
+                  className="w-full py-2.5 rounded-xl text-center text-xs font-bold text-slate-200 bg-white/10 hover:bg-white/15 border border-white/10 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5 text-greenlogix-lime" />
+                  <span>Vào ứng dụng (Chọn vai trò Quản lý / Tài xế)</span>
+                </button>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);

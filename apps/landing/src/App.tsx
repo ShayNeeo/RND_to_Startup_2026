@@ -9,9 +9,11 @@ import { Team } from './components/Team';
 import { PricingAndPilot } from './components/PricingAndPilot';
 import { Footer } from './components/Footer';
 import { PilotModal } from './components/PilotModal';
+import { RolePortalModal } from './components/RolePortalModal';
 
 export function App() {
   const [pilotModalOpen, setPilotModalOpen] = useState<boolean>(false);
+  const [rolePortalOpen, setRolePortalOpen] = useState<boolean>(false);
   const [selectedInterest, setSelectedInterest] = useState<string>('Dùng thử miễn phí 4–6 tuần');
 
   const handleOpenPilotModal = (interest?: string) => {
@@ -31,7 +33,10 @@ export function App() {
       </a>
 
       {/* Floating Glass Pill Top Bar */}
-      <Navbar onOpenPilotModal={() => handleOpenPilotModal('Dùng thử miễn phí 4–6 tuần')} />
+      <Navbar
+        onOpenPilotModal={() => handleOpenPilotModal('Dùng thử miễn phí 4–6 tuần')}
+        onOpenPortalModal={() => setRolePortalOpen(true)}
+      />
 
       <main id="main-content" tabIndex={-1}>
         {/* 1. Hero Section (Full Viewport Video with Barlow Condensed Headline & Route Map) */}
@@ -64,6 +69,12 @@ export function App() {
         isOpen={pilotModalOpen}
         onClose={() => setPilotModalOpen(false)}
         initialInterest={selectedInterest}
+      />
+
+      {/* Live Demo Role Portal Modal (Zero-Friction Role Entrance) */}
+      <RolePortalModal
+        isOpen={rolePortalOpen}
+        onClose={() => setRolePortalOpen(false)}
       />
     </div>
   );
