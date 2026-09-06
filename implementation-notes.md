@@ -61,3 +61,33 @@
    - Clicked "Vào ứng dụng": Verified `RolePortalModal` opened with Dispatcher and Driver cards.
    - Navigated to `https://greenlogix.w9.nu/driver?plate=51C-000.01`: Verified Driver PWA loaded with 27 stops and Lucide icons.
    - Clicked "Đã giao" on Stop #1: Verified status updated to `delivered` in Cloudflare D1.
+
+---
+
+# Bugfix Notes: Dispatcher Leaflet SRI Hash Mismatch & Connection Stall
+
+**Date:** 2026-09-07T06:05:00+07:00  
+**Author:** Phạm Quốc Thanh (`@ShayNeeo`)  
+**Scope:** Root cause analysis and resolution of "Đang kết nối Cloudflare Edge..." stall on `/app`.
+
+### Root Cause
+1. **Subresource Integrity (SRI) Hash Mismatch**:
+   - In `apps/worker/src/dispatcherHtml.ts`, the `<script src="leaflet.js">` tag was assigned the sha256 hash belonging to `leaflet.css` (`sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=`) rather than `leaflet.js` (`sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=`).
+   - Chrome's security layer blocked `leaflet.js` from loading with:  
+     `Failed to find a valid digest in the 'integrity' attribute for resource '...leaflet.js'`.
+   - When the inline script ran `const map = L.map("map", ...)`, it threw `Uncaught ReferenceError: L is not defined`.
+   - Because the main thread threw an uncaught error before `Promise.all([refreshRoutes(), ...])`, data loading halted completely, leaving the status message permanently stuck on `"Đang kết nối Cloudflare Edge..."` and the map unrendered (black).
+
+2. **CDN 302 Redirect Latency**:
+   - `https://unpkg.com/lucide@latest` issued 302 redirects on each uncached load.
+
+### Fix
+1. Corrected `leaflet.js` SRI hash to `sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=`.
+2. Pinned `lucide` to `https://unpkg.com/lucide@0.475.0/dist/umd/lucide.min.js`.
+3. Wrapped icon rendering in `safeCreateIcons()` to prevent any external CDN delay from blocking application execution.
+4. Added defensive checks around `L.map` and `drawRoutes` to guarantee that even if map assets are delayed, the dashboard and route tables initialize reliably.
+
+### Verification
+- Chrome DevTools console: 0 errors/exceptions.
+- App state verified: Status transitioned to `"Hệ thống sẵn sàng trên Cloudflare Edge 24/7"`, map rendered with 5 routes and 80 stops, KPIs loaded (`94.74 km`).
+- Worker version `b05ec4d6-33f3-4240-82d7-b6c9d9f7271a` deployed live to `greenlogix.w9.nu/*`.

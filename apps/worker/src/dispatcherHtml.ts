@@ -7,7 +7,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@0.475.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
       --ink: #080f0c;
@@ -251,7 +251,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
           crossorigin=""></script>
   <script>
     const AUTH = { "Authorization": "Bearer DEMO" };
@@ -261,16 +261,32 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
     let markers = [];
     const geomCache = new Map();
 
-    const map = L.map("map", { zoomControl: false }).setView([10.776, 106.700], 12);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    function safeCreateIcons() {
+      if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+        try { lucide.createIcons(); } catch (e) { console.warn("lucide error:", e); }
+      }
+    }
+
+    let map = null;
+    if (typeof L !== 'undefined') {
+      try {
+        map = L.map("map", { zoomControl: false }).setView([10.776, 106.700], 12);
+        L.control.zoom({ position: "bottomright" }).addTo(map);
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+      } catch (e) {
+        console.error("Map init error:", e);
+      }
+    } else {
+      console.warn("Leaflet library is not available");
+    }
 
     function setStatus(text) {
-      document.getElementById("status-text").textContent = text;
-      lucide.createIcons();
+      const el = document.getElementById("status-text");
+      if (el) el.textContent = text;
+      safeCreateIcons();
     }
     function num(v) { return Number(v || 0).toFixed(2); }
 
@@ -279,7 +295,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       event.currentTarget.classList.add('active');
       document.getElementById('tab-' + tab).classList.add('active');
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     // HCMC Truck Ban Rules (Quy định 23/2018/QĐ-UBND)
@@ -343,6 +359,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
     }
 
     async function drawRoutes(routes) {
+      if (!map) return;
       polylines.forEach(p => map.removeLayer(p));
       markers.forEach(m => map.removeLayer(m));
       polylines = [];
@@ -493,7 +510,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
           ul.appendChild(li);
         }
       }
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     async function refreshVehicles() {
@@ -561,8 +578,12 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
     // Initial load
     Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]).then(() => {
       setStatus("Hệ thống sẵn sàng trên Cloudflare Edge 24/7");
-      lucide.createIcons();
-    }).catch(err => setStatus(String(err)));
+      safeCreateIcons();
+    }).catch(err => {
+      console.error("Initial load error:", err);
+      setStatus("Lỗi kết nối: " + (err.message || err));
+      safeCreateIcons();
+    });
   </script>
 </body>
 </html>

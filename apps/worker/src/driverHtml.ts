@@ -4,7 +4,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <title>GreenLogix — Ứng dụng tài xế (Driver PWA)</title>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@0.475.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
       --bg: #070d0a;
@@ -200,6 +200,12 @@ export const DRIVER_HTML = `<!DOCTYPE html>
       }
     }
 
+    function safeCreateIcons() {
+      if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+        try { lucide.createIcons(); } catch (e) { console.warn("lucide error:", e); }
+      }
+    }
+
     function isHcmcTruckBan(start, end) {
       if (!start || !end) return false;
       const s = parseInt(start.split(":")[0], 10);
@@ -245,7 +251,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
           document.getElementById("stat-total").textContent = "0";
           document.getElementById("stat-done").textContent = "0";
           document.getElementById("stat-kg").textContent = "0 kg";
-          lucide.createIcons();
+          safeCreateIcons();
           return;
         }
 
@@ -304,7 +310,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
           container.appendChild(card);
         });
 
-        lucide.createIcons();
+        safeCreateIcons();
       } catch (err) {
         container.innerHTML = '<div class="empty-card" style="color:var(--danger)">' + String(err) + '</div>';
       }
