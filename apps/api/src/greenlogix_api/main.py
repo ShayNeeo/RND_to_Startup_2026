@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session
 
@@ -35,6 +38,20 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="GreenLogix API", lifespan=lifespan)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(
+    _request: Request, error: RequestValidationError
+) -> JSONResponse:
+    errors = jsonable_encoder(
+        error.errors(),
+        custom_encoder={
+            float: lambda value: value if math.isfinite(value) else str(value)
+        },
+    )
+    return JSONResponse(status_code=422, content={"detail": errors})
+
 
 app.add_middleware(
     CORSMiddleware,

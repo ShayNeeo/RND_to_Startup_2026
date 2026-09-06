@@ -33,9 +33,7 @@ def nearest_neighbor(orders: list[Order], depot: tuple[float, float]) -> list[Or
             if best is None:
                 best, best_d = order, dist
                 continue
-            if dist < best_d - 1e-12:
-                best, best_d = order, dist
-            elif abs(dist - best_d) <= 1e-12 and order.window_start < best.window_start:
+            if dist < best_d - 1e-12 or (abs(dist - best_d) <= 1e-12 and order.window_start < best.window_start):
                 best, best_d = order, dist
         assert best is not None
         remaining.remove(best)

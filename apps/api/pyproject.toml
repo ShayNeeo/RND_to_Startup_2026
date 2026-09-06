@@ -28,6 +28,10 @@ pythonpath = ["src"]
 target-version = "py312"
 src = ["src", "tests"]
 
+[tool.ruff.lint]
+extend-select = ["B", "I", "SIM"]
+extend-ignore = ["B008", "BLE001", "DTZ001"]
+
 [dependency-groups]
 dev = [
     "httpx2>=2.12.0",

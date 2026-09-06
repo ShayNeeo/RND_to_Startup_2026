@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime, time
 from io import BytesIO
+
 from openpyxl import load_workbook
 
 from greenlogix_api.models import Order
@@ -58,7 +59,7 @@ def normalize_window(value: object) -> str:
     if isinstance(value, bool):
         return ""
     if isinstance(value, (int, float)):
-        minutes = int(round(float(value) * 24 * 60)) % (24 * 60)
+        minutes = round(float(value) * 24 * 60) % (24 * 60)
         hours, mins = divmod(minutes, 60)
         return f"{hours:02d}:{mins:02d}"
     text = str(value).strip()

@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, Field, model_validator
 
-StatusName = Literal["arrived", "delivered", "failed"]
-FailReason = Literal["khach_vang", "sai_dia_chi", "hang_hong", "tu_choi"]
+CargoType = Literal["thuong", "lanh", "de_vo"]
+FuelType = Literal["petrol", "diesel"]
+VehicleStatus = Literal["ready", "maintenance"]
+StopStatus = Literal["pending", "arrived", "delivered", "failed"]
+DeliveryStatus = Literal["arrived", "delivered", "failed"]
+FailureReason = Literal["khach_vang", "sai_dia_chi", "hang_hong", "tu_choi"]
+LocalTime = Annotated[str, Field(pattern=r"^(?:[01][0-9]|2[0-3]):[0-5][0-9]$")]
 
 
 class HealthOut(BaseModel):
-    status: str
+    status: Literal["ok"]
 
 
 class OrderOut(BaseModel):
@@ -22,25 +27,25 @@ class OrderOut(BaseModel):
     receiver: str
     phone: str
     kg: float
-    window_start: str
-    window_end: str
-    cargo_type: str
+    window_start: LocalTime
+    window_end: LocalTime
+    cargo_type: CargoType
     notes: str
     excel_row: int | None
-    status: str
-    late_risk: bool
+    status: Literal["pending", "assigned", "arrived", "delivered", "failed"]
+    late_risk: bool = False
 
 
 class OrderPatch(BaseModel):
     address: str | None = None
-    lat: float | None = None
-    lng: float | None = None
+    lat: float | None = Field(default=None, ge=-90, le=90, allow_inf_nan=False)
+    lng: float | None = Field(default=None, ge=-180, le=180, allow_inf_nan=False)
     receiver: str | None = None
     phone: str | None = None
-    kg: float | None = None
-    window_start: str | None = None
-    window_end: str | None = None
-    cargo_type: str | None = None
+    kg: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    window_start: LocalTime | None = None
+    window_end: LocalTime | None = None
+    cargo_type: CargoType | None = None
     notes: str | None = None
 
 
@@ -60,27 +65,27 @@ class VehicleOut(BaseModel):
     plate: str
     type: str
     capacity_kg: float
-    fuel: str
+    fuel: FuelType
     l_per_100km: float
-    status: str
+    status: VehicleStatus
 
 
 class VehiclePatch(BaseModel):
     type: str | None = None
-    capacity_kg: float | None = None
-    fuel: str | None = None
-    l_per_100km: float | None = None
-    status: str | None = None
+    capacity_kg: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    fuel: FuelType | None = None
+    l_per_100km: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    status: VehicleStatus | None = None
 
 
 class OptimizeIn(BaseModel):
-    cluster_radius_km: float = 3.0
+    cluster_radius_km: float = Field(default=3.0, gt=0, allow_inf_nan=False)
 
 
 class StopOut(BaseModel):
     id: int
     seq: int
-    kind: str
+    kind: Literal["depot", "stop"]
     order_id: int | None
     lat: float
     lng: float
@@ -90,9 +95,9 @@ class StopOut(BaseModel):
     window_end: str
     notes: str
     kg: float
-    status: str
-    fail_reason: str | None
-    late_risk: bool
+    status: StopStatus
+    fail_reason: FailureReason | None = None
+    late_risk: bool = False
 
 
 class RouteOut(BaseModel):
@@ -134,20 +139,23 @@ class DriverRouteList(BaseModel):
 
 
 class StatusIn(BaseModel):
-    status: StatusName
-    reason: FailReason | None = None
+    status: DeliveryStatus
+    reason: FailureReason | None = Field(
+        default=None,
+        description="Required and non-null when status is failed.",
+    )
 
     @model_validator(mode="after")
-    def failed_requires_reason(self) -> StatusIn:
+    def require_failure_reason(self) -> Self:
         if self.status == "failed" and self.reason is None:
-            raise ValueError("failed requires reason")
+            raise ValueError("reason is required when status is failed")
         return self
 
 
 class StatusOut(BaseModel):
     id: int
-    status: str
-    reason: str | None
+    status: StopStatus
+    reason: FailureReason | None
 
 
 class ReportTotals(BaseModel):
