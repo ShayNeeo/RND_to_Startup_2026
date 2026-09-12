@@ -531,17 +531,19 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
     // Action handlers
     document.getElementById("btn-seed").onclick = async () => {
       try {
+        setStatus("Đang nạp 80 đơn hàng chuẩn & tối ưu tuyến trên Cloudflare D1...");
         const body = await api("/seed", { method: "POST" });
-        setStatus("Đã nạp dữ liệu chuẩn 80 đơn hàng & 10 xe tải");
         await Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]);
+        setStatus("Đã nạp dữ liệu & tối ưu thành công " + (body.orders || 80) + " đơn hàng trên " + (body.routes || 5) + " tuyến xe tải!");
       } catch (err) { setStatus(String(err)); }
     };
 
     document.getElementById("btn-optimize").onclick = async () => {
       try {
+        setStatus("Đang chạy thuật toán VRPTW 2-Opt...");
         const body = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
-        setStatus("Đã hoàn thành tối ưu " + (body.routes || []).length + " tuyến với VRPTW 2-Opt");
         await Promise.all([refreshRoutes(), refreshReport()]);
+        setStatus("Đã hoàn thành tối ưu " + (body.routes || []).length + " tuyến với VRPTW 2-Opt");
       } catch (err) { setStatus(String(err)); }
     };
 
@@ -576,7 +578,17 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
     };
 
     // Initial load
-    Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]).then(() => {
+    Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]).then(async () => {
+      const countEl = document.getElementById("route-count");
+      if (countEl && (countEl.textContent === "0" || countEl.textContent === "")) {
+        setStatus("Đang tự động nạp 80 đơn hàng & tối ưu tuyến ban đầu...");
+        try {
+          const body = await api("/seed", { method: "POST" });
+          await Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]);
+        } catch (e) {
+          console.warn("Auto-seed error:", e);
+        }
+      }
       setStatus("Hệ thống sẵn sàng trên Cloudflare Edge 24/7");
       safeCreateIcons();
     }).catch(err => {

@@ -44,10 +44,89 @@ function checkDriverPin(request: Request): boolean {
   return pin === "0000";
 }
 
+async function performOptimization(env: Env, radius: number = 3.0, autoPublish: boolean = true) {
+  const orderRows = (await env.DB.prepare("SELECT * FROM orders").all()).results as unknown as OrderRow[];
+  const vehicleRows = (await env.DB.prepare("SELECT * FROM vehicles").all()).results as unknown as VehicleRow[];
+
+  const vrp = runVrp(orderRows, vehicleRows, [DEPOT_LAT, DEPOT_LNG], DEPOT_NAME, radius);
+
+  // Persist generated routes and stops to D1
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM stops"),
+    env.DB.prepare("DELETE FROM routes"),
+  ]);
+
+  const createdRoutes: any[] = [];
+  const publishedVal = autoPublish ? 1 : 0;
+
+  for (const r of vrp.routes) {
+    const routeInsert = await env.DB.prepare(
+      `INSERT INTO routes (vehicle_id, plate, color, published, km, litres, kg_co2, overload)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+      .bind(r.vehicle.id, r.vehicle.plate, r.color, publishedVal, r.km, r.litres, r.kg_co2, r.overload ? 1 : 0)
+      .run();
+
+    const routeId = Number(routeInsert.meta.last_row_id);
+
+    const stopStmts = r.stops.map((s) =>
+      env.DB.prepare(
+        `INSERT INTO stops (route_id, seq, kind, order_id, lat, lng, address, phone, window_start, window_end, notes, kg, status, fail_reason, late_risk)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        routeId,
+        s.seq,
+        s.kind,
+        s.order_id,
+        s.lat,
+        s.lng,
+        s.address,
+        s.phone,
+        s.window_start,
+        s.window_end,
+        s.notes,
+        s.kg,
+        s.status,
+        s.fail_reason,
+        s.late_risk ? 1 : 0
+      )
+    );
+
+    if (stopStmts.length > 0) {
+      await env.DB.batch(stopStmts);
+    }
+
+    createdRoutes.push({
+      id: routeId,
+      vehicle_id: r.vehicle.id,
+      plate: r.vehicle.plate,
+      color: r.color,
+      published: autoPublish,
+      km: r.km,
+      litres: r.litres,
+      kg_co2: r.kg_co2,
+      overload: r.overload,
+      stops: r.stops.map((s, idx) => ({ id: idx + 1, ...s })),
+    });
+  }
+
+  // Save report
+  await env.DB.prepare("INSERT OR REPLACE INTO reports (id, data) VALUES ('latest', ?)")
+    .bind(JSON.stringify({ baseline: vrp.baseline, optimized: vrp.totals, delta: vrp.delta }))
+    .run();
+
+  return {
+    routes: createdRoutes,
+    unassigned_order_ids: vrp.unassigned_ids,
+    totals: vrp.totals,
+  };
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const rawPath = url.pathname;
+    const cleanPath = rawPath.replace(/\/+$/, "") || "/";
     const method = request.method.toUpperCase();
 
     // 1. CORS Preflight
@@ -56,7 +135,7 @@ export default {
     }
 
     // 2. Dispatcher Web Console UI (Served 24/7 at /app, /dashboard, and /dispatcher)
-    if (rawPath === "/app" || rawPath === "/dashboard" || rawPath === "/dispatcher") {
+    if (cleanPath === "/app" || cleanPath === "/dashboard" || cleanPath === "/dispatcher") {
       return new Response(DISPATCHER_HTML, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
@@ -66,7 +145,7 @@ export default {
     }
 
     // 2b. Driver Mobile PWA UI (Served 24/7 at /driver)
-    if (rawPath === "/driver") {
+    if (cleanPath === "/driver") {
       return new Response(DRIVER_HTML, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
@@ -165,9 +244,13 @@ export default {
       }
       await env.DB.batch(vehicleStmts);
 
+      // Immediately run optimizer so routes, stops, and ground operations are immediately visible
+      const optResult = await performOptimization(env, 3.0, true);
+
       return jsonResponse({
         orders: seedOrders.length,
         vehicles: seedVehicles.length,
+        routes: optResult.routes.length,
         depot: { lat: DEPOT_LAT, lng: DEPOT_LNG, name: DEPOT_NAME },
       });
     }
@@ -281,80 +364,8 @@ export default {
       const body = (await request.json().catch(() => ({}))) as { cluster_radius_km?: number };
       const radius = body.cluster_radius_km && body.cluster_radius_km > 0 ? body.cluster_radius_km : 3.0;
 
-      const orderRows = (await env.DB.prepare("SELECT * FROM orders").all()).results as unknown as OrderRow[];
-      const vehicleRows = (await env.DB.prepare("SELECT * FROM vehicles").all()).results as unknown as VehicleRow[];
-
-      const vrp = runVrp(orderRows, vehicleRows, [DEPOT_LAT, DEPOT_LNG], DEPOT_NAME, radius);
-
-      // Persist generated routes and stops to D1
-      await env.DB.batch([
-        env.DB.prepare("DELETE FROM stops"),
-        env.DB.prepare("DELETE FROM routes"),
-      ]);
-
-      const createdRoutes: any[] = [];
-
-      for (const r of vrp.routes) {
-        const routeInsert = await env.DB.prepare(
-          `INSERT INTO routes (vehicle_id, plate, color, published, km, litres, kg_co2, overload)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-          .bind(r.vehicle.id, r.vehicle.plate, r.color, 0, r.km, r.litres, r.kg_co2, r.overload ? 1 : 0)
-          .run();
-
-        const routeId = Number(routeInsert.meta.last_row_id);
-
-        const stopStmts = r.stops.map((s) =>
-          env.DB.prepare(
-            `INSERT INTO stops (route_id, seq, kind, order_id, lat, lng, address, phone, window_start, window_end, notes, kg, status, fail_reason, late_risk)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-          ).bind(
-            routeId,
-            s.seq,
-            s.kind,
-            s.order_id,
-            s.lat,
-            s.lng,
-            s.address,
-            s.phone,
-            s.window_start,
-            s.window_end,
-            s.notes,
-            s.kg,
-            s.status,
-            s.fail_reason,
-            s.late_risk ? 1 : 0
-          )
-        );
-
-        if (stopStmts.length > 0) {
-          await env.DB.batch(stopStmts);
-        }
-
-        createdRoutes.push({
-          id: routeId,
-          vehicle_id: r.vehicle.id,
-          plate: r.vehicle.plate,
-          color: r.color,
-          published: false,
-          km: r.km,
-          litres: r.litres,
-          kg_co2: r.kg_co2,
-          overload: r.overload,
-          stops: r.stops.map((s, idx) => ({ id: idx + 1, ...s })),
-        });
-      }
-
-      // Save report
-      await env.DB.prepare("INSERT OR REPLACE INTO reports (id, data) VALUES ('latest', ?)")
-        .bind(JSON.stringify({ baseline: vrp.baseline, optimized: vrp.totals, delta: vrp.delta }))
-        .run();
-
-      return jsonResponse({
-        routes: createdRoutes,
-        unassigned_order_ids: vrp.unassigned_ids,
-        totals: vrp.totals,
-      });
+      const optResult = await performOptimization(env, radius, true);
+      return jsonResponse(optResult);
     }
 
     // 9. Routes (/routes & /routes/publish)

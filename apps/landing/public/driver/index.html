@@ -185,7 +185,7 @@
 
   <script>
     const AUTH = { "Authorization": "Bearer DEMO", "X-Driver-Pin": "0000" };
-    const base = (window.location.port === "8787") ? "" : "https://greenlogix-api.9ez.workers.dev";
+    const base = (window.location.port === "8787" || window.location.hostname.includes("workers.dev")) ? "" : "https://greenlogix-api.9ez.workers.dev";
     let currentStops = [];
 
     // Parse URL plate param if provided
