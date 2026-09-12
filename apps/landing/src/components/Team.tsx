@@ -1,34 +1,71 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 
-const members = [
+interface TeamMember {
+  name: string;
+  role: React.ReactNode;
+  image: string;
+  imagePosition: string;
+}
+
+const members: TeamMember[] = [
   {
     name: 'Nguyễn Thu Thuỷ',
-    role: 'Nghiên cứu & Cung cấp kiến thức chuyên môn Logistics và Chuỗi cung ứng',
+    role: (
+      <>
+        Nghiên Cứu &amp; Cung Cấp Kiến Thức
+        <br />
+        Logistics &amp; Chuỗi Cung Ứng
+      </>
+    ),
     image: '/team/thuy.jpg',
     imagePosition: 'center 20%',
   },
   {
     name: 'Phạm Quốc Thanh',
-    role: 'Phụ Trách Công Nghệ và Kiến Trúc Hệ Thống',
+    role: (
+      <>
+        Phụ Trách Công Nghệ
+        <br />
+        &amp; Kiến Trúc Hệ Thống
+      </>
+    ),
     image: '/team/thanh.jpg',
     imagePosition: 'center 32%',
   },
   {
     name: 'Nguyễn Ngọc Khánh Phương',
-    role: 'Nghiên Cứu Thị Trường và Phát Triển Bền Vững',
+    role: (
+      <>
+        Nghiên Cứu Thị Trường
+        <br />
+        &amp; Phát Triển Bền Vững
+      </>
+    ),
     image: '/team/phuong.jpg',
     imagePosition: 'center 28%',
   },
   {
     name: 'Nguyễn Hồng Phúc',
-    role: 'Mô Hình Tài Chính và Kế Hoạch Vốn',
+    role: (
+      <>
+        Mô Hình Tài Chính
+        <br />
+        &amp; Kế Hoạch Vốn
+      </>
+    ),
     image: '/team/phuc.jpg',
     imagePosition: 'center 24%',
   },
   {
     name: 'Lê Thị Hoàng Ngân',
-    role: 'Nghiên cứu thị trường & Thương mại điện tử',
+    role: (
+      <>
+        Nghiên Cứu Thị Trường
+        <br />
+        &amp; Thương Mại Điện Tử
+      </>
+    ),
     image: '/team/ngan.jpg',
     imagePosition: 'center 25%',
   },
@@ -115,11 +152,11 @@ export const Team: React.FC = () => {
                 </span>
               </div>
 
-              <div className="mx-auto mt-6 max-w-[250px]">
+              <div className="mx-auto mt-6 max-w-[260px]">
                 <h3 className="font-barlow text-lg font-extrabold uppercase leading-tight tracking-[0.025em] text-white sm:text-xl">
                   {member.name}
                 </h3>
-                <p className="mt-2 min-h-10 text-xs font-bold leading-5 text-greenlogix-lime sm:text-[13px]">
+                <p className="mt-2 min-h-[44px] text-xs font-bold leading-5 text-greenlogix-lime sm:text-[13px] text-balance">
                   {member.role}
                 </p>
               </div>
