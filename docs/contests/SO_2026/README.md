@@ -18,11 +18,11 @@ Official submission materials for the **Olympic Khởi nghiệp 2026** competiti
 
 | Member Name | University / Institution | Project Role | Domain Focus |
 |---|---|---|---|
-| **Nguyễn Thu Thuỷ** | Đại học Kinh tế Quốc dân (NEU) | International Business | Quản trị Kinh doanh Quốc tế & Chiến lược |
-| **Phạm Quốc Thanh** | ĐH Quốc tế — ĐHQG TP.HCM (IU) | Fullstack & AI | Platform Engineering, Cloud Infrastructure & AI |
-| **Nguyễn Ngọc Khánh Phương** | ĐH Ngoại Thương CS2 (FTU2) | Business Development | Marketing, ESG Partnerships & Stakeholder Relations |
-| **Nguyễn Hồng Phúc** | Đại học FPT Hà Nội | Operations & Audit | Financial Projections, Cost Modeling & Internal Audit |
-| **Lê Thị Hoàng Ngân** | Đại học Kinh tế Quốc dân (NEU) | E-commerce | Thương Mại Điện Tử & Vận Hành Kênh Số |
+| **Nguyễn Thu Thuỷ** (2005) | Đại học Kinh tế Quốc dân (NEU) | Logistics & Supply Chain | Nghiên cứu & cung cấp kiến thức chuyên môn về Logistics và Chuỗi cung ứng (QTKD Quốc tế CLC) |
+| **Phạm Quốc Thanh** (2004) | ĐH Quốc tế — ĐHQG TP.HCM (IU) | Fullstack & AI | Platform Engineering, Cloud Infrastructure & AI |
+| **Nguyễn Ngọc Khánh Phương** (2004) | ĐH Ngoại Thương CS2 (FTU2) | Business Development | Marketing, ESG Partnerships & Stakeholder Relations |
+| **Nguyễn Hồng Phúc** (2004) | Đại học FPT Hà Nội | Operations & Audit | Financial Projections, Cost Modeling & Internal Audit |
+| **Lê Thị Hoàng Ngân** (2006) | Đại học Kinh tế Quốc dân (NEU) | Market Research | Nghiên cứu thị trường & Thương mại điện tử |
 
 ---
 

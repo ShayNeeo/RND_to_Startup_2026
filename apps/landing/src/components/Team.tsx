@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 const members = [
   {
     name: 'Nguyễn Thu Thuỷ',
-    role: 'Quản Trị Kinh Doanh Quốc Tế',
+    role: 'Nghiên cứu & Cung cấp kiến thức chuyên môn Logistics và Chuỗi cung ứng',
     image: '/team/thuy.jpg',
     imagePosition: 'center 20%',
   },
@@ -28,7 +28,7 @@ const members = [
   },
   {
     name: 'Lê Thị Hoàng Ngân',
-    role: 'Thương Mại Điện Tử',
+    role: 'Nghiên cứu thị trường & Thương mại điện tử',
     image: '/team/ngan.jpg',
     imagePosition: 'center 25%',
   },

@@ -26,7 +26,8 @@ import {
   Truck,
   Users,
   ChevronRight,
-  Layers
+  Layers,
+  Printer
 } from 'lucide-react';
 
 interface SlideItem {
@@ -305,7 +306,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-emerald-400 selection:text-slate-950 font-sans">
       {/* Official SO 2026 Competition Banner Header */}
-      <header className="sticky top-0 z-50 border-b border-cyan-500/30 bg-[#041c43]/95 backdrop-blur-2xl shadow-2xl transition-all duration-200">
+      <header className="sticky top-0 z-50 border-b border-cyan-500/30 bg-[#041c43]/95 backdrop-blur-2xl shadow-2xl transition-all duration-200 print:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2 sm:px-6">
           {/* Left: Brand Emblem & Back link */}
           <div className="flex items-center gap-2.5 shrink-0 z-10">
@@ -366,6 +367,33 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                 <span className="hidden md:inline">Slide Gốc</span>
               </button>
             </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const prev = showCaptions;
+                setShowCaptions(false);
+                setTimeout(() => {
+                  window.print();
+                  setShowCaptions(prev);
+                }, 100);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition backdrop-blur-md"
+              title="Xuất bản in PDF 16:9 không phụ đề (Ctrl+P)"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Xuất PDF</span>
+            </button>
+
+            <a
+              href="/slides/EcoMiles_Pitch_Deck_SO2026_No_Subtitles.pdf"
+              download="EcoMiles_Pitch_Deck_SO2026_No_Subtitles.pdf"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900/80 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition backdrop-blur-md"
+              title="Tải tệp PDF 16:9 Không Phụ Đề chính thức"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">Tải PDF</span>
+            </a>
 
             <button
               type="button"
@@ -449,7 +477,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
       </header>
 
       {/* Floating Side Dot Tracker (Right Edge) */}
-      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-2 bg-slate-950/70 p-2 rounded-full border border-slate-800 backdrop-blur-md">
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-2 bg-slate-950/70 p-2 rounded-full border border-slate-800 backdrop-blur-md print:hidden">
         {SLIDES.map((s) => {
           const isActive = activeSlide === s.id;
           return (
@@ -481,7 +509,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
       </div>
 
       {/* Top Banner Hero — Full Screen Width Edge-to-Edge */}
-      <div className="w-full bg-[#041c43] border-b border-cyan-500/40 shadow-2xl py-3 sm:py-5 px-0 flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full bg-[#041c43] border-b border-cyan-500/40 shadow-2xl py-3 sm:py-5 px-0 flex flex-col items-center justify-center overflow-hidden print:hidden">
         <div className="w-full flex justify-center">
           <img
             src="/assets/neu_so2026_banner.png"
@@ -536,7 +564,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 print:hidden">
                     {/* Voice-over Audio Button */}
                     <button
                       type="button"
@@ -855,11 +883,14 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
                               Nguyễn Thu Thuỷ
                             </h4>
+                            <span className="text-[10px] text-slate-400 mt-0.5">
+                              2005 · ĐH Kinh Tế Quốc Dân
+                            </span>
                             <span className="text-[11px] font-semibold text-emerald-300 mt-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              QTKD Quốc Tế
+                              QTKD Quốc Tế CLC
                             </span>
                             <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
-                              Chiến lược tăng trưởng B2B, mở rộng mạng lưới đối tác logistics và quản trị rủi ro toàn cầu.
+                              Nghiên cứu &amp; cung cấp kiến thức chuyên môn về Logistics và Chuỗi cung ứng.
                             </p>
                           </div>
 
@@ -875,6 +906,9 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
                               Phạm Quốc Thanh
                             </h4>
+                            <span className="text-[10px] text-slate-400 mt-0.5">
+                              2004 · ĐH Quốc Tế (IU - ĐHQG)
+                            </span>
                             <span className="text-[11px] font-semibold text-emerald-300 mt-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                               Công Nghệ &amp; AI
                             </span>
@@ -895,6 +929,9 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
                               Khánh Phương
                             </h4>
+                            <span className="text-[10px] text-slate-400 mt-0.5">
+                              2004 · ĐH Ngoại Thương CS2
+                            </span>
                             <span className="text-[11px] font-semibold text-emerald-300 mt-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                               ESG &amp; Bền Vững
                             </span>
@@ -915,11 +952,14 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
                               Nguyễn Hồng Phúc
                             </h4>
+                            <span className="text-[10px] text-slate-400 mt-0.5">
+                              2004 · Đại học FPT Hà Nội
+                            </span>
                             <span className="text-[11px] font-semibold text-emerald-300 mt-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                               Tài Chính &amp; Vốn
                             </span>
                             <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
-                              Xây dựng mô hình tài chính hoàn vốn 1.68 năm, IRR 28%, định giá SaaS và chiến lược huy động vốn.
+                              Xây dựng mô hình tài chính hoàn vốn 1.68 năm, IRR 28%, định giá SaaS và kế hoạch gọi vốn.
                             </p>
                           </div>
 
@@ -935,11 +975,14 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
                               Lê Thị Hoàng Ngân
                             </h4>
+                            <span className="text-[10px] text-slate-400 mt-0.5">
+                              2006 · ĐH Kinh Tế Quốc Dân
+                            </span>
                             <span className="text-[11px] font-semibold text-emerald-300 mt-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              Thương Mại ĐT
+                              Thương Mại Điện Tử
                             </span>
                             <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
-                              Tối ưu chuyển đổi khách hàng SME, tích hợp sàn E-commerce và phát triển thị trường số.
+                              Nghiên cứu thị trường &amp; phân tích xu hướng hành vi khách hàng mục tiêu.
                             </p>
                           </div>
                         </div>
@@ -1734,14 +1777,15 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                           </a>
 
                           <a
-                            href="/slides/EcoMiles_Pitch_Deck_SO2026.pdf"
+                            href="/slides/EcoMiles_Pitch_Deck_SO2026_No_Subtitles.pdf"
+                            download="EcoMiles_Pitch_Deck_SO2026_No_Subtitles.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-2 transition"
                           >
                             <Download className="w-5 h-5 text-cyan-400" />
                             <span>Tải Pitch Deck PDF</span>
-                            <span className="text-[10px] text-slate-400">Bản In Slide Gốc</span>
+                            <span className="text-[10px] text-slate-400">16:9 Không Phụ Đề</span>
                           </a>
 
                           <button
@@ -1767,7 +1811,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
 
                 {/* Voice-over Presenter Transcript Box */}
                 {showCaptions && (
-                  <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/90 p-5 shadow-xl transition-all">
+                  <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/90 p-5 shadow-xl transition-all print:hidden">
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
                         <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -1796,7 +1840,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
       </main>
 
       {/* Persistent Bottom Presenter Bar */}
-      <footer className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-800/90 bg-slate-950/95 backdrop-blur-xl px-4 py-3 shadow-2xl">
+      <footer className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-800/90 bg-slate-950/95 backdrop-blur-xl px-4 py-3 shadow-2xl print:hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-black text-xs">
