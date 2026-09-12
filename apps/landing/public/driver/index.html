@@ -185,6 +185,7 @@
 
   <script>
     const AUTH = { "Authorization": "Bearer DEMO", "X-Driver-Pin": "0000" };
+    const base = (window.location.port === "8787") ? "" : "https://greenlogix-api.9ez.workers.dev";
     let currentStops = [];
 
     // Parse URL plate param if provided
@@ -238,8 +239,6 @@
     }
 
     async function loadDriverRoute() {
-      const isPages = window.location.hostname.includes("pages.dev");
-      const base = isPages ? "https://greenlogix-api.9ez.workers.dev" : "";
       const plate = document.getElementById("plate-select").value;
       const container = document.getElementById("stops-container");
       try {
@@ -287,8 +286,8 @@
           const actionsHtml = isDepot
             ? '<div style="font-size:12px;color:var(--mut)">Điểm xuất phát trung tâm / Depot Tân Bình</div>'
             : '<div class="stop-actions">' +
-                '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \\'arrived\\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
-                '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \\'delivered\\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
+                '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \'arrived\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
+                '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \'delivered\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
                 '<button class="btn-act btn-failed" onclick="onFailClick(' + s.id + ')"><i data-lucide="x-circle" style="width:13px;height:13px"></i>Báo hoãn</button>' +
               '</div>';
 

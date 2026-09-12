@@ -307,10 +307,9 @@
     }
 
     async function api(path, opts) {
-      const isPages = window.location.hostname.includes("pages.dev");
-      const base = isPages ? "https://greenlogix-api.9ez.workers.dev" : "";
-      const target = base + (path.startsWith("/api") ? path : ("/api" + (path.startsWith("/") ? path : "/" + path)));
-      const target = path.startsWith('/api') ? path : ('/api' + (path.startsWith('/') ? path : '/' + path));
+      const base = (window.location.port === "8787") ? "" : "https://greenlogix-api.9ez.workers.dev";
+      const cleanPath = path.startsWith("/api") ? path : ("/api" + (path.startsWith("/") ? path : "/" + path));
+      const target = base + cleanPath;
       const res = await fetch(target, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
       if (!res.ok) throw new Error(target + " " + res.status);
       const ct = res.headers.get("content-type") || "";

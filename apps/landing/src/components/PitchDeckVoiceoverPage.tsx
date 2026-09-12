@@ -170,7 +170,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
   const [activeFeatureTab, setActiveFeatureTab] = useState<number>(0);
 
   // Interactive state for Slide 6 (Live Console tabs)
-  const [activeConsoleTab, setActiveConsoleTab] = useState<'dispatcher' | 'driver'>('dispatcher');
+  const [activeConsoleTab, setActiveConsoleTab] = useState<'both' | 'dispatcher' | 'driver'>('both');
 
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -335,15 +335,6 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
             </div>
           </div>
 
-          {/* Center: Official SO 2026 Organizer & Partner Banner */}
-          <div className="flex-1 flex justify-center items-center px-2 max-w-3xl mx-auto overflow-hidden">
-            <img
-              src="/assets/neu_so2026_banner.png"
-              alt="Olympic Khởi Nghiệp 2026 — Trường Đại Học Kinh Tế Quốc Dân (NEU) & CICN"
-              className="h-9 sm:h-11 md:h-12 w-auto max-w-full object-contain drop-shadow-md"
-            />
-          </div>
-
           {/* Right: Mode Switcher & Presentation Controls */}
           <div className="flex items-center gap-2 shrink-0 z-10">
             {/* Presentation Mode Toggle */}
@@ -489,16 +480,16 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
         })}
       </div>
 
-      {/* Top Banner Hero */}
-      <div className="w-full bg-[#041c43] border-b border-cyan-500/30 py-5 px-4 shadow-2xl flex flex-col items-center justify-center">
-        <div className="max-w-5xl w-full flex justify-center">
+      {/* Top Banner Hero — Full Screen Width Edge-to-Edge */}
+      <div className="w-full bg-[#041c43] border-b border-cyan-500/40 shadow-2xl py-3 sm:py-5 px-0 flex flex-col items-center justify-center overflow-hidden">
+        <div className="w-full flex justify-center">
           <img
             src="/assets/neu_so2026_banner.png"
-            alt="Olympic Khởi Nghiệp 2026 (SO 2026) — Trường Đại Học Kinh Tế Quốc Dân (NEU) & CICN"
-            className="max-h-16 sm:max-h-24 md:max-h-28 w-auto object-contain drop-shadow-xl"
+            alt="Olympic Khởi Nghiệp 2026 (SO 2026) — NEU & Ban Tổ Chức"
+            className="w-full h-auto max-h-36 sm:max-h-48 md:max-h-56 object-contain drop-shadow-2xl select-none"
           />
         </div>
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-semibold tracking-wider text-cyan-200/90 uppercase">
+        <div className="mt-2.5 px-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-semibold tracking-wider text-cyan-200/90 uppercase">
           <span className="text-emerald-400 font-bold">Dự án: EcoMiles</span>
           <span>•</span>
           <span>Vòng 1: Ý tưởng</span>
@@ -1237,38 +1228,173 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                           <div className="inline-flex rounded-xl bg-slate-950 p-1 border border-slate-800 shrink-0">
                             <button
                               type="button"
+                              onClick={() => setActiveConsoleTab('both')}
+                              className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition ${
+                                activeConsoleTab === 'both'
+                                  ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
+                                  : 'text-slate-400 hover:text-white'
+                              }`}
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>Ghép Đôi Cả 2 Máy</span>
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => setActiveConsoleTab('dispatcher')}
-                              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${
+                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition ${
                                 activeConsoleTab === 'dispatcher'
                                   ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
                                   : 'text-slate-400 hover:text-white'
                               }`}
                             >
                               <Monitor className="w-3.5 h-3.5" />
-                              <span>Bàn Điều Hành (Dispatcher)</span>
+                              <span className="hidden sm:inline">Bàn Điều Hành</span>
                             </button>
                             <button
                               type="button"
                               onClick={() => setActiveConsoleTab('driver')}
-                              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${
+                              className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition ${
                                 activeConsoleTab === 'driver'
                                   ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
                                   : 'text-slate-400 hover:text-white'
                               }`}
                             >
                               <Smartphone className="w-3.5 h-3.5" />
-                              <span>App Tài Xế (Driver PWA)</span>
+                              <span className="hidden sm:inline">App Tài Xế</span>
                             </button>
                           </div>
                         </div>
 
-                        {activeConsoleTab === 'dispatcher' ? (
+                        {/* BOTH DEVICES COMBINED VIEW (DEFAULT) */}
+                        {activeConsoleTab === 'both' && (
+                          <div className="space-y-6">
+                            {/* Dual Device Stage */}
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                              {/* Desktop Dispatcher Frame (8 cols on lg) */}
+                              <div className="lg:col-span-8 rounded-2xl border border-slate-700/80 bg-slate-950 shadow-2xl overflow-hidden flex flex-col group">
+                                {/* Browser Window Bar */}
+                                <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                    <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                                    <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                                    <span className="text-[11px] font-mono text-slate-400 ml-2 hidden sm:inline">
+                                      EcoMiles Dispatcher Console — Điều Phối Tuyến TP.HCM
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2 rounded-md bg-slate-950 border border-slate-800 px-2.5 py-1 text-[10px] font-mono text-emerald-400">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>https://ecomiles.pages.dev/app/</span>
+                                  </div>
+                                </div>
+
+                                {/* Browser Content Image */}
+                                <div className="relative bg-slate-950">
+                                  <img
+                                    src="/screenshots/dispatcher-ecomiles.png"
+                                    alt="Bàn điều hành EcoMiles — 80 điểm giao hàng, 5 tuyến xe và báo cáo CO2"
+                                    className="w-full h-auto object-cover"
+                                  />
+                                  <div className="absolute top-3 left-3 bg-slate-950/90 border border-emerald-500/40 rounded-lg px-3 py-1.5 text-[11px] text-emerald-300 font-semibold backdrop-blur-md shadow-lg hidden sm:flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span>Phân cụm 80 đơn · 5 tuyến xe tải · Giảm -88.03% km</span>
+                                  </div>
+                                </div>
+
+                                {/* Bottom Footer of Browser */}
+                                <div className="flex items-center justify-between px-4 py-3 bg-slate-900/90 border-t border-slate-800 text-xs">
+                                  <div className="flex items-center gap-2 text-slate-300">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span className="font-semibold text-emerald-400">Cloudflare D1 &amp; Workers:</span>
+                                    <span className="text-slate-400 hidden sm:inline">Tối ưu hoá VRPTW + 2-Opt tức thì</span>
+                                  </div>
+                                  <a
+                                    href="/app/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-1.5 text-xs font-bold shadow-md shadow-emerald-500/20 transition"
+                                  >
+                                    <span>Mở Bàn Điều Hành (/app/)</span>
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              {/* Mobile Smartphone Frame (4 cols on lg) */}
+                              <div className="lg:col-span-4 flex flex-col items-center">
+                                {/* iPhone Mockup Container */}
+                                <div className="w-full max-w-[290px] rounded-[38px] border-[5px] border-slate-700 bg-slate-950 shadow-2xl overflow-hidden relative group">
+                                  {/* Dynamic Island Notch */}
+                                  <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full z-20 flex items-center justify-center">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800 mr-2"></div>
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500/40"></div>
+                                  </div>
+
+                                  {/* Smartphone Screen Content */}
+                                  <div className="pt-2 bg-slate-950">
+                                    <img
+                                      src="/screenshots/driver-ecomiles.png"
+                                      alt="App tài xế EcoMiles trên điện thoại thông minh"
+                                      className="w-full h-auto object-cover max-h-[500px]"
+                                    />
+                                  </div>
+
+                                  {/* Smartphone Bottom Bar */}
+                                  <div className="p-3 bg-slate-900 border-t border-slate-800 text-center">
+                                    <a
+                                      href="/driver/?plate=51C-000.01"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 px-3 py-2 text-xs font-bold transition shadow-md shadow-amber-400/20"
+                                    >
+                                      <Smartphone className="w-3.5 h-3.5" />
+                                      <span>Mở App Tài Xế (/driver/)</span>
+                                      <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  </div>
+                                </div>
+                                <span className="text-[11px] text-slate-400 font-medium mt-2 text-center">
+                                  PWA di động cho tài xế · Nhận lệnh tức thì &amp; Cảnh báo cấm tải
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Operational Synergy Loop */}
+                            <div className="rounded-2xl bg-slate-950/80 border border-white/10 p-4 sm:p-5">
+                              <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4" />
+                                <span>Vòng Khép Kín Vận Hành: Từ Bàn Điều Hành Đến Từng Bánh Xe Lăn</span>
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
+                                  <div className="text-emerald-400 font-bold mb-1">1. Phân Cụm VRPTW</div>
+                                  <p className="text-slate-300">Gộp 80 đơn hàng vào 5 xe tải tự động qua giải thuật VRPTW và 2-Opt.</p>
+                                </div>
+                                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
+                                  <div className="text-cyan-400 font-bold mb-1">2. Né Giờ Cấm Tải TP.HCM</div>
+                                  <p className="text-slate-300">Tự động loại bỏ rủi ro phạt nguội trong khung 06h–09h &amp; 16h–20h (QĐ 23/2018).</p>
+                                </div>
+                                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
+                                  <div className="text-amber-400 font-bold mb-1">3. Đồng Bộ Điện Thoại &lt;0.2s</div>
+                                  <p className="text-slate-300">Tài xế nhận lộ trình theo thứ tự 1-2-3 trên PWA, gọi khách và xác nhận 1-chạm.</p>
+                                </div>
+                                <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
+                                  <div className="text-emerald-400 font-bold mb-1">4. Kiểm Kê CO₂ Scope 3</div>
+                                  <p className="text-slate-300">Tự động phát hành báo cáo giảm -88.31% phát thải CO₂ chuẩn hóa ISO 14064.</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* DISPATCHER ONLY VIEW */}
+                        {activeConsoleTab === 'dispatcher' && (
                           <div className="space-y-4">
                             <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl group">
                               <img
                                 src="/screenshots/dispatcher-ecomiles.png"
                                 alt="Bàn điều hành EcoMiles — 80 điểm giao hàng, 5 tuyến xe và báo cáo CO2"
-                                className="w-full h-auto object-cover max-h-[520px]"
+                                className="w-full h-auto object-cover max-h-[560px]"
                               />
                               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-4 flex items-center justify-between">
                                 <div className="text-xs text-slate-300">
@@ -1286,7 +1412,10 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                               </div>
                             </div>
                           </div>
-                        ) : (
+                        )}
+
+                        {/* DRIVER ONLY VIEW */}
+                        {activeConsoleTab === 'driver' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-[1fr_360px] gap-6 items-center">
                               <div className="space-y-4">
