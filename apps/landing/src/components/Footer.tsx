@@ -53,6 +53,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
               <li><a href="#team" className="hover:text-greenlogix-lime transition-colors">Đội ngũ EcoMiles</a></li>
               <li><a href="#pricing" className="hover:text-greenlogix-lime transition-colors">Bảng giá gói cước</a></li>
               <li><a href="#pricing" className="hover:text-greenlogix-lime transition-colors">Dùng thử miễn phí 4–6 tuần</a></li>
+              <li><a href="#pitch-deck" className="hover:text-emerald-400 transition-colors text-emerald-400/80 font-medium flex items-center gap-1">★ Kịch bản Pitch Deck (SO 2026)</a></li>
             </ul>
           </div>
 
