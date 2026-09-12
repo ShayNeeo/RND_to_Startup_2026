@@ -28,6 +28,18 @@ export function App() {
   const [showPitchDeck, setShowPitchDeck] = useState<boolean>(checkIsPitchDeck());
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const p = window.location.pathname.toLowerCase();
+      if (p === '/app') {
+        window.location.replace('/app/');
+        return;
+      }
+      if (p === '/driver') {
+        window.location.replace('/driver/' + window.location.search);
+        return;
+      }
+    }
+
     const handleLocationChange = () => {
       setShowPitchDeck(checkIsPitchDeck());
     };

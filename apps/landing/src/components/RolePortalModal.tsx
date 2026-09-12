@@ -82,7 +82,9 @@ export const RolePortalModal: React.FC<RolePortalModalProps> = ({ isOpen, onClos
             </div>
 
             <a
-              href="/app"
+              href="/app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full py-2.5 px-4 rounded-xl bg-greenlogix-lime hover:bg-yellow-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-greenlogix-lime/20 group-hover:shadow-lg group-hover:shadow-greenlogix-lime/30"
             >
               <span>Vào Bàn điều hành</span>
@@ -135,7 +137,9 @@ export const RolePortalModal: React.FC<RolePortalModalProps> = ({ isOpen, onClos
             </div>
 
             <a
-              href={`/driver?plate=${encodeURIComponent(selectedPlate)}`}
+              href={`/driver/?plate=${encodeURIComponent(selectedPlate)}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full py-2.5 px-4 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-400/20 group-hover:shadow-lg group-hover:shadow-emerald-400/30"
             >
               <span>Vào App tài xế</span>
