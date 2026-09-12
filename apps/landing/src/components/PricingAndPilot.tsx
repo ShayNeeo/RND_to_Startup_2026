@@ -333,7 +333,7 @@ export const PricingAndPilot: React.FC<PricingProps> = ({ onOpenPilotModal }) =>
               Trải Nghiệm Miễn Phí Trên Dữ Liệu Thực Tế
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Dành cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> có đội xe từ 5–15 phương tiện. GreenLogix sẽ hỗ trợ chuẩn bị dữ liệu và đo mức tiết kiệm thực tế trước khi doanh nghiệp quyết định sử dụng.
+              Dành cho <strong>3–5 doanh nghiệp đầu tiên tại TP.HCM</strong> có đội xe từ 5–15 phương tiện. EcoMiles sẽ hỗ trợ chuẩn bị dữ liệu và đo mức tiết kiệm thực tế trước khi doanh nghiệp quyết định sử dụng.
             </p>
           </div>
 

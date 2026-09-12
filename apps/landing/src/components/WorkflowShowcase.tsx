@@ -150,7 +150,7 @@ export const WorkflowShowcase: React.FC = () => {
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300">
-            Tình huống thực tế: Doanh nghiệp phân phối thực phẩm tại TP.HCM xử lý 80 đơn hàng mỗi ngày với 10 phương tiện qua hệ thống GreenLogix.
+            Tình huống thực tế: Doanh nghiệp phân phối thực phẩm tại TP.HCM xử lý 80 đơn hàng mỗi ngày với 10 phương tiện qua hệ thống EcoMiles.
           </p>
         </motion.div>
 
@@ -283,7 +283,7 @@ export const WorkflowShowcase: React.FC = () => {
           className="bg-slate-900/60 rounded-3xl p-6 sm:p-9 border border-white/10"
         >
           <h3 className="text-xl font-bold text-white text-center mb-6">
-            So Sánh Hiệu Quả: <span className="text-slate-400">Phương Án Cũ</span> và <span className="text-greenlogix-lime">GreenLogix</span>
+            So Sánh Hiệu Quả: <span className="text-slate-400">Phương Án Cũ</span> và <span className="text-greenlogix-lime">EcoMiles</span>
           </h3>
 
           <div className="overflow-x-auto">
@@ -292,7 +292,7 @@ export const WorkflowShowcase: React.FC = () => {
                 <tr className="border-b border-white/10 text-slate-400">
                   <th className="py-3 px-4">Hạng Mục</th>
                   <th className="py-3 px-4">Phương Án Cũ (Làm thủ công trên bảng tính)</th>
-                  <th className="py-3 px-4 text-greenlogix-lime">Phương Án Tối Ưu GreenLogix</th>
+                  <th className="py-3 px-4 text-greenlogix-lime">Phương Án Tối Ưu EcoMiles</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-slate-300">

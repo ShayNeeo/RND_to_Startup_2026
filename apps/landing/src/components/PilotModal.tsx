@@ -63,7 +63,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initial
                   <span className="text-[10px] font-bold tracking-wider text-greenlogix-lime uppercase bg-greenlogix-lime/10 px-2.5 py-0.5 rounded-full border border-greenlogix-lime/20">
                     TƯ VẤN GIẢI PHÁP &amp; DÙNG THỬ
                   </span>
-                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Nhu Cầu Với GreenLogix</h3>
+                  <h3 className="text-xl font-bold text-white mt-1">Đăng Ký Nhu Cầu Với EcoMiles</h3>
                 </div>
               </div>
 
@@ -232,7 +232,7 @@ export const PilotModal: React.FC<PilotModalProps> = ({ isOpen, onClose, initial
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Đã Gửi Thông Tin Thành Công!</h3>
               <p className="text-xs text-slate-300 mb-6 leading-relaxed max-w-sm mx-auto">
-                Cảm ơn bạn. Đội ngũ GreenLogix sẽ liên hệ trực tiếp trong vòng 24h để trao đổi nhu cầu và đề xuất phương án phù hợp.
+                Cảm ơn bạn. Đội ngũ EcoMiles sẽ liên hệ trực tiếp trong vòng 24h để trao đổi nhu cầu và đề xuất phương án phù hợp.
               </p>
               <button
                 onClick={() => {

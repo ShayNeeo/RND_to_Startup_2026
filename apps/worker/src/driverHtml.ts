@@ -3,7 +3,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-  <title>GreenLogix — Ứng dụng tài xế (Driver PWA)</title>
+  <title>EcoMiles — Ứng dụng tài xế (Driver PWA)</title>
   <script src="https://unpkg.com/lucide@0.475.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
@@ -134,7 +134,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
   <header>
     <div class="brand">
       <i data-lucide="truck" style="width:18px;height:18px;color:var(--lime)"></i>
-      <h1>GREEN<span>LOGIX</span></h1>
+      <h1>ECO<span>MILES</span></h1>
       <span class="badge-driver">Tài xế</span>
     </div>
     <select class="vehicle-selector" id="plate-select" onchange="loadDriverRoute()">

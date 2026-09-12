@@ -17,7 +17,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
                 <Leaf className="w-4 h-4 fill-slate-950/20 stroke-slate-950" />
               </div>
               <span className="font-extrabold text-xl text-white tracking-tight">
-                GREEN<span className="text-greenlogix-lime">LOGIX</span>
+                ECO<span className="text-greenlogix-lime">MILES</span>
               </span>
             </div>
 
@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
               <li><a href="#showcase" className="hover:text-greenlogix-lime transition-colors">Màn hình quản lý giao hàng</a></li>
               <li><a href="#showcase" className="hover:text-greenlogix-lime transition-colors">Web vận hành cho tài xế</a></li>
               <li><a href="#workflow" className="hover:text-greenlogix-lime transition-colors">Quy trình 8 bước</a></li>
-              <li><a href="#team" className="hover:text-greenlogix-lime transition-colors">Đội ngũ GreenLogix</a></li>
+              <li><a href="#team" className="hover:text-greenlogix-lime transition-colors">Đội ngũ EcoMiles</a></li>
               <li><a href="#pricing" className="hover:text-greenlogix-lime transition-colors">Bảng giá gói cước</a></li>
               <li><a href="#pricing" className="hover:text-greenlogix-lime transition-colors">Dùng thử miễn phí 4–6 tuần</a></li>
             </ul>
@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Mail className="w-3.5 h-3.5 text-greenlogix-lime shrink-0" />
-                <span>contact@greenlogix.vn</span>
+                <span>contact@ecomiles.vn</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Phone className="w-3.5 h-3.5 text-greenlogix-lime shrink-0" />
@@ -87,7 +87,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPilotModal }) => {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
           <div>
-            © 2026 GreenLogix. Công nghệ từ CargoX.
+            © 2026 EcoMiles. Nền tảng Logistics Xanh Thông Minh.
           </div>
           <div className="flex items-center gap-6">
             <span>Bảo mật theo Nghị định 13/2023/NĐ-CP</span>

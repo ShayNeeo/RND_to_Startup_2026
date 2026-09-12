@@ -97,7 +97,7 @@ export default {
     if (path === "/openapi.json") {
       return jsonResponse({
         openapi: "3.1.0",
-        info: { title: "GreenLogix API", version: "0.1.0" },
+        info: { title: "EcoMiles API", version: "0.1.0" },
         paths: {
           "/health": { get: {} },
           "/dispatcher": { get: {} },

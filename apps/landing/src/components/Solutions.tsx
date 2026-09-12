@@ -65,7 +65,7 @@ export const Solutions: React.FC = () => {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            4 Cách GreenLogix Giúp <span className="text-greenlogix-lime">Vận Hành Hiệu Quả Hơn</span>
+            4 Cách EcoMiles Giúp <span className="text-greenlogix-lime">Vận Hành Hiệu Quả Hơn</span>
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">

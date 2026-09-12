@@ -3,10 +3,10 @@ import { Sparkles } from 'lucide-react';
 
 const members = [
   {
-    name: 'Tống Ngọc Khang',
-    role: 'Mô Hình Kinh Doanh và Chiến Lược',
-    image: '/team/khang.jpg',
-    imagePosition: 'center 28%',
+    name: 'Nguyễn Thu Thuỷ',
+    role: 'Quản Trị Kinh Doanh Quốc Tế',
+    image: '/team/thuy.jpg',
+    imagePosition: 'center 20%',
   },
   {
     name: 'Phạm Quốc Thanh',
@@ -27,10 +27,10 @@ const members = [
     imagePosition: 'center 24%',
   },
   {
-    name: 'Nguyễn Quang Chiến',
-    role: 'Thuật Toán và Tối Ưu Tuyến Đường',
-    image: '/team/chien.jpg',
-    imagePosition: 'center 22%',
+    name: 'Lê Thị Hoàng Ngân',
+    role: 'Thương Mại Điện Tử',
+    image: '/team/ngan.jpg',
+    imagePosition: 'center 25%',
   },
 ];
 

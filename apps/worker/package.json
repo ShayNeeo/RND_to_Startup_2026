@@ -1,7 +1,7 @@
 {
   "name": "@greenlogix/worker",
   "version": "1.0.0",
-  "description": "GreenLogix Cloudflare Edge Worker API Gateway and Proxy",
+  "description": "EcoMiles Cloudflare Edge Worker API Gateway and Proxy",
   "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev",

@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal, onOpenPortalMo
             href="#main-content"
             onClick={() => setActiveSection('')}
             className="flex items-center gap-2.5 group shrink-0"
-            aria-label="GreenLogix — về đầu trang"
+            aria-label="EcoMiles — về đầu trang"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-greenlogix-lime to-emerald-500 flex items-center justify-center text-slate-950 shadow-md group-hover:scale-105 transition-transform duration-300">
               <Leaf className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-slate-950/20 stroke-slate-950" />
@@ -71,12 +71,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPilotModal, onOpenPortalMo
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5 leading-none">
                 <span className="font-extrabold text-base sm:text-lg tracking-tight text-white">
-                  GREEN<span className="text-greenlogix-lime">LOGIX</span>
+                  ECO<span className="text-greenlogix-lime">MILES</span>
                 </span>
                 <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               </div>
               <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
-                Công nghệ từ <strong className="text-slate-200">CargoX</strong>
+                Logistics Xanh Thông Minh
               </span>
             </div>
           </a>

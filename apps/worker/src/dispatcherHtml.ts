@@ -3,7 +3,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>GreenLogix — Điều hành tuyến (Cloudflare 24/7)</title>
+  <title>EcoMiles — Điều hành tuyến (Cloudflare 24/7)</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossorigin=""/>
@@ -154,7 +154,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
   <header>
     <div class="brand">
       <i data-lucide="layers" style="width:20px;height:20px;color:var(--lime)"></i>
-      <h1>GREEN<span>LOGIX</span></h1>
+      <h1>ECO<span>MILES</span></h1>
       <span class="badge-edge">Cloudflare 24/7</span>
     </div>
     <div class="row">
@@ -203,7 +203,7 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
         </thead>
         <tbody>
           <tr><th>Zig-zag cơ sở</th><td id="base-km">0</td><td id="base-litres">0</td><td id="base-co2">0</td></tr>
-          <tr><th>GreenLogix</th><td id="opt-km">0</td><td id="opt-litres">0</td><td id="opt-co2">0</td></tr>
+          <tr><th>EcoMiles</th><td id="opt-km">0</td><td id="opt-litres">0</td><td id="opt-co2">0</td></tr>
           <tr><th>Hiệu quả Δ %</th><td id="pct-km" class="delta">0%</td><td id="pct-litres" class="delta">0%</td><td id="pct-co2" class="delta">0%</td></tr>
         </tbody>
       </table>
@@ -568,10 +568,10 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "greenlogix_co2_report.csv";
+        a.download = "ecomiles_co2_report.csv";
         a.click();
         URL.revokeObjectURL(url);
-        setStatus("Đã tải tệp báo cáo phát thải greenlogix_co2_report.csv");
+        setStatus("Đã tải tệp báo cáo phát thải ecomiles_co2_report.csv");
       } catch (err) { setStatus(String(err)); }
     };
 

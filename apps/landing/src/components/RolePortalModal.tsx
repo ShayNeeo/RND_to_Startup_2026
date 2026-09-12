@@ -39,7 +39,7 @@ export const RolePortalModal: React.FC<RolePortalModalProps> = ({ isOpen, onClos
             <span>Trải nghiệm trực tiếp không cần đăng ký</span>
           </div>
           <h2 id="portal-modal-title" className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-            Chọn vai trò truy cập <span className="text-greenlogix-lime">GreenLogix</span>
+            Chọn vai trò truy cập <span className="text-greenlogix-lime">EcoMiles</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Hệ thống chạy 24/7 trên Cloudflare Serverless Edge. Phiên demo được tự động cấp quyền mà không cần tạo tài khoản.

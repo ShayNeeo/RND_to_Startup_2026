@@ -145,7 +145,7 @@ export const DriverAndDispatcherShowcase: React.FC = () => {
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed">
-                Tài xế mở đường dẫn GreenLogix trên trình duyệt là thấy ngay thứ tự các điểm cần giao. Web chỉ đường từng chặng, báo đơn chiều về và hỗ trợ lưu xác nhận giao hàng.
+                Tài xế mở đường dẫn EcoMiles trên trình duyệt là thấy ngay thứ tự các điểm cần giao. Web chỉ đường từng chặng, báo đơn chiều về và hỗ trợ lưu xác nhận giao hàng.
               </p>
 
               <div className="space-y-3 text-xs sm:text-sm text-slate-200">
