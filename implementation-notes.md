@@ -1,4 +1,72 @@
+# Implementation Notes: RoadBaseline OSM distances + optional eco-cost
+
+**Date:** 2026-09-13T17:50:00+07:00  
+**Author:** Cursor Cloud Agent (Thanh / `@ShayNeeo`)  
+**Scope:** Adapter so solver tour km uses a free OSM road network (Valhalla auto/truck or OSRM driving) with circuity fallback, plus an optional eco-weighted sequencing cost. Google Directions can implement the same interface later. CR: `changes/CR-20260913-001.md`.
+
+---
+
+### What changed
+
+1. **`apps/api/src/greenlogix_api/solver/road_baseline.py`** (NEW):
+   - `RoadBaseline` protocol: `pair_km` + `matrix_km`.
+   - `CircuityRoadBaseline` — haversine × `HCMC_CIRCUITY=1.35` (always available).
+   - `OsrmRoadBaseline` — OSRM `/table/v1/driving` (meters → km).
+   - `ValhallaRoadBaseline` — `/sources_to_targets` with `auto` or `truck` costing (`xe_tai_nho` envelope).
+   - `FallbackRoadBaseline` + `materialize_matrix` — one matrix per optimize, HTTP timeout, fallback to circuity.
+   - `GoogleDirectionsBaseline` — stub only. Raises `RoadBaselineNotConfigured` until a key and client exist. No scrape.
+
+2. **`apps/api/src/greenlogix_api/solver/eco.py`** (NEW):
+   - `eco_leg_cost` / `make_eco_pair_km` / `GREENLOGIX_ECO_WEIGHT` in `[0,1]`.
+   - `0` = minimize km (default). `1` = minimize estimated kg CO₂. Blend in between.
+   - Reported totals stay physical TTW km / litres / kg CO₂.
+
+3. **Solver wiring** (`nn_two_opt.py`, `solver/__init__.py`, worker `solver.ts` + `index.ts`):
+   - NN+2-opt keep their structure. They accept an injected `pair_km` / `cost_fn`.
+   - Cluster radius and late-risk ETA still use geographic haversine / circuity `road_km` (no HTTP on list).
+   - Live worker defaults to `ROAD_BASELINE=auto` (Valhalla → OSRM → circuity). API/CI default `circuity` unless env is set.
+
+4. **Tests:** `apps/api/tests/test_road_baseline.py`, `test_eco_cost.py`; existing `test_baseline.py` still asserts baseline km ≠ optimized km. Worker: `src/roadBaseline.test.ts` (node:test).
+
+5. **Docs/UI:** dispatcher notes (API + live worker), root README, `apps/api/README.md`. Google-class baseline = OSM for now; Google key later. Zig-zag vs NN+2-opt is not Google.
+
+---
+
+### Decisions / tradeoffs
+
+1. **Interface first, Google later.**
+   - *Problem:* No Google Maps API key; contest wants a Google-class road baseline, not another haversine trick.
+   - *Solution:* Same `RoadBaseline` for Valhalla/OSRM now and Google Directions later. Public OSM endpoints; 2.5s timeout; circuity if they are down. CI does not need Docker or an OSM extract.
+
+2. **Matrix once per optimize, not per pair.**
+   - NN+2-opt calls pair distance many times. `materialize_matrix` caches the table so lookups are O(1). Clustering stays haversine so a 3 km radius stays geographic.
+
+3. **Eco-cost is a hook, not a new carbon standard.**
+   - For one vehicle, kg CO₂ is linear in km, so `eco_weight` does not change the tour unless a custom `pair_km` is non-linear. The hook is there for mixed-fleet / future Google traffic emissions. Do not invent ISO 14083.
+
+4. **Baseline vs optimized is still Excel-order vs NN+2-opt.**
+   - Both sides use the same road provider. That delta is routing, not “Google vs us”.
+
+5. **Surgical.**
+   - No OpenAPI change, no landing rewrite, no emission factor edits, no Google scrape.
+
+---
+
+### Verification
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+cd apps/api && uv sync --locked && uv run --locked pytest -q
+pnpm --filter @greenlogix/worker run typecheck
+pnpm --filter @greenlogix/worker run test
+```
+
+No local Valhalla/OSRM Docker image is required. To force OSM on the FastAPI path: `ROAD_BASELINE=auto`. To force truck costing: `ROAD_BASELINE=valhalla ROAD_BASELINE_COSTING=truck`. Self-hosted extract: set `VALHALLA_URL` or `OSRM_URL`.
+
+---
+
 # Implementation Notes: Professional Lucide Icons, Demo Role Portal & Driver App Flow
+
 
 **Date:** 2026-09-07T02:48:00+07:00  
 **Author:** Phạm Quốc Thanh (`@ShayNeeo`)  

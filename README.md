@@ -102,7 +102,7 @@ Contest loop on the HCMC 80/10 sample. Cold start needs **only** `GREENLOGIX_DEM
 
 **Depot:** Tân Bình DC `10.801, 106.661`.
 
-**Distance:** road km = haversine × named constant `HCMC_CIRCUITY=1.35`. The spreadsheet-order baseline and the clustered NN+2-opt plan use the same factor.
+**Distance:** Google-class road km uses the `RoadBaseline` interface — OSM Valhalla (`auto`/`truck`) or OSRM `driving` when reachable, otherwise haversine × named constant `HCMC_CIRCUITY=1.35`. Spreadsheet-order baseline and clustered NN+2-opt share the same provider (that comparison is **not** Google). A Google Directions key can plug in later behind the same interface; do not scrape Google. Set `ROAD_BASELINE=auto|osrm|valhalla|circuity`. Optional sequencing eco-cost: `GREENLOGIX_ECO_WEIGHT` in `[0,1]` blends km and estimated kg CO₂; reported totals stay physical TTW km.
 
 **CO₂ (TTW estimate, not an ISO 14083 pack):** `kg_co2 = road_km × (l_per_100km/100) × kg_co2_per_litre` from `apps/api/data/emission_factors.json` — petrol **2.31**, diesel **2.68** (IPCC 2006 Vol.2 Table 1.4 × Table 1.2 NCV; GLEC v3.2 Europe TTW cross-check).
 

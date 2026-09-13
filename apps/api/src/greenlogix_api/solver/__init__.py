@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from greenlogix_api.carbon import kg_co2, litres_used
@@ -9,7 +10,16 @@ from greenlogix_api.models import Order, Vehicle
 from greenlogix_api.schemas import TotalsOut
 from greenlogix_api.solver.baseline import baseline_fill
 from greenlogix_api.solver.cluster import CLUSTER_RADIUS_KM, greedy_clusters
+from greenlogix_api.solver.distance import road_km
+from greenlogix_api.solver.eco import eco_weight_from_env, make_eco_pair_km
 from greenlogix_api.solver.nn_two_opt import sequence_orders, tour_km
+from greenlogix_api.solver.road_baseline import (
+    RoadBaseline,
+    materialize_matrix,
+    resolve_road_baseline,
+)
+
+PairKm = Callable[[float, float, float, float], float]
 
 ROUTE_COLORS = [
     "#e41a1c",
@@ -166,9 +176,16 @@ def _build_route(
     color: str,
     *,
     sequence: bool,
+    pair_km: PairKm = road_km,
+    eco_weight: float = 0.0,
 ) -> PlannedRoute:
-    sequenced = sequence_orders(orders, depot) if sequence else list(orders)
-    km = tour_km(sequenced, depot)
+    cost_fn = (
+        make_eco_pair_km(pair_km, vehicle.l_per_100km, vehicle.fuel, eco_weight)
+        if eco_weight
+        else pair_km
+    )
+    sequenced = sequence_orders(orders, depot, pair_km=pair_km, cost_fn=cost_fn) if sequence else list(orders)
+    km = tour_km(sequenced, depot, pair_km=pair_km)
     liq, co2 = _metrics(km, vehicle)
     stops = [_depot_stop(0, depot, depot_name)]
     for i, order in enumerate(sequenced, start=1):
@@ -192,7 +209,16 @@ def run_vrp(
     depot: tuple[float, float],
     depot_name: str,
     radius_km: float = CLUSTER_RADIUS_KM,
+    pair_km: PairKm | None = None,
+    eco_weight: float | None = None,
+    road_baseline: RoadBaseline | None = None,
 ) -> VrpResult:
+    if pair_km is None:
+        provider = road_baseline or resolve_road_baseline()
+        points = [depot, *[(order.lat, order.lng) for order in orders]]
+        cached, _name = materialize_matrix(provider, points)
+        pair_km = cached.pair_km
+    weight = eco_weight if eco_weight is not None else eco_weight_from_env()
     clusters = greedy_clusters(orders, radius_km=radius_km)
     assigned, unassigned_ids = assign_clusters(clusters, vehicles)
     routes: list[PlannedRoute] = []
@@ -207,6 +233,8 @@ def run_vrp(
                 depot_name,
                 color,
                 sequence=True,
+                pair_km=pair_km,
+                eco_weight=weight,
             )
         )
 
@@ -222,6 +250,8 @@ def run_vrp(
                 depot_name,
                 ROUTE_COLORS[i % len(ROUTE_COLORS)],
                 sequence=False,
+                pair_km=pair_km,
+                eco_weight=weight,
             )
         )
     return VrpResult(

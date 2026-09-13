@@ -47,7 +47,8 @@ uv run --locked python -c 'from greenlogix_api.main import dump_openapi; dump_op
 
 ## Distances & Emissions
 
-- Road km = haversine × `HCMC_CIRCUITY` **1.35** (`greenlogix_api.solver.distance`). Same factor on the spreadsheet-order baseline and the clustered NN+2-opt plan. Times are naive local `HH:MM` (`TZ=Asia/Ho_Chi_Minh`).
+- Road km goes through `RoadBaseline` (`greenlogix_api.solver.road_baseline`): OSM Valhalla auto/truck or OSRM driving when `ROAD_BASELINE=auto|osrm|valhalla`, else haversine × `HCMC_CIRCUITY` **1.35**. Same provider on the spreadsheet-order baseline and the clustered NN+2-opt plan (not a Google comparison). Google Directions can implement the same interface later. Tests/CI use circuity unless the env var is set. Times are naive local `HH:MM` (`TZ=Asia/Ho_Chi_Minh`).
+- Optional eco-cost: `GREENLOGIX_ECO_WEIGHT` in `[0,1]` blends km and estimated kg CO₂ for NN+2-opt only. Reported km / litres / kg CO₂ stay tank-to-wheel physical units.
 - CO₂ is tank-to-wheel: `kg_co2 = road_km * (l_per_100km/100) * kg_co2_per_litre` from `data/emission_factors.json` (petrol 2.31, diesel 2.68). This is a contest TTW estimate, not a full ISO 14083 audit report.
 
 ## Seed & Dispatcher

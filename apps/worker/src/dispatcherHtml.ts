@@ -207,6 +207,11 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
           <tr><th>Hiệu quả Δ %</th><td id="pct-km" class="delta">0%</td><td id="pct-litres" class="delta">0%</td><td id="pct-co2" class="delta">0%</td></tr>
         </tbody>
       </table>
+      <p class="note" id="road-baseline-note" style="font-size:11px;color:var(--mut);line-height:1.45;margin:8px 0 4px">
+        Google-class road km = OSM network (Valhalla auto/truck, else OSRM driving) for now — not a Google key.
+        Zig-zag cơ sở is Excel stop order vs NN+2-opt, not Google. Fallback: haversine × 1.35.
+        CO₂ TTW: km × (L/100km) × kg/L. Optional eco-cost: GREENLOGIX_ECO_WEIGHT.
+      </p>
 
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('routes')">

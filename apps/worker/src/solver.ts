@@ -1,6 +1,7 @@
 /**
  * GreenLogix Native VRPTW Optimizer for Cloudflare Workers
- * Clustered Nearest-Neighbor + 2-Opt with Haversine * 1.35 Circuity.
+ * Clustered Nearest-Neighbor + 2-Opt. Tour km uses RoadBaseline
+ * (OSM Valhalla/OSRM when available, otherwise haversine × 1.35).
  */
 
 export interface OrderRow {
@@ -98,24 +99,30 @@ export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: numb
   return 2 * R * Math.asin(Math.min(1.0, Math.sqrt(a)));
 }
 
+export type PairKm = (lat1: number, lng1: number, lat2: number, lng2: number) => number;
+
 export function roadKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   return haversineKm(lat1, lng1, lat2, lng2) * HCMC_CIRCUITY;
 }
 
-export function tourKm(orders: OrderRow[], depot: [number, number]): number {
+export function tourKm(orders: OrderRow[], depot: [number, number], pairKm: PairKm = roadKm): number {
   if (orders.length === 0) return 0.0;
   let [lat, lng] = depot;
   let total = 0.0;
   for (const order of orders) {
-    total += roadKm(lat, lng, order.lat, order.lng);
+    total += pairKm(lat, lng, order.lat, order.lng);
     lat = order.lat;
     lng = order.lng;
   }
-  total += roadKm(lat, lng, depot[0], depot[1]);
+  total += pairKm(lat, lng, depot[0], depot[1]);
   return total;
 }
 
-export function nearestNeighbor(orders: OrderRow[], depot: [number, number]): OrderRow[] {
+export function nearestNeighbor(
+  orders: OrderRow[],
+  depot: [number, number],
+  pairKm: PairKm = roadKm
+): OrderRow[] {
   const remaining = [...orders];
   const route: OrderRow[] = [];
   let [lat, lng] = depot;
@@ -126,7 +133,7 @@ export function nearestNeighbor(orders: OrderRow[], depot: [number, number]): Or
 
     for (let i = 0; i < remaining.length; i++) {
       const order = remaining[i];
-      const dist = roadKm(lat, lng, order.lat, order.lng);
+      const dist = pairKm(lat, lng, order.lat, order.lng);
       if (
         dist < bestDist - 1e-12 ||
         (Math.abs(dist - bestDist) <= 1e-12 && order.window_start < remaining[bestIdx].window_start)
@@ -145,7 +152,11 @@ export function nearestNeighbor(orders: OrderRow[], depot: [number, number]): Or
   return route;
 }
 
-export function twoOpt(orders: OrderRow[], depot: [number, number]): OrderRow[] {
+export function twoOpt(
+  orders: OrderRow[],
+  depot: [number, number],
+  pairKm: PairKm = roadKm
+): OrderRow[] {
   let route = [...orders];
   const n = route.length;
   if (n < 4) return route;
@@ -155,7 +166,7 @@ export function twoOpt(orders: OrderRow[], depot: [number, number]): OrderRow[] 
   while (iters < 500 && swaps < 2000) {
     iters++;
     let improved = false;
-    let current = tourKm(route, depot);
+    let current = tourKm(route, depot, pairKm);
 
     for (let i = 0; i < n - 1; i++) {
       for (let k = i + 2; k < n; k++) {
@@ -165,7 +176,7 @@ export function twoOpt(orders: OrderRow[], depot: [number, number]): OrderRow[] 
           ...route.slice(i + 1, k + 1).reverse(),
           ...route.slice(k + 1),
         ];
-        const newKm = tourKm(candidate, depot);
+        const newKm = tourKm(candidate, depot, pairKm);
         if (newKm < current - 1e-12) {
           route = candidate;
           current = newKm;
@@ -210,7 +221,9 @@ export function runVrp(
   vehicles: VehicleRow[],
   depot: [number, number],
   depotName: string,
-  radiusKm = 3.0
+  radiusKm = 3.0,
+  pairKm: PairKm = roadKm,
+  ecoWeight = 0
 ): VrpResult {
   const readyVehicles = vehicles.filter((v) => v.status === "ready");
   const clusters = greedyClusters(orders, radiusKm);
@@ -221,10 +234,19 @@ export function runVrp(
     const cluster = clusters[cIdx];
     if (cIdx < readyVehicles.length) {
       const v = readyVehicles[cIdx];
-      const sequenced = twoOpt(nearestNeighbor(cluster, depot), depot);
-      const km = tourKm(sequenced, depot);
-      const litres = (km * v.l_per_100km) / 100.0;
       const factor = v.fuel === "diesel" ? DIESEL_FACTOR : PETROL_FACTOR;
+      const costFn: PairKm =
+        ecoWeight > 0
+          ? (lat1, lng1, lat2, lng2) => {
+              const km = pairKm(lat1, lng1, lat2, lng2);
+              const kg = km * (v.l_per_100km / 100.0) * factor;
+              const w = Math.max(0, Math.min(1, ecoWeight));
+              return (1 - w) * km + w * kg;
+            }
+          : pairKm;
+      const sequenced = twoOpt(nearestNeighbor(cluster, depot, costFn), depot, costFn);
+      const km = tourKm(sequenced, depot, pairKm);
+      const litres = (km * v.l_per_100km) / 100.0;
       const kgCo2 = litres * factor;
       const totalKg = cluster.reduce((sum, o) => sum + o.kg, 0);
       const overload = totalKg > v.capacity_kg;
@@ -293,7 +315,7 @@ export function runVrp(
   };
 
   // Compute unoptimized spreadsheet baseline
-  const baseKm = tourKm(orders, depot);
+  const baseKm = tourKm(orders, depot, pairKm);
   const avgLpk = readyVehicles.length > 0 ? readyVehicles.reduce((s, v) => s + v.l_per_100km, 0) / readyVehicles.length : 10.0;
   const baseLitres = (baseKm * avgLpk) / 100.0;
   const baseCo2 = baseLitres * PETROL_FACTOR;
