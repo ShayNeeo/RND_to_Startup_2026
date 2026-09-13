@@ -134,7 +134,15 @@ async function performOptimization(env: Env, radius: number = 3.0, autoPublish: 
 
   // Save report
   await env.DB.prepare("INSERT OR REPLACE INTO reports (id, data) VALUES ('latest', ?)")
-    .bind(JSON.stringify({ baseline: vrp.baseline, optimized: vrp.totals, delta: vrp.delta }))
+    .bind(
+      JSON.stringify({
+        baseline: vrp.baseline,
+        optimized: vrp.totals,
+        delta: vrp.delta,
+        distance_provider: road.providerId,
+        eco_weight: ecoWeight,
+      })
+    )
     .run();
 
   return {

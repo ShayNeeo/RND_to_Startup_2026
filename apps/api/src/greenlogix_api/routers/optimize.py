@@ -56,7 +56,14 @@ def persist_plan(session: Session, result, *, wipe: bool = True) -> list[Route]:
         session.commit()
         stored.append(route)
         log.info("persist route_id=%s vehicle_id=%s stops=%s", rid, route.vehicle_id, len(planned.stops))
-    save_report(result.baseline, result.totals)
+    save_report(
+        result.baseline,
+        result.totals,
+        extra={
+            "distance_provider": getattr(result, "distance_provider", "circuity"),
+            "eco_weight": getattr(result, "eco_weight", 0.0),
+        },
+    )
     return stored
 
 
@@ -76,6 +83,13 @@ def optimize(
         depot=(DEPOT_LAT, DEPOT_LNG),
         depot_name=DEPOT_NAME,
         radius_km=radius,
+    )
+    log.info(
+        "path=/optimize provider=%s eco_weight=%s km=%s kg_co2=%s",
+        getattr(result, "distance_provider", "circuity"),
+        getattr(result, "eco_weight", 0.0),
+        result.totals.km,
+        result.totals.kg_co2,
     )
     stored = persist_plan(session, result)
     outs: list[RouteOut] = []

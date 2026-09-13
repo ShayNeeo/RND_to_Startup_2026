@@ -50,13 +50,20 @@ def totals_from_legs(
     return TotalsOut(km=km, litres=liq, kg_co2=liq * kg_co2_per_litre(fuel, path))
 
 
-def save_report(baseline: TotalsOut, optimized: TotalsOut, path: Path | None = None) -> None:
+def save_report(
+    baseline: TotalsOut,
+    optimized: TotalsOut,
+    path: Path | None = None,
+    extra: dict[str, Any] | None = None,
+) -> None:
     target = path or dbmod.REPORT_PATH
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "baseline": baseline.model_dump(),
         "optimized": optimized.model_dump(),
     }
+    if extra:
+        payload.update(extra)
     target.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 

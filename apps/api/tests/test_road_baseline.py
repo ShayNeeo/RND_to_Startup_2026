@@ -22,6 +22,7 @@ from greenlogix_api.solver.road_baseline import (
     parse_valhalla_matrix,
     resolve_road_baseline,
     valhalla_matrix_body,
+    validate_matrix_km,
 )
 
 
@@ -104,6 +105,23 @@ def test_parse_osrm_table_rejects_bad_code() -> None:
         parse_osrm_table({"code": "NoRoute", "distances": []})
 
 
+def test_parse_osrm_table_rejects_null_cell() -> None:
+    with pytest.raises(ValueError):
+        parse_osrm_table({"code": "Ok", "distances": [[0, None], [1, 0]]})
+
+
+def test_parse_valhalla_rejects_missing_distance() -> None:
+    with pytest.raises(ValueError):
+        parse_valhalla_matrix({"sources_to_targets": [[{}, {"distance": 1.0}]]})
+
+
+def test_validate_matrix_rejects_nonsquare_and_negative() -> None:
+    with pytest.raises(ValueError):
+        validate_matrix_km([[0.0, 1.0], [1.0]])
+    with pytest.raises(ValueError):
+        validate_matrix_km([[0.0, -1.0], [1.0, 0.0]])
+
+
 def test_osrm_table_url_uses_driving_profile() -> None:
     url = osrm_table_url("https://router.project-osrm.org", [(10.801, 106.661), (10.776, 106.700)])
     assert "/table/v1/driving/" in url
@@ -163,6 +181,24 @@ def test_google_directions_without_key_is_not_configured() -> None:
         GoogleDirectionsBaseline(api_key="")
 
 
+def test_resolve_google_without_key_uses_osm_chain(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("GOOGLE_MAPS_API_KEY", raising=False)
+    monkeypatch.delenv("ROAD_BASELINE_COSTING", raising=False)
+    resolved = resolve_road_baseline("google")
+    assert isinstance(resolved, FallbackRoadBaseline)
+    assert resolved.primary.provider_id == "valhalla"
+    assert resolved.primary.costing == "truck"
+
+
+def test_resolve_auto_defaults_to_valhalla_truck(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ROAD_BASELINE", raising=False)
+    monkeypatch.delenv("ROAD_BASELINE_COSTING", raising=False)
+    resolved = resolve_road_baseline("auto")
+    assert isinstance(resolved, FallbackRoadBaseline)
+    assert resolved.primary.provider_id == "valhalla"
+    assert resolved.primary.costing == "truck"
+
+
 def test_resolve_circuity_skips_http() -> None:
     assert resolve_road_baseline("circuity").provider_id == "circuity"
 
@@ -173,6 +209,55 @@ def test_materialize_falls_back_when_matrix_fails() -> None:
     assert cached.pair_km(10.801, 106.661, 10.776, 106.700) == pytest.approx(
         road_km(10.801, 106.661, 10.776, 106.700)
     )
+
+
+def test_nested_fallback_reports_osrm_not_fallback_id() -> None:
+    def transport(url: str, method: str, body: bytes | None) -> dict:
+        return {"code": "Ok", "distances": [[0, 3000], [3000, 0]]}
+
+    chain = FallbackRoadBaseline(
+        _BoomBaseline(),
+        FallbackRoadBaseline(OsrmRoadBaseline(transport=transport)),
+    )
+    pts = [(10.801, 106.661), (10.776, 106.700)]
+    matrix = chain.matrix_km(pts)
+    assert matrix[0][1] == pytest.approx(3.0)
+    assert chain.last_provider_id == "osrm"
+
+
+def test_materialize_ttl_cache_skips_second_http() -> None:
+    calls = {"n": 0}
+
+    def transport(url: str, method: str, body: bytes | None) -> dict:
+        calls["n"] += 1
+        return {"code": "Ok", "distances": [[0, 5000], [5000, 0]]}
+
+    store: dict = {}
+    pts = [(10.801, 106.661), (10.776, 106.700)]
+    first, name1 = materialize_matrix(
+        OsrmRoadBaseline(transport=transport), pts, cache=store, now=10.0
+    )
+    second, name2 = materialize_matrix(
+        OsrmRoadBaseline(transport=transport), pts, cache=store, now=20.0
+    )
+    assert name1 == name2 == "osrm"
+    assert first.pair_km(*pts[0], *pts[1]) == pytest.approx(5.0)
+    assert second.pair_km(*pts[0], *pts[1]) == pytest.approx(5.0)
+    assert calls["n"] == 1
+
+
+def test_osrm_retries_then_succeeds() -> None:
+    calls = {"n": 0}
+
+    def transport(url: str, method: str, body: bytes | None) -> dict:
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise RuntimeError("transient")
+        return {"code": "Ok", "distances": [[0, 1000], [1000, 0]]}
+
+    baseline = OsrmRoadBaseline(transport=transport)
+    assert baseline.pair_km(10.0, 106.7, 10.01, 106.71) == pytest.approx(1.0)
+    assert calls["n"] == 3
 
 
 def test_materialize_caches_osrm_matrix() -> None:

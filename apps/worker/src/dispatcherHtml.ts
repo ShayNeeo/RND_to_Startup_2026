@@ -482,6 +482,16 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
       document.getElementById("km").textContent = num(o.km);
       document.getElementById("litres").textContent = num(o.litres);
       document.getElementById("kg_co2").textContent = num(o.kg_co2);
+      const note = document.getElementById("road-baseline-note");
+      if (note) {
+        const provider = r.distance_provider || "circuity";
+        const eco = r.eco_weight == null ? "0" : String(r.eco_weight);
+        note.textContent =
+          "Live road km: " + provider +
+          " (Valhalla truck / OSRM driving, circuity fallback). Google Directions key later, same RoadBaseline." +
+          " Zig-zag cơ sở is Excel order vs NN+2-opt, not Google. Eco-weight " + eco +
+          " (TTW kg CO₂).";
+      }
     }
 
     async function refreshRoutes() {

@@ -226,14 +226,35 @@ export function runVrp(
   ecoWeight = 0
 ): VrpResult {
   const readyVehicles = vehicles.filter((v) => v.status === "ready");
+  readyVehicles.sort((a, b) => b.capacity_kg - a.capacity_kg || a.plate.localeCompare(b.plate));
   const clusters = greedyClusters(orders, radiusKm);
   const plannedRoutes: RoutePlanned[] = [];
   const unassigned: number[] = [];
+  const remaining = [...readyVehicles];
 
   for (let cIdx = 0; cIdx < clusters.length; cIdx++) {
     const cluster = clusters[cIdx];
-    if (cIdx < readyVehicles.length) {
-      const v = readyVehicles[cIdx];
+    let v: VehicleRow | undefined;
+    if (ecoWeight > 0 && remaining.length) {
+      let bestIdx = 0;
+      let bestCost = Infinity;
+      for (let i = 0; i < remaining.length; i++) {
+        const candidate = remaining[i];
+        const km = tourKm(cluster, depot, pairKm);
+        const factor = candidate.fuel === "diesel" ? DIESEL_FACTOR : PETROL_FACTOR;
+        const kg = km * (candidate.l_per_100km / 100.0) * factor;
+        const w = Math.max(0, Math.min(1, ecoWeight));
+        const cost = (1 - w) * km + w * kg;
+        if (cost < bestCost - 1e-12 || (Math.abs(cost - bestCost) <= 1e-12 && candidate.plate < remaining[bestIdx].plate)) {
+          bestCost = cost;
+          bestIdx = i;
+        }
+      }
+      v = remaining.splice(bestIdx, 1)[0];
+    } else if (cIdx < readyVehicles.length) {
+      v = readyVehicles[cIdx];
+    }
+    if (v) {
       const factor = v.fuel === "diesel" ? DIESEL_FACTOR : PETROL_FACTOR;
       const costFn: PairKm =
         ecoWeight > 0

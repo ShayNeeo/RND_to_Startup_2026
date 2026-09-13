@@ -8,11 +8,13 @@ import {
   OsrmRoadBaseline,
   RoadBaselineNotConfigured,
   ValhallaRoadBaseline,
+  clearMatrixCache,
   ecoLegCost,
   ecoWeightFromEnv,
   materializeMatrix,
   parseOsrmTable,
   parseValhallaMatrix,
+  resolveRoadBaseline,
 } from "./roadBaseline.ts";
 
 describe("RoadBaseline", () => {
@@ -74,6 +76,38 @@ describe("RoadBaseline", () => {
 
   it("Google stub refuses missing key", () => {
     assert.throws(() => new GoogleDirectionsBaseline(""), (err: unknown) => err instanceof RoadBaselineNotConfigured);
+  });
+
+  it("resolve google/auto uses Valhalla truck then OSRM", () => {
+    const auto = resolveRoadBaseline({ ROAD_BASELINE: "auto" }) as FallbackRoadBaseline;
+    assert.equal((auto as unknown as { primary: { providerId: string; opts: { costing?: string } } }).primary.providerId, "valhalla");
+    const google = resolveRoadBaseline({ ROAD_BASELINE: "google" }) as FallbackRoadBaseline;
+    assert.equal(google.providerId, "fallback");
+  });
+
+  it("rejects null OSRM cells", () => {
+    assert.throws(() => parseOsrmTable({ code: "Ok", distances: [[0, null], [1, 0]] }));
+  });
+
+  it("TTL cache skips a second HTTP fetch", async () => {
+    clearMatrixCache();
+    let calls = 0;
+    const provider = new OsrmRoadBaseline({
+      transport: async () => {
+        calls += 1;
+        return { code: "Ok", distances: [[0, 4000], [4000, 0]] };
+      },
+    });
+    const pts: [number, number][] = [
+      [10.801, 106.661],
+      [10.776, 106.7],
+    ];
+    const first = await materializeMatrix(provider, pts, 1_000);
+    const second = await materializeMatrix(provider, pts, 2_000);
+    assert.equal(first.providerId, "osrm");
+    assert.equal(second.pairKm(10.801, 106.661, 10.776, 106.7), 4);
+    assert.equal(calls, 1);
+    clearMatrixCache();
   });
 
   it("materialize caches matrix and falls back", async () => {

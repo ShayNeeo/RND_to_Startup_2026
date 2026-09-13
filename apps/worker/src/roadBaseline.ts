@@ -14,6 +14,34 @@ export type Transport = (url: string, method: string, body?: string) => Promise<
 export const DEFAULT_OSRM_URL = "https://router.project-osrm.org";
 export const DEFAULT_VALHALLA_URL = "https://valhalla1.openstreetmap.de";
 export const DEFAULT_TIMEOUT_MS = 2500;
+export const DEFAULT_RETRIES = 2;
+export const DEFAULT_CACHE_TTL_MS = 300_000;
+export const DEFAULT_COSTING = "truck";
+
+const matrixCache = new Map<string, { at: number; matrix: number[][]; name: string }>();
+
+export function clearMatrixCache(): void {
+  matrixCache.clear();
+}
+
+export function validateMatrixKm(matrix: number[][]): number[][] {
+  if (!matrix.length) throw new RoadBaselineError("empty distance matrix");
+  const n = matrix.length;
+  for (let i = 0; i < n; i++) {
+    if (!matrix[i] || matrix[i].length !== n) throw new RoadBaselineError("matrix must be square");
+    for (let j = 0; j < n; j++) {
+      const value = matrix[i][j];
+      if (value == null || !Number.isFinite(value) || value < 0) {
+        throw new RoadBaselineError(`invalid matrix cell at ${i},${j}`);
+      }
+    }
+  }
+  return matrix;
+}
+
+function usedProviderId(provider: RoadBaseline): string {
+  return (provider as FallbackRoadBaseline).lastProviderId || provider.providerId;
+}
 
 export class RoadBaselineError extends Error {}
 export class RoadBaselineNotConfigured extends RoadBaselineError {}
@@ -43,6 +71,25 @@ async function defaultTransport(url: string, method: string, body?: string, time
   } finally {
     clearTimeout(tid);
   }
+}
+
+async function callTransport(
+  transport: Transport | undefined,
+  url: string,
+  method: string,
+  body?: string,
+  retries = DEFAULT_RETRIES
+): Promise<unknown> {
+  let last: unknown;
+  const attempts = Math.max(1, retries + 1);
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await (transport ?? defaultTransport)(url, method, body);
+    } catch (err) {
+      last = err;
+    }
+  }
+  throw last instanceof Error ? last : new RoadBaselineError(String(last));
 }
 
 export class CircuityRoadBaseline implements RoadBaseline {
@@ -117,17 +164,20 @@ export class FallbackRoadBaseline implements RoadBaseline {
       this.lastProviderId = this.primary.providerId;
       return matrix;
     } catch {
-      this.lastProviderId = this.fallback.providerId;
-      return this.fallback.matrixKm(points);
+      const matrix = await this.fallback.matrixKm(points);
+      this.lastProviderId = usedProviderId(this.fallback);
+      return matrix;
     }
   }
 }
 
-export function parseOsrmTable(payload: { code?: string; distances?: number[][] }): number[][] {
+export function parseOsrmTable(payload: { code?: string; distances?: Array<Array<number | null>> }): number[][] {
   if (payload.code !== "Ok" || !payload.distances?.length) {
     throw new RoadBaselineError(`OSRM table error: ${payload.code ?? "missing"}`);
   }
-  return payload.distances.map((row) => row.map((cell) => cell / 1000));
+  return validateMatrixKm(
+    payload.distances.map((row) => row.map((cell) => (cell == null ? Number.NaN : cell / 1000)))
+  );
 }
 
 export function osrmTableUrl(baseUrl: string, points: LatLng[], profile = "driving"): string {
@@ -145,8 +195,8 @@ export class OsrmRoadBaseline implements RoadBaseline {
 
   async matrixKm(points: LatLng[]): Promise<number[][]> {
     if (points.length < 2) return points.map(() => points.map(() => 0));
-    const transport = this.opts.transport ?? defaultTransport;
-    const payload = (await transport(
+    const payload = (await callTransport(
+      this.opts.transport,
       osrmTableUrl(this.opts.baseUrl ?? DEFAULT_OSRM_URL, points, this.opts.profile ?? "driving"),
       "GET"
     )) as { code?: string; distances?: number[][] };
@@ -158,10 +208,17 @@ export class OsrmRoadBaseline implements RoadBaseline {
   }
 }
 
-export function parseValhallaMatrix(payload: { sources_to_targets?: { distance: number }[][] }): number[][] {
+export function parseValhallaMatrix(payload: { sources_to_targets?: Array<Array<{ distance?: number }>> }): number[][] {
   const rows = payload.sources_to_targets;
   if (!rows?.length) throw new RoadBaselineError("Valhalla matrix missing sources_to_targets");
-  return rows.map((row) => row.map((cell) => Number(cell.distance)));
+  return validateMatrixKm(
+    rows.map((row) =>
+      row.map((cell) => {
+        if (cell == null || cell.distance == null) throw new RoadBaselineError("Valhalla matrix cell missing distance");
+        return Number(cell.distance);
+      })
+    )
+  );
 }
 
 export function valhallaMatrixBody(points: LatLng[], costing = "auto"): Record<string, unknown> {
@@ -183,11 +240,11 @@ export class ValhallaRoadBaseline implements RoadBaseline {
 
   async matrixKm(points: LatLng[]): Promise<number[][]> {
     if (points.length < 2) return points.map(() => points.map(() => 0));
-    const transport = this.opts.transport ?? defaultTransport;
-    const payload = (await transport(
+    const payload = (await callTransport(
+      this.opts.transport,
       `${(this.opts.baseUrl ?? DEFAULT_VALHALLA_URL).replace(/\/$/, "")}/sources_to_targets`,
       "POST",
-      JSON.stringify(valhallaMatrixBody(points, this.opts.costing ?? "auto"))
+      JSON.stringify(valhallaMatrixBody(points, this.opts.costing ?? DEFAULT_COSTING))
     )) as { sources_to_targets?: { distance: number }[][] };
     return parseValhallaMatrix(payload);
   }
@@ -220,10 +277,21 @@ export class GoogleDirectionsBaseline implements RoadBaseline {
   }
 }
 
-export async function materializeMatrix(provider: RoadBaseline, points: LatLng[]): Promise<CachedMatrixBaseline | CircuityRoadBaseline> {
+export async function materializeMatrix(
+  provider: RoadBaseline,
+  points: LatLng[],
+  nowMs = Date.now(),
+  ttlMs = DEFAULT_CACHE_TTL_MS
+): Promise<CachedMatrixBaseline | CircuityRoadBaseline> {
+  const key = `${provider.providerId}|${points.map((p) => `${p[0].toFixed(5)},${p[1].toFixed(5)}`).join(";")}`;
+  const hit = matrixCache.get(key);
+  if (hit && nowMs - hit.at < ttlMs) {
+    return new CachedMatrixBaseline(points, hit.matrix, hit.name);
+  }
   try {
-    const matrix = await provider.matrixKm(points);
-    const name = (provider as FallbackRoadBaseline).lastProviderId || provider.providerId;
+    const matrix = validateMatrixKm(await provider.matrixKm(points));
+    const name = usedProviderId(provider);
+    if (name !== "circuity") matrixCache.set(key, { at: nowMs, matrix, name });
     return new CachedMatrixBaseline(points, matrix, name);
   } catch {
     return new CircuityRoadBaseline();
@@ -238,8 +306,9 @@ export function resolveRoadBaseline(env: {
   VALHALLA_URL?: string;
   GOOGLE_MAPS_API_KEY?: string;
 } = {}): RoadBaseline {
-  const choice = (env.ROAD_BASELINE || "auto").trim().toLowerCase();
-  const costing = (env.ROAD_BASELINE_COSTING || "auto").trim().toLowerCase();
+  let choice = (env.ROAD_BASELINE || "auto").trim().toLowerCase();
+  if (choice === "google" || choice === "google_directions") choice = "auto";
+  const costing = (env.ROAD_BASELINE_COSTING || DEFAULT_COSTING).trim().toLowerCase();
   const shared = (env.ROAD_BASELINE_URL || "").trim();
   const osrmUrl = env.OSRM_URL || (choice === "osrm" ? shared : "") || DEFAULT_OSRM_URL;
   const valhallaUrl = env.VALHALLA_URL || (choice === "valhalla" ? shared : "") || DEFAULT_VALHALLA_URL;

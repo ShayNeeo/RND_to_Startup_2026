@@ -1,15 +1,17 @@
 """Road-network distance providers (OSM now, Google Directions later).
 
-Google-class baseline is Valhalla auto/truck or OSRM driving until a Google
-Maps key is configured. Circuity (haversine × HCMC_CIRCUITY) is the offline
-fallback so CI and the demo never depend on a local OSM extract. Do not scrape
-Google.
+Production path: Valhalla truck (xe_tai_nho) → OSRM driving → circuity.
+HTTP is retried, matrices are TTL-cached, malformed cells fail that provider
+and the next one runs. A Google Directions key can plug in later behind the
+same interface. Do not scrape Google. CI sets ROAD_BASELINE=circuity.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import os
+import time
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Sequence
@@ -19,10 +21,16 @@ from greenlogix_api.solver.distance import HCMC_CIRCUITY, haversine_km
 
 LatLng = tuple[float, float]
 Transport = Callable[[str, str, bytes | None], dict[str, Any]]
+MatrixCache = dict[str, tuple[float, list[list[float]], str]]
 
 DEFAULT_OSRM_URL = "https://router.project-osrm.org"
 DEFAULT_VALHALLA_URL = "https://valhalla1.openstreetmap.de"
 DEFAULT_TIMEOUT_S = 2.5
+DEFAULT_RETRIES = 2
+DEFAULT_CACHE_TTL_S = 300.0
+DEFAULT_COSTING = "truck"
+
+_MATRIX_CACHE: MatrixCache = {}
 
 
 class RoadBaselineError(Exception):
@@ -45,6 +53,43 @@ def _key(lat: float, lng: float) -> tuple[float, float]:
     return (round(lat, 5), round(lng, 5))
 
 
+def _points_key(points: Sequence[LatLng]) -> str:
+    return ";".join(f"{lat:.5f},{lng:.5f}" for lat, lng in points)
+
+
+def clear_matrix_cache() -> None:
+    _MATRIX_CACHE.clear()
+
+
+def validate_matrix_km(matrix: Sequence[Sequence[Any]], size: int | None = None) -> list[list[float]]:
+    if not matrix:
+        raise ValueError("empty distance matrix")
+    n = size if size is not None else len(matrix)
+    if len(matrix) != n:
+        raise ValueError("matrix row count mismatch")
+    out: list[list[float]] = []
+    for i, row in enumerate(matrix):
+        if not isinstance(row, (list, tuple)) or len(row) != n:
+            raise ValueError("matrix must be square")
+        parsed: list[float] = []
+        for j, cell in enumerate(row):
+            if cell is None:
+                raise ValueError(f"null matrix cell at {i},{j}")
+            try:
+                value = float(cell)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"non-numeric matrix cell at {i},{j}") from exc
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"invalid matrix cell at {i},{j}")
+            parsed.append(value)
+        out.append(parsed)
+    return out
+
+
+def _used_provider_id(provider: RoadBaseline) -> str:
+    return getattr(provider, "last_provider_id", None) or provider.provider_id
+
+
 def default_transport(
     url: str,
     method: str,
@@ -58,9 +103,33 @@ def default_transport(
         req.add_header("Content-Type", "application/json")
     try:
         with urllib.request.urlopen(req, timeout=timeout_s) as resp:
+            if getattr(resp, "status", 200) >= 400:
+                raise RoadBaselineError(f"HTTP {resp.status}")
             return json.loads(resp.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
         raise RoadBaselineError(str(exc)) from exc
+
+
+def _call_transport(
+    transport: Transport | None,
+    url: str,
+    method: str,
+    body: bytes | None,
+    *,
+    timeout_s: float,
+    retries: int = DEFAULT_RETRIES,
+) -> dict[str, Any]:
+    attempts = max(1, retries + 1)
+    last: Exception | None = None
+    for _ in range(attempts):
+        try:
+            if transport is not None:
+                return transport(url, method, body)
+            return default_transport(url, method, body, timeout_s=timeout_s)
+        except Exception as exc:
+            last = exc
+    assert last is not None
+    raise last
 
 
 class CircuityRoadBaseline:
@@ -102,14 +171,14 @@ class CachedMatrixBaseline:
 
 
 class FallbackRoadBaseline:
-    """Try primary OSM; fall back to circuity (or the next provider)."""
+    """Try primary OSM; fall back to the next provider or circuity."""
 
     provider_id = "fallback"
 
     def __init__(self, primary: RoadBaseline, fallback: RoadBaseline | None = None) -> None:
         self.primary = primary
         self.fallback = fallback or CircuityRoadBaseline()
-        self.last_provider_id = self.fallback.provider_id
+        self.last_provider_id = _used_provider_id(self.fallback)
 
     def pair_km(self, lat1: float, lng1: float, lat2: float, lng2: float) -> float:
         try:
@@ -117,8 +186,9 @@ class FallbackRoadBaseline:
             self.last_provider_id = self.primary.provider_id
             return km
         except Exception:
-            self.last_provider_id = getattr(self.fallback, "last_provider_id", self.fallback.provider_id)
-            return self.fallback.pair_km(lat1, lng1, lat2, lng2)
+            km = self.fallback.pair_km(lat1, lng1, lat2, lng2)
+            self.last_provider_id = _used_provider_id(self.fallback)
+            return km
 
     def matrix_km(self, points: Sequence[LatLng]) -> list[list[float]]:
         try:
@@ -126,8 +196,9 @@ class FallbackRoadBaseline:
             self.last_provider_id = self.primary.provider_id
             return matrix
         except Exception:
-            self.last_provider_id = getattr(self.fallback, "last_provider_id", self.fallback.provider_id)
-            return self.fallback.matrix_km(points)
+            matrix = self.fallback.matrix_km(points)
+            self.last_provider_id = _used_provider_id(self.fallback)
+            return matrix
 
 
 def parse_osrm_table(payload: dict[str, Any]) -> list[list[float]]:
@@ -136,7 +207,7 @@ def parse_osrm_table(payload: dict[str, Any]) -> list[list[float]]:
     distances = payload.get("distances")
     if not isinstance(distances, list) or not distances:
         raise ValueError("OSRM table missing distances")
-    return [[float(cell) / 1000.0 for cell in row] for row in distances]
+    return validate_matrix_km([[None if cell is None else float(cell) / 1000.0 for cell in row] for row in distances])
 
 
 def osrm_table_url(base_url: str, points: Sequence[LatLng], profile: str = "driving") -> str:
@@ -145,7 +216,7 @@ def osrm_table_url(base_url: str, points: Sequence[LatLng], profile: str = "driv
 
 
 class OsrmRoadBaseline:
-    """OSRM `/table/v1/driving` — Google Directions can replace this later."""
+    """OSRM `/table/v1/driving` — Google Distance Matrix can replace this later."""
 
     provider_id = "osrm"
 
@@ -156,16 +227,18 @@ class OsrmRoadBaseline:
         timeout_s: float = DEFAULT_TIMEOUT_S,
         transport: Transport | None = None,
         profile: str = "driving",
+        retries: int = DEFAULT_RETRIES,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.timeout_s = timeout_s
         self.transport = transport
         self.profile = profile
+        self.retries = retries
 
     def _fetch(self, url: str, method: str, body: bytes | None) -> dict[str, Any]:
-        if self.transport is not None:
-            return self.transport(url, method, body)
-        return default_transport(url, method, body, timeout_s=self.timeout_s)
+        return _call_transport(
+            self.transport, url, method, body, timeout_s=self.timeout_s, retries=self.retries
+        )
 
     def matrix_km(self, points: Sequence[LatLng]) -> list[list[float]]:
         if len(points) < 2:
@@ -181,10 +254,15 @@ def parse_valhalla_matrix(payload: dict[str, Any]) -> list[list[float]]:
     rows = payload.get("sources_to_targets")
     if not isinstance(rows, list) or not rows:
         raise ValueError("Valhalla matrix missing sources_to_targets")
-    matrix: list[list[float]] = []
+    raw: list[list[Any]] = []
     for row in rows:
-        matrix.append([float(cell["distance"]) for cell in row])
-    return matrix
+        parsed_row: list[Any] = []
+        for cell in row:
+            if not isinstance(cell, dict) or "distance" not in cell:
+                raise ValueError("Valhalla matrix cell missing distance")
+            parsed_row.append(cell["distance"])
+        raw.append(parsed_row)
+    return validate_matrix_km(raw)
 
 
 def valhalla_matrix_body(points: Sequence[LatLng], costing: str = "auto") -> dict[str, Any]:
@@ -207,19 +285,21 @@ class ValhallaRoadBaseline:
         self,
         base_url: str = DEFAULT_VALHALLA_URL,
         *,
-        costing: str = "auto",
+        costing: str = DEFAULT_COSTING,
         timeout_s: float = DEFAULT_TIMEOUT_S,
         transport: Transport | None = None,
+        retries: int = DEFAULT_RETRIES,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.costing = costing
         self.timeout_s = timeout_s
         self.transport = transport
+        self.retries = retries
 
     def _fetch(self, url: str, method: str, body: bytes | None) -> dict[str, Any]:
-        if self.transport is not None:
-            return self.transport(url, method, body)
-        return default_transport(url, method, body, timeout_s=self.timeout_s)
+        return _call_transport(
+            self.transport, url, method, body, timeout_s=self.timeout_s, retries=self.retries
+        )
 
     def matrix_km(self, points: Sequence[LatLng]) -> list[list[float]]:
         if len(points) < 2:
@@ -236,7 +316,7 @@ class ValhallaRoadBaseline:
 
 
 class GoogleDirectionsBaseline:
-    """Stub so a Google Directions key can plug in behind RoadBaseline later."""
+    """Reserved adapter. Instantiating without a wired client is not configured."""
 
     provider_id = "google_directions"
 
@@ -256,6 +336,19 @@ class GoogleDirectionsBaseline:
         raise RoadBaselineNotConfigured("Google Directions client is not wired yet")
 
 
+def _osm_chain(
+    *,
+    osrm: str,
+    valhalla: str,
+    costing: str,
+    transport: Transport | None,
+) -> FallbackRoadBaseline:
+    return FallbackRoadBaseline(
+        ValhallaRoadBaseline(valhalla, costing=costing, transport=transport),
+        FallbackRoadBaseline(OsrmRoadBaseline(osrm, transport=transport)),
+    )
+
+
 def resolve_road_baseline(
     name: str | None = None,
     *,
@@ -264,38 +357,52 @@ def resolve_road_baseline(
     costing: str | None = None,
     transport: Transport | None = None,
 ) -> RoadBaseline:
-    choice = (name or os.environ.get("ROAD_BASELINE") or "circuity").strip().lower()
-    if choice in {"circuity", "haversine"}:
-        return CircuityRoadBaseline()
-    costing_name = (costing or os.environ.get("ROAD_BASELINE_COSTING") or "auto").strip().lower()
+    choice = (name or os.environ.get("ROAD_BASELINE") or "auto").strip().lower()
+    costing_name = (costing or os.environ.get("ROAD_BASELINE_COSTING") or DEFAULT_COSTING).strip().lower()
     shared = os.environ.get("ROAD_BASELINE_URL", "").strip()
-    osrm = (osrm_url or os.environ.get("OSRM_URL") or (shared if choice == "osrm" else "") or DEFAULT_OSRM_URL)
+    osrm = osrm_url or os.environ.get("OSRM_URL") or (shared if choice == "osrm" else "") or DEFAULT_OSRM_URL
     valhalla = (
         valhalla_url
         or os.environ.get("VALHALLA_URL")
         or (shared if choice == "valhalla" else "")
         or DEFAULT_VALHALLA_URL
     )
+    if choice in {"google", "google_directions"}:
+        # No key / no client yet — same OSM chain the live worker deploys.
+        choice = "auto"
+    if choice in {"circuity", "haversine"}:
+        return CircuityRoadBaseline()
     if choice == "osrm":
         return FallbackRoadBaseline(OsrmRoadBaseline(osrm, transport=transport))
     if choice == "valhalla":
         return FallbackRoadBaseline(
             ValhallaRoadBaseline(valhalla, costing=costing_name, transport=transport)
         )
-    return FallbackRoadBaseline(
-        ValhallaRoadBaseline(valhalla, costing=costing_name, transport=transport),
-        FallbackRoadBaseline(OsrmRoadBaseline(osrm, transport=transport)),
-    )
+    return _osm_chain(osrm=osrm, valhalla=valhalla, costing=costing_name, transport=transport)
 
 
 def materialize_matrix(
     provider: RoadBaseline,
     points: Sequence[LatLng],
+    *,
+    cache: MatrixCache | None = None,
+    now: float | None = None,
+    ttl_s: float = DEFAULT_CACHE_TTL_S,
 ) -> tuple[RoadBaseline, str]:
     """Build a cached matrix once per optimize; fall back to circuity on failure."""
-    try:
-        matrix = provider.matrix_km(points)
-        name = getattr(provider, "last_provider_id", None) or provider.provider_id
+    store = _MATRIX_CACHE if cache is None else cache
+    clock = time.monotonic() if now is None else now
+    key = f"{provider.provider_id}|{_points_key(points)}"
+    hit = store.get(key)
+    if hit and clock - hit[0] < ttl_s:
+        matrix, name = hit[1], hit[2]
         return CachedMatrixBaseline(points, matrix, CircuityRoadBaseline(), name), name
+    try:
+        matrix = validate_matrix_km(provider.matrix_km(points), size=len(points) or None)
+        name = _used_provider_id(provider)
+        cached = CachedMatrixBaseline(points, matrix, CircuityRoadBaseline(), name)
+        if name != "circuity":
+            store[key] = (clock, matrix, name)
+        return cached, name
     except Exception:
         return CircuityRoadBaseline(), "circuity"

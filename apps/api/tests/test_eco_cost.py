@@ -120,3 +120,44 @@ def test_run_vrp_with_eco_weight_keeps_baseline_different_and_ttw_km() -> None:
     assert result.totals.km != result.baseline.km
     assert result.totals.kg_co2 == pytest.approx(kg_co2(result.totals.km, 12.0, "diesel"))
     assert result.baseline.kg_co2 == pytest.approx(kg_co2(result.baseline.km, 12.0, "diesel"))
+    assert result.distance_provider == "circuity"
+    assert result.eco_weight == pytest.approx(1.0)
+
+
+def test_eco_weight_assigns_lower_emission_vehicle() -> None:
+    """Mixed xe_tai_nho fleet: eco_weight=1 prefers sipping petrol over thirsty diesel."""
+    orders = [
+        _order(1, 10.776, 106.700, 80, "09:00"),
+        _order(2, 10.790, 106.680, 80, "08:00"),
+    ]
+    diesel = Vehicle(
+        id=1,
+        plate="51C-000.01",
+        type="xe_tai_nho",
+        capacity_kg=2000,
+        fuel="diesel",
+        l_per_100km=20,
+        status="ready",
+    )
+    petrol = Vehicle(
+        id=2,
+        plate="51C-000.02",
+        type="xe_tai_nho",
+        capacity_kg=2000,
+        fuel="petrol",
+        l_per_100km=8,
+        status="ready",
+    )
+    shared = {
+        "orders": orders,
+        "vehicles": [diesel, petrol],
+        "depot": (DEPOT_LAT, DEPOT_LNG),
+        "depot_name": DEPOT_NAME,
+        "radius_km": 50.0,
+        "road_baseline": CircuityRoadBaseline(),
+    }
+    km_first = run_vrp(**shared, eco_weight=0.0)
+    eco_first = run_vrp(**shared, eco_weight=1.0)
+    assert km_first.routes[0].vehicle.plate == "51C-000.01"
+    assert eco_first.routes[0].vehicle.plate == "51C-000.02"
+    assert eco_first.totals.kg_co2 < km_first.totals.kg_co2
