@@ -207,6 +207,11 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
           <tr><th>Hiệu quả Δ %</th><td id="pct-km" class="delta">0%</td><td id="pct-litres" class="delta">0%</td><td id="pct-co2" class="delta">0%</td></tr>
         </tbody>
       </table>
+      <p class="note" id="road-baseline-note" style="font-size:11px;color:var(--mut);line-height:1.45;margin:8px 0 4px">
+        Google-class road km = OSM network (Valhalla auto/truck, else OSRM driving) for now — not a Google key.
+        Zig-zag cơ sở is Excel stop order vs NN+2-opt, not Google. Fallback: haversine × 1.35.
+        CO₂ TTW: km × (L/100km) × kg/L. Optional eco-cost: GREENLOGIX_ECO_WEIGHT.
+      </p>
 
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('routes')">
@@ -477,6 +482,16 @@ export const DISPATCHER_HTML = `<!DOCTYPE html>
       document.getElementById("km").textContent = num(o.km);
       document.getElementById("litres").textContent = num(o.litres);
       document.getElementById("kg_co2").textContent = num(o.kg_co2);
+      const note = document.getElementById("road-baseline-note");
+      if (note) {
+        const provider = r.distance_provider || "circuity";
+        const eco = r.eco_weight == null ? "0" : String(r.eco_weight);
+        note.textContent =
+          "Live road km: " + provider +
+          " (Valhalla truck / OSRM driving, circuity fallback). Google Directions key later, same RoadBaseline." +
+          " Zig-zag cơ sở is Excel order vs NN+2-opt, not Google. Eco-weight " + eco +
+          " (TTW kg CO₂).";
+      }
     }
 
     async function refreshRoutes() {

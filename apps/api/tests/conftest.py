@@ -13,6 +13,17 @@ PIN = {"X-Driver-Pin": "0000"}
 
 
 @pytest.fixture(autouse=True)
+def road_baseline_offline(monkeypatch):
+    """CI stays on circuity; production defaults to OSM auto/truck."""
+    monkeypatch.setenv("ROAD_BASELINE", "circuity")
+    from greenlogix_api.solver.road_baseline import clear_matrix_cache
+
+    clear_matrix_cache()
+    yield
+    clear_matrix_cache()
+
+
+@pytest.fixture(autouse=True)
 def isolated_database(tmp_path, monkeypatch):
     data_dir = tmp_path / "data"
     data_dir.mkdir(parents=True, exist_ok=True)

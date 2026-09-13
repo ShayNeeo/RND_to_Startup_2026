@@ -8,11 +8,19 @@ import { D1Database } from "@cloudflare/workers-types";
 import { DISPATCHER_HTML } from "./dispatcherHtml";
 import { DRIVER_HTML } from "./driverHtml";
 import { generateSeedOrders, generateSeedVehicles, DEPOT_LAT, DEPOT_LNG, DEPOT_NAME } from "./seedData";
+import { ecoWeightFromEnv, materializeMatrix, resolveRoadBaseline } from "./roadBaseline";
 import { OrderRow, VehicleRow, runVrp } from "./solver";
 
 export interface Env {
   DB: D1Database;
   ENVIRONMENT?: string;
+  ROAD_BASELINE?: string;
+  ROAD_BASELINE_URL?: string;
+  ROAD_BASELINE_COSTING?: string;
+  OSRM_URL?: string;
+  VALHALLA_URL?: string;
+  GREENLOGIX_ECO_WEIGHT?: string;
+  GOOGLE_MAPS_API_KEY?: string;
 }
 
 const CORS_HEADERS: Record<string, string> = {
@@ -48,7 +56,21 @@ async function performOptimization(env: Env, radius: number = 3.0, autoPublish: 
   const orderRows = (await env.DB.prepare("SELECT * FROM orders").all()).results as unknown as OrderRow[];
   const vehicleRows = (await env.DB.prepare("SELECT * FROM vehicles").all()).results as unknown as VehicleRow[];
 
-  const vrp = runVrp(orderRows, vehicleRows, [DEPOT_LAT, DEPOT_LNG], DEPOT_NAME, radius);
+  const points: [number, number][] = [
+    [DEPOT_LAT, DEPOT_LNG],
+    ...orderRows.map((o) => [o.lat, o.lng] as [number, number]),
+  ];
+  const road = await materializeMatrix(resolveRoadBaseline(env), points);
+  const ecoWeight = ecoWeightFromEnv(env.GREENLOGIX_ECO_WEIGHT);
+  const vrp = runVrp(
+    orderRows,
+    vehicleRows,
+    [DEPOT_LAT, DEPOT_LNG],
+    DEPOT_NAME,
+    radius,
+    (lat1, lng1, lat2, lng2) => road.pairKm(lat1, lng1, lat2, lng2) as number,
+    ecoWeight
+  );
 
   // Persist generated routes and stops to D1
   await env.DB.batch([
@@ -112,7 +134,15 @@ async function performOptimization(env: Env, radius: number = 3.0, autoPublish: 
 
   // Save report
   await env.DB.prepare("INSERT OR REPLACE INTO reports (id, data) VALUES ('latest', ?)")
-    .bind(JSON.stringify({ baseline: vrp.baseline, optimized: vrp.totals, delta: vrp.delta }))
+    .bind(
+      JSON.stringify({
+        baseline: vrp.baseline,
+        optimized: vrp.totals,
+        delta: vrp.delta,
+        distance_provider: road.providerId,
+        eco_weight: ecoWeight,
+      })
+    )
     .run();
 
   return {
