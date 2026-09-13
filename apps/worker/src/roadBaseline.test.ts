@@ -176,4 +176,36 @@ describe("eco-cost", () => {
     if (prev === undefined) delete process.env.GREENLOGIX_ECO_WEIGHT;
     else process.env.GREENLOGIX_ECO_WEIGHT = prev;
   });
+
+  it("eco_weight=1 plus failed OSM reports circuity not fallback", async () => {
+    const boom = {
+      providerId: "boom",
+      pairKm() {
+        throw new Error("down");
+      },
+      async matrixKm() {
+        throw new Error("down");
+      },
+    };
+    const cached = await materializeMatrix(new FallbackRoadBaseline(boom), [
+      [10.801, 106.661],
+      [10.776, 106.7],
+    ]);
+    assert.equal(cached.providerId, "circuity");
+    assert.notEqual(cached.providerId, "fallback");
+    assert.equal(ecoWeightFromEnv("1"), 1);
+
+    const orders = [
+      { id: 1, address: "a", lat: 10.776, lng: 106.7, receiver: "KH", phone: "", kg: 80, window_start: "09:00", window_end: "10:00", cargo_type: "thuong", notes: "", excel_row: 1, status: "pending" },
+      { id: 2, address: "b", lat: 10.79, lng: 106.68, receiver: "KH", phone: "", kg: 80, window_start: "08:00", window_end: "10:00", cargo_type: "thuong", notes: "", excel_row: 2, status: "pending" },
+      { id: 3, address: "c", lat: 10.76, lng: 106.72, receiver: "KH", phone: "", kg: 80, window_start: "10:00", window_end: "12:00", cargo_type: "thuong", notes: "", excel_row: 3, status: "pending" },
+    ];
+    const vehicles = [
+      { id: 1, plate: "51C-000.01", type: "xe_tai_nho", capacity_kg: 2000, fuel: "diesel" as const, l_per_100km: 12, status: "ready" as const },
+    ];
+    const result = runVrp(orders, vehicles, [10.801, 106.661], "Tan Binh DC", 50, (lat1, lng1, lat2, lng2) => cached.pairKm(lat1, lng1, lat2, lng2) as number, 1);
+    assert.notEqual(result.totals.km, result.baseline.km);
+    assert.ok(result.baseline.kg_co2 > 0);
+    assert.ok(result.totals.kg_co2 > 0);
+  });
 });

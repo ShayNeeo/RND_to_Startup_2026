@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import os
+import re
 
 from fastapi import Header, HTTPException, Request
 
-_DEMO_BEARER = "Bearer DEMO"
+_DEMO_BEARER = re.compile(r"^bearer\s+demo$", re.IGNORECASE)
 _DEMO_PIN = "0000"
 
 
@@ -20,7 +21,8 @@ def require_dispatcher(
 ) -> None:
     if not demo_enabled():
         raise HTTPException(status_code=401, detail="unauthorized")
-    if authorization == _DEMO_BEARER or request.query_params.get("token") == "DEMO":
+    auth = (authorization or "").strip()
+    if _DEMO_BEARER.match(auth) or request.query_params.get("token") == "DEMO":
         return
     raise HTTPException(status_code=401, detail="unauthorized")
 

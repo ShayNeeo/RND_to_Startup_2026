@@ -1,3 +1,55 @@
+# Implementation Notes: Go-live QA slice (optimize labels + slash/auth)
+
+**Date:** 2026-09-13T18:20:00+07:00  
+**Author:** Cursor Cloud Agent (Thanh / `@ShayNeeo`)  
+**Scope:** Production go-live QA for van / `xe_tai_nho` routing. Runbook plus Worker/API hardening only where tests proved a gap. Not moto. Not ISO 14083. No Google scrape.
+
+---
+
+### What changed
+
+1. **`docs/runbooks/golive-qa.md`** (NEW): how to verify live `POST /optimize`, driver, and report; env `ROAD_BASELINE=auto`, `ROAD_BASELINE_COSTING=truck`, `GREENLOGIX_ECO_WEIGHT=1`; note that a CF API token may lack Zone → Workers Routes for `greenlogix.w9.nu` while `workers.dev` still serves the code.
+
+2. **Judge-visible optimize/report fields** (API + Worker):
+   - `POST /optimize` now returns `baseline` (km / litres / kg CO₂), `distance_provider`, and `eco_weight` next to `totals`.
+   - `GET /report` keeps those labels instead of dropping them on `ReportOut`.
+   - Frozen OpenAPI snapshot updated for the additive keys only. Path set unchanged.
+
+3. **Trailing-slash / auth footguns**:
+   - Worker `apiPath` treats `/optimize/`, `/api/optimize/`, `/report/`, `/driver/route/` as the no-slash routes.
+   - FastAPI strips a trailing slash (no 307) so POST body is not lost.
+   - `Bearer DEMO` is case-insensitive; `?token=DEMO` still works.
+
+4. **Tests:** `apps/api/tests/test_golive_qa.py`; Worker `src/http.test.ts` plus eco_weight + circuity-not-fallback in `roadBaseline.test.ts`. CI stays `ROAD_BASELINE=circuity`.
+
+---
+
+### Decisions / tradeoffs
+
+1. **Expose labels on optimize, not a new endpoint.**
+   - Judges hitting `POST /optimize` (or the landing proxy) must see baseline vs optimized km/CO₂ without a second hop. `/report` still owns delta %.
+
+2. **Additive OpenAPI only.**
+   - Previous RoadBaseline CR froze the path set. This slice adds optional-with-default response keys (`baseline`, `distance_provider`, `eco_weight`). No new paths.
+
+3. **Surgical.**
+   - No landing rewrite, no emission-factor edits, no Google scrape, no ISO 14083.
+
+---
+
+### Verification
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+cd apps/api && uv sync --locked && uv run --locked pytest -q
+pnpm --filter @greenlogix/worker run typecheck
+pnpm --filter @greenlogix/worker run test
+```
+
+Live (read-only checks plus one demo optimize): see `docs/runbooks/golive-qa.md`.
+
+---
+
 # Implementation Notes: RoadBaseline OSM distances + optional eco-cost
 
 **Date:** 2026-09-13T17:50:00+07:00  

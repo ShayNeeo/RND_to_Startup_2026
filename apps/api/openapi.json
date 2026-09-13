@@ -1244,13 +1244,27 @@
           },
           "totals": {
             "$ref": "#/components/schemas/TotalsOut"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/TotalsOut"
+          },
+          "distance_provider": {
+            "type": "string",
+            "title": "Distance Provider",
+            "default": "circuity"
+          },
+          "eco_weight": {
+            "type": "number",
+            "title": "Eco Weight",
+            "default": 0.0
           }
         },
         "type": "object",
         "required": [
           "routes",
           "unassigned_order_ids",
-          "totals"
+          "totals",
+          "baseline"
         ],
         "title": "OptimizeOut"
       },
@@ -1542,6 +1556,16 @@
           },
           "delta": {
             "$ref": "#/components/schemas/ReportDelta"
+          },
+          "distance_provider": {
+            "type": "string",
+            "title": "Distance Provider",
+            "default": "circuity"
+          },
+          "eco_weight": {
+            "type": "number",
+            "title": "Eco Weight",
+            "default": 0.0
           }
         },
         "type": "object",
