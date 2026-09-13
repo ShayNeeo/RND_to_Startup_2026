@@ -37,7 +37,17 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
-app = FastAPI(title="GreenLogix API", lifespan=lifespan)
+app = FastAPI(title="GreenLogix API", lifespan=lifespan, redirect_slashes=False)
+
+
+@app.middleware("http")
+async def strip_trailing_slash(request: Request, call_next):
+    path = request.scope.get("path", "")
+    if len(path) > 1 and path.endswith("/"):
+        trimmed = path.rstrip("/") or "/"
+        request.scope["path"] = trimmed
+        request.scope["raw_path"] = trimmed.encode("ascii")
+    return await call_next(request)
 
 
 @app.exception_handler(RequestValidationError)

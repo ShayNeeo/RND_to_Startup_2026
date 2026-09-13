@@ -8,6 +8,7 @@ import { D1Database } from "@cloudflare/workers-types";
 import { DISPATCHER_HTML } from "./dispatcherHtml";
 import { DRIVER_HTML } from "./driverHtml";
 import { generateSeedOrders, generateSeedVehicles, DEPOT_LAT, DEPOT_LNG, DEPOT_NAME } from "./seedData";
+import { apiPath, isDemoDispatcher, judgeOptimizeFields } from "./http";
 import { ecoWeightFromEnv, materializeMatrix, resolveRoadBaseline } from "./roadBaseline";
 import { OrderRow, VehicleRow, runVrp } from "./solver";
 
@@ -41,10 +42,7 @@ function jsonResponse(data: unknown, status = 200): Response {
 }
 
 function checkAuth(request: Request): boolean {
-  const url = new URL(request.url);
-  if (url.searchParams.get("token") === "DEMO") return true;
-  const auth = request.headers.get("Authorization");
-  return auth === "Bearer DEMO";
+  return isDemoDispatcher(request);
 }
 
 function checkDriverPin(request: Request): boolean {
@@ -148,7 +146,7 @@ async function performOptimization(env: Env, radius: number = 3.0, autoPublish: 
   return {
     routes: createdRoutes,
     unassigned_order_ids: vrp.unassigned_ids,
-    totals: vrp.totals,
+    ...judgeOptimizeFields(vrp, road.providerId, ecoWeight),
   };
 }
 
@@ -156,7 +154,8 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const rawPath = url.pathname;
-    const cleanPath = rawPath.replace(/\/+$/, "") || "/";
+    const path = apiPath(rawPath);
+    const isApiPrefix = rawPath.replace(/\/+$/, "").startsWith("/api");
     const method = request.method.toUpperCase();
 
     // 1. CORS Preflight
@@ -165,7 +164,7 @@ export default {
     }
 
     // 2. Dispatcher Web Console UI (Served 24/7 at /app, /dashboard, and /dispatcher)
-    if (cleanPath === "/app" || cleanPath === "/dashboard" || cleanPath === "/dispatcher") {
+    if (path === "/app" || path === "/dashboard" || path === "/dispatcher") {
       return new Response(DISPATCHER_HTML, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
@@ -175,7 +174,7 @@ export default {
     }
 
     // 2b. Driver Mobile PWA UI (Served 24/7 at /driver)
-    if (cleanPath === "/driver") {
+    if (path === "/driver") {
       return new Response(DRIVER_HTML, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
@@ -183,10 +182,6 @@ export default {
         },
       });
     }
-
-    // Normalize path: allow both /api/xxx and /xxx
-    const isApiPrefix = rawPath.startsWith("/api");
-    const path = isApiPrefix ? (rawPath.slice(4) || "/") : rawPath;
 
     // 3. Health & Info
     if (path === "/health") {
@@ -489,6 +484,8 @@ export default {
         baseline: { km: 0, litres: 0, kg_co2: 0 },
         optimized: { km: 0, litres: 0, kg_co2: 0 },
         delta: { km: 0, litres: 0, kg_co2: 0, km_pct: 0, litres_pct: 0, kg_co2_pct: 0 },
+        distance_provider: "circuity",
+        eco_weight: 0,
       });
     }
 

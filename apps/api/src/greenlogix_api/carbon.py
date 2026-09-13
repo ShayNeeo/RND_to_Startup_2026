@@ -78,6 +78,8 @@ def load_report(path: Path | None = None) -> ReportOut | None:
         baseline=baseline,
         optimized=optimized,
         delta=delta_from_totals(baseline, optimized),
+        distance_provider=str(raw.get("distance_provider") or "circuity"),
+        eco_weight=float(raw.get("eco_weight") or 0.0),
     )
 
 

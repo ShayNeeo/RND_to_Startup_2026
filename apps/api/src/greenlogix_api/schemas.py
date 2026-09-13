@@ -123,6 +123,9 @@ class OptimizeOut(BaseModel):
     routes: list[RouteOut]
     unassigned_order_ids: list[int]
     totals: TotalsOut
+    baseline: TotalsOut
+    distance_provider: str = "circuity"
+    eco_weight: float = 0.0
 
 
 class PublishIn(BaseModel):
@@ -177,6 +180,8 @@ class ReportOut(BaseModel):
     baseline: ReportTotals
     optimized: ReportTotals
     delta: ReportDelta
+    distance_provider: str = "circuity"
+    eco_weight: float = 0.0
 
 
 class DepotOut(BaseModel):

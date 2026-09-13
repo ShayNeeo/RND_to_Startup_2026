@@ -99,6 +99,9 @@ def optimize(
         routes=outs,
         unassigned_order_ids=result.unassigned_ids,
         totals=result.totals,
+        baseline=result.baseline,
+        distance_provider=getattr(result, "distance_provider", "circuity"),
+        eco_weight=getattr(result, "eco_weight", 0.0),
     )
 
 

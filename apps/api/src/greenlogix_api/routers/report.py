@@ -30,7 +30,13 @@ def current_report() -> ReportOut:
         )
     # Recompute so km_pct is owned here, not a marketing constant (RPT-02).
     delta = delta_from_totals(stored.baseline, stored.optimized)
-    return ReportOut(baseline=stored.baseline, optimized=stored.optimized, delta=delta)
+    return ReportOut(
+        baseline=stored.baseline,
+        optimized=stored.optimized,
+        delta=delta,
+        distance_provider=stored.distance_provider,
+        eco_weight=stored.eco_weight,
+    )
 
 
 def report_workbook(payload: ReportOut) -> bytes:
