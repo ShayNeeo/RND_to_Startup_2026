@@ -61,7 +61,7 @@ pnpm --filter @greenlogix/worker run typecheck
 pnpm --filter @greenlogix/worker run test
 ```
 
-No local Valhalla/OSRM Docker image is required. To force OSM on the FastAPI path: `ROAD_BASELINE=auto`. To force truck costing: `ROAD_BASELINE=valhalla ROAD_BASELINE_COSTING=truck`. Self-hosted extract: set `VALHALLA_URL` or `OSRM_URL`.
+No local Valhalla/OSRM Docker image is required. Public endpoints responded from this environment (OSRM table ~6.3 km, Valhalla auto ~6.0 km for Tân Bình DC → Q1). To force OSM on the FastAPI path: `ROAD_BASELINE=auto`. To force truck costing: `ROAD_BASELINE=valhalla ROAD_BASELINE_COSTING=truck`. Self-hosted extract: set `VALHALLA_URL` or `OSRM_URL`. Live worker already defaults to `auto` with a 2.5s timeout.
 
 ---
 
