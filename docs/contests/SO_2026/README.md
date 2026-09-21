@@ -30,6 +30,7 @@ Official submission materials for the **Olympic Khởi nghiệp 2026** competiti
 
 | File | Type | Description |
 |---|---|---|
+| [`DE_AN_SO2026_VSIC_HOAN_THIEN.md`](DE_AN_SO2026_VSIC_HOAN_THIEN.md) | Markdown Document (28 KB) | **Bản đề án hoàn chỉnh chuẩn VSIC 2026**: Tích hợp 5 Whys, 2 Personas định tính, ma trận đối thủ & Innovation Gap, phân tách 3 tầng Customers/Users/Beneficiaries, Impact-driven Business Model, Perceptual Map, và gắn nhãn 3 cấp độ số liệu minh bạch (`[ĐÃ KIỂM CHỨNG]`, `[BENCHMARK NGÀNH]`, `[GIẢ ĐỊNH – CẦN PILOT]`). |
 | [`BÀI DỰ THI OLYMPIC KHỞI NGHIỆP 2026.docx`](BÀI%20DỰ%20THI%20OLYMPIC%20KHỞI%20NGHIỆP%202026.docx) | Word Document (1.05 MB) | Official 9-section contest submission paper covering problem analysis (17% logistics GDP cost, 80% road CO₂, 30-35% empty return trips), VRP routing engine, GLEC/GHG CO₂ measurement, business model canvas (BMC), financial projections, and ESG impact roadmap. |
 | [`ĐƠN ĐĂNG KÝ VÀ CAM KẾT DỰ THI OLYMPIC KHỞI NGHIỆP 2026.docx`](ĐƠN%20ĐĂNG%20KÝ%20VÀ%20CAM%20KẾT%20DỰ%20THI%20OLYMPIC%20KHỞI%20NGHIỆP%202026.docx) | Word Document (628 KB) | Official registration form, team identity verification, and competition commitment agreement. |
 
