@@ -185,8 +185,39 @@
 
   <script>
     const AUTH = { "Authorization": "Bearer DEMO", "X-Driver-Pin": "0000" };
-    const base = (window.location.port === "8787" || window.location.hostname.includes("workers.dev")) ? "" : "https://greenlogix-api.9ez.workers.dev";
     let currentStops = [];
+
+    function resolveBaseUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const customApi = urlParams.get("api");
+      if (customApi) {
+        if (customApi === "local" || customApi === "fastapi" || customApi === "py") return "http://localhost:8000";
+        if (customApi === "worker") return "http://localhost:8787";
+        return customApi.replace(/\/+$/, "");
+      }
+      if (window.location.port === "8787" || window.location.hostname.includes("workers.dev")) return "";
+      if (window.location.port === "8000") return "";
+      return "https://greenlogix-api.9ez.workers.dev";
+    }
+
+    async function apiFetch(path, opts) {
+      const base = resolveBaseUrl();
+      const target = base + path;
+      try {
+        const res = await fetch(target, opts);
+        if (!res.ok) throw new Error(target + " (" + res.status + ")");
+        return res;
+      } catch (err) {
+        if (window.location.hostname === "localhost" && base !== "http://localhost:8000" && base !== "") {
+          console.warn("API fallback to local FastAPI http://localhost:8000 for", path);
+          const localTarget = "http://localhost:8000" + path;
+          const res = await fetch(localTarget, opts);
+          if (!res.ok) throw new Error(localTarget + " (" + res.status + ")");
+          return res;
+        }
+        throw err;
+      }
+    }
 
     // Parse URL plate param if provided
     const urlParams = new URLSearchParams(window.location.search);
@@ -218,12 +249,11 @@
       const msg = document.getElementById("status-msg");
       msg.textContent = "Đang gửi cập nhật...";
       try {
-        const res = await fetch(base + "/api/stops/" + stopId + "/status", {
+        const res = await apiFetch("/api/stops/" + stopId + "/status", {
           method: "POST",
           headers: Object.assign({ "Content-Type": "application/json" }, AUTH),
           body: JSON.stringify({ status, reason })
         });
-        if (!res.ok) throw new Error("Cập nhật thất bại (" + res.status + ")");
         msg.textContent = "Đã cập nhật trạng thái điểm #" + stopId + " thành: " + status;
         await loadDriverRoute();
       } catch (err) {
@@ -242,8 +272,7 @@
       const plate = document.getElementById("plate-select").value;
       const container = document.getElementById("stops-container");
       try {
-        const res = await fetch(base + "/api/driver/route?plate=" + encodeURIComponent(plate), { headers: AUTH });
-        if (!res.ok) throw new Error("Lỗi nạp lộ trình (" + res.status + ")");
+        const res = await apiFetch("/api/driver/route?plate=" + encodeURIComponent(plate), { headers: AUTH });
         const data = await res.json();
         const route = (data.routes || [])[0] || null;
         

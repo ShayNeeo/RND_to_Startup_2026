@@ -29,6 +29,17 @@ API_ROOT = Path(__file__).resolve().parents[2]
 OPENAPI_PATH = API_ROOT / "openapi.json"
 templates = Jinja2Templates(directory=str(API_ROOT / "templates"))
 
+# Load local .env defaults (e.g. GREENLOGIX_DEMO=1) if present
+_env_file = API_ROOT / ".env"
+if _env_file.exists():
+    import os
+
+    for _line in _env_file.read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -41,12 +52,14 @@ app = FastAPI(title="GreenLogix API", lifespan=lifespan, redirect_slashes=False)
 
 
 @app.middleware("http")
-async def strip_trailing_slash(request: Request, call_next):
+async def normalize_path(request: Request, call_next):
     path = request.scope.get("path", "")
+    if path.startswith("/api/") or path == "/api":
+        path = path[4:] or "/"
     if len(path) > 1 and path.endswith("/"):
-        trimmed = path.rstrip("/") or "/"
-        request.scope["path"] = trimmed
-        request.scope["raw_path"] = trimmed.encode("ascii")
+        path = path.rstrip("/") or "/"
+    request.scope["path"] = path
+    request.scope["raw_path"] = path.encode("ascii")
     return await call_next(request)
 
 

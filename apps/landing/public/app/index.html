@@ -306,15 +306,41 @@
       return (s < 9 && e > 6) || (s < 20 && e > 16);
     }
 
+    function resolveBaseUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const customApi = urlParams.get("api");
+      if (customApi) {
+        if (customApi === "local" || customApi === "fastapi" || customApi === "py") return "http://localhost:8000";
+        if (customApi === "worker") return "http://localhost:8787";
+        return customApi.replace(/\/+$/, "");
+      }
+      if (window.location.port === "8787" || window.location.hostname.includes("workers.dev")) return "";
+      if (window.location.port === "8000") return "";
+      return "https://greenlogix-api.9ez.workers.dev";
+    }
+
     async function api(path, opts) {
-      const base = (window.location.port === "8787") ? "" : "https://greenlogix-api.9ez.workers.dev";
+      const base = resolveBaseUrl();
       const cleanPath = path.startsWith("/api") ? path : ("/api" + (path.startsWith("/") ? path : "/" + path));
       const target = base + cleanPath;
-      const res = await fetch(target, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
-      if (!res.ok) throw new Error(target + " " + res.status);
-      const ct = res.headers.get("content-type") || "";
-      if (ct.includes("application/json")) return res.json();
-      return res.text();
+      try {
+        const res = await fetch(target, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
+        if (!res.ok) throw new Error(target + " " + res.status);
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("application/json")) return res.json();
+        return res.text();
+      } catch (err) {
+        if (window.location.hostname === "localhost" && base !== "http://localhost:8000" && base !== "") {
+          console.warn("API error on primary base, attempting local fallback (http://localhost:8000):", err);
+          const localTarget = "http://localhost:8000" + cleanPath;
+          const res = await fetch(localTarget, Object.assign({ headers: Object.assign({ "Content-Type": "application/json" }, AUTH) }, opts || {}));
+          if (!res.ok) throw new Error(localTarget + " " + res.status);
+          const ct = res.headers.get("content-type") || "";
+          if (ct.includes("application/json")) return res.json();
+          return res.text();
+        }
+        throw err;
+      }
     }
 
     // Micro-routing Turn-by-Turn Pathfinding via OSRM with local cache & fallback
