@@ -197,6 +197,31 @@
         <div class="kpi"><span>CO₂ (TTW kg)</span><b id="kg_co2">0</b></div>
       </div>
 
+      <!-- Route Policy Pareto Selector -->
+      <div style="background:#080f0c;border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:2px;margin-bottom:4px">
+        <div style="font-size:10px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span>Chính sách tuyến (Route Policy):</span>
+          <span style="background:rgba(54,217,165,0.15);color:var(--mint);padding:1px 5px;border-radius:4px;font-size:9.5px;font-weight:700">Tier C1: Physics</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+          <div class="policy-card" id="pol-fastest" onclick="setPolicy('fastest')" style="background:#14261d;border:1px solid var(--lime);border-radius:6px;padding:5px 6px;cursor:pointer;text-align:center;">
+            <div style="font-weight:700;font-size:11px;color:var(--lime)">Nhanh nhất</div>
+            <div style="font-size:9.5px;color:var(--mut)">0% SLA · Legal</div>
+          </div>
+          <div class="policy-card" id="pol-balanced" onclick="setPolicy('balanced')" style="background:#0a1510;border:1px solid var(--line);border-radius:6px;padding:5px 6px;cursor:pointer;text-align:center;">
+            <div style="font-weight:700;font-size:11px;color:var(--mint)">Cân bằng</div>
+            <div style="font-size:9.5px;color:var(--mut)">+5% SLA · -10%</div>
+          </div>
+          <div class="policy-card" id="pol-eco" onclick="setPolicy('eco')" style="background:#0a1510;border:1px solid var(--line);border-radius:6px;padding:5px 6px;cursor:pointer;text-align:center;">
+            <div style="font-weight:700;font-size:11px;color:#38bdf8">Tối đa Xanh</div>
+            <div style="font-size:9.5px;color:var(--mut)">+10% SLA · -16%</div>
+          </div>
+        </div>
+        <div id="policy-desc" style="font-size:10.5px;color:var(--mut);margin-top:6px;line-height:1.35;border-top:1px dashed var(--line);padding-top:4px;">
+          Tuyến nhanh nhất tuân thủ chiều cao/tải trọng và giờ cấm tải TP.HCM (QĐ 23/2018).
+        </div>
+      </div>
+
       <table class="benchmark-table">
         <thead>
           <tr><th>Đối chuẩn</th><th>km</th><th>lít</th><th>kg CO₂</th></tr>
@@ -207,6 +232,11 @@
           <tr><th>Hiệu quả Δ %</th><td id="pct-km" class="delta">0%</td><td id="pct-litres" class="delta">0%</td><td id="pct-co2" class="delta">0%</td></tr>
         </tbody>
       </table>
+
+      <div style="font-size:10px;color:var(--mut);display:flex;justify-content:space-between;padding:2px 4px 0;">
+        <span>Khung xe: <b>xe_tai_nho 1.5T</b></span>
+        <span>Mô hình: <b>GLX-HDT-v1 (GLEC 3.2)</b></span>
+      </div>
 
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('routes')">
@@ -541,6 +571,26 @@
       safeCreateIcons();
     }
 
+    let currentPolicy = "fastest";
+    function setPolicy(p) {
+      currentPolicy = p;
+      const f = document.getElementById("pol-fastest");
+      const b = document.getElementById("pol-balanced");
+      const e = document.getElementById("pol-eco");
+      const desc = document.getElementById("policy-desc");
+      [f, b, e].forEach(el => { el.style.borderColor = "var(--line)"; el.style.background = "#0a1510"; });
+      if (p === "fastest") {
+        f.style.borderColor = "var(--lime)"; f.style.background = "#14261d";
+        desc.textContent = "Tuyến nhanh nhất tuân thủ chiều cao/tải trọng và giờ cấm tải TP.HCM (QĐ 23/2018).";
+      } else if (p === "balanced") {
+        b.style.borderColor = "var(--mint)"; b.style.background = "#14261d";
+        desc.textContent = "Tiết kiệm nhiên liệu trong giới hạn +5% SLA; điều phối giảm tải trước đoạn dốc và giảm dừng chờ giao lộ.";
+      } else if (p === "eco") {
+        e.style.borderColor = "#38bdf8"; e.style.background = "#14261d";
+        desc.textContent = "Tối đa hóa mức giảm phát thải trong giới hạn +10% SLA; duy trì dải vòng tua động cơ kinh tế.";
+      }
+    }
+
     async function refreshVehicles() {
       const vehicles = await api("/vehicles");
       document.getElementById("vehicle-count").textContent = (vehicles || []).length;
@@ -549,9 +599,19 @@
       for (const v of vehicles || []) {
         const item = document.createElement("div");
         item.className = "stop-item";
+        item.style.flexDirection = "column";
+        item.style.alignItems = "flex-start";
+        item.style.gap = "4px";
+        item.style.padding = "8px 10px";
         item.innerHTML =
-          '<div><b>' + v.plate + '</b> <span style="color:var(--mut)">(' + v.capacity_kg + ' kg)</span></div>' +
-          '<span class="badge-status ' + (v.status === 'ready' ? 'badge-delivered' : 'badge-failed') + '">' + v.status + '</span>';
+          '<div style="display:flex;justify-content:space-between;width:100%;align-items:center;">' +
+            '<div><b>' + v.plate + '</b> <span style="color:var(--lime);font-weight:700">(' + v.type + ')</span></div>' +
+            '<span class="badge-status ' + (v.status === 'ready' ? 'badge-delivered' : 'badge-failed') + '">' + v.status + '</span>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--mut);line-height:1.4;">' +
+            'Tải trọng: <b>' + v.capacity_kg + ' kg</b> · Nhiên liệu: <b>' + (v.fuel === 'diesel' ? 'Dầu Diesel' : 'Xăng Petrol') + '</b> (' + v.l_per_100km + ' L/100km)<br/>' +
+            '<span style="color:var(--mint)">Khung xe: Cao 2.1m · Rộng 1.8m · Dài 4.8m | GVW: 3.2T</span>' +
+          '</div>';
         c.appendChild(item);
       }
     }

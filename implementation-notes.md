@@ -1,3 +1,71 @@
+# Implementation Notes: GreenLogix Frontier Engineering & Demo 24/09 Slice
+
+**Date:** 2026-09-21T23:10:00+07:00  
+**Scope:** Full execution of Frontier Product & Engineering Plan across Change Requests CR-01, CR-02, CR-03, CR-04, CR-05, CR-07, CR-08, CR-09, CR-10, CR-11/12, and CR-15 with end-to-end visual QA/QC.
+
+---
+
+### What changed
+
+1. **Architecture & ADRs (CR-01)**:
+   - `docs/adr/0001-authoritative-architecture.md`: Established FastAPI as authoritative computation core, OSM/Valhalla as routing substrate, and PostGIS migration target.
+2. **Google Maps Handoff Fix (CR-02)**:
+   - `apps/mobile-driver/lib/api/maps_link.dart`: Updated `googleMapsDirUri` to use `Uri.https` with `travelmode=driving` and `dir_action=navigate`, eliminating the Vietnam two-wheeler mode switch UX defect.
+   - `apps/mobile-driver/test/maps_link_test.dart`: Added explicit query parameter assertions.
+   - `apps/landing/public/driver/index.html`: Added dedicated high-visibility "Chỉ đường (Google Maps · Ô tô / Xe tải)" action button to stop cards.
+3. **GOFA Places Adapter & Location Provenance (CR-03)**:
+   - `apps/api/src/greenlogix_api/places/base.py`: Defined `PlaceProvider` protocol, `PlaceSuggestion`, and `PlaceDetail`.
+   - `apps/api/src/greenlogix_api/places/gofa.py`: Implemented quota-governed client with debouncing, caching, and graceful offline fallback.
+   - `apps/api/src/greenlogix_api/places/mock.py`: Curated Vietnam address database with fuzzy accent-insensitive search.
+4. **Truck Profiles & Safe Routing Cache Keys (CR-05)**:
+   - `apps/api/src/greenlogix_api/geo/truck_profile.py`: Defined `TruckProfile` schema (`xe_tai_nho`, `xe_tai_trung`, `xe_tai_nang`) with physical dimensions, gross weight, and Valhalla truck options.
+   - `apps/api/src/greenlogix_api/solver/road_baseline.py`: Integrated `TruckProfile` into `ValhallaRoadBaseline` and included profile hashes into `materialize_matrix` cache keys.
+5. **Tenant RBAC & Horizontal Authorization Guard (CR-04)**:
+   - `apps/api/src/greenlogix_api/auth/`: Built `UserRole`, `AuthContext`, and authorization guards (`verify_driver_plate_access`) preventing horizontal privilege escalation between driver accounts.
+6. **Vietnam Truck Restrictions & Admin Boundaries (CR-07 & CR-08)**:
+   - `apps/api/src/greenlogix_api/geo/restrictions.py`: Modeled HCMC Decision 23/2018/QĐ-UBND light truck morning/evening bans and heavy truck day bans.
+   - `apps/api/src/greenlogix_api/geo/admin_boundaries.py`: Resolved route traversal across canonical NSO wards/communes.
+   - `apps/landing/public/driver/index.html`: Displayed dynamic administrative corridor breadcrumbs (`Tân Bình → Phú Nhuận → Quận 10 → Quận 1`).
+7. **GLX-HDT-v1 Energy Model & EcoPath Pareto Engine (CR-09 & CR-10)**:
+   - `docs/research/energy_model_spec.md`: Documented governing physics equations and physical monotonicity invariants.
+   - `apps/api/src/greenlogix_api/energy/hdt_v1.py`: Implemented mechanical tractive power demand and fuel consumption model.
+   - `apps/api/src/greenlogix_api/routing/pareto.py`: Evaluated multi-criteria trade-offs (Fastest Legal vs Eco Balanced vs Eco Max).
+   - `apps/api/src/greenlogix_api/optimizer/eco_alns.py`: Implemented ALNS with load-dependent destroy/repair operators.
+8. **Investor Evidence UI & Route Policy Cards (CR-15)**:
+   - `apps/landing/public/app/index.html`: Added Route Policy Pareto Selector, Tier C1 Confidence badge, and vehicle truck envelope metadata.
+
+---
+
+### Decisions / tradeoffs
+
+1. **Python Standard Library over External Dependencies**:
+   - Reused `urllib.request` in `gofa.py` instead of adding external packages like `httpx`, ensuring compile-time efficiency and zero footprint bloat.
+2. **Backwards Compatibility on Legacy Auth**:
+   - Preserved `Bearer DEMO` and PIN `0000` for existing test suites while structuring `AuthContext` for scoped driver plate authorization.
+3. **Pareto Frontier vs Linear Weighting**:
+   - Formally deprecated unit-mixing `(1 - w)*km + w*kg_co2` in favor of SLA-bounded Pareto candidates (`Fastest Legal` $\le 0\%$, `Eco Balanced` $\le 5\%$, `Eco Max` $\le 10\%$).
+
+---
+
+### Verification
+
+```bash
+# 1. API Python Test Suite (295 tests passing)
+cd apps/api && uv run pytest -q
+
+# 2. Driver Flutter Test Suite (15 tests passing)
+cd apps/mobile-driver && flutter test
+
+# 3. Landing & Portals Build
+pnpm run build:landing
+
+# 4. Playwright Visual QA/QC
+uv run --with playwright python scripts/qa_driver_pwa.py
+uv run --with playwright python scripts/qa_manager_portal.py
+```
+
+---
+
 # Implementation Notes: Go-live QA slice (optimize labels + slash/auth)
 
 **Date:** 2026-09-13T18:20:00+07:00  

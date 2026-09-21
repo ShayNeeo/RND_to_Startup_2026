@@ -107,6 +107,7 @@
     .btn-arrived { background: #3b2805; color: #fde047; border: 1px solid #713f12; }
     .btn-delivered { background: #064e3b; color: #6ee7b7; border: 1px solid #047857; }
     .btn-failed { background: #450a0a; color: #fca5a5; border: 1px solid #991b1b; }
+    .btn-navig { background: #0f2744; color: #60a5fa; border: 1px solid #1e40af; text-decoration: none; width: 100%; box-sizing: border-box; }
     .btn-act:hover { filter: brightness(1.2); }
     .btn-act:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -159,6 +160,14 @@
       <div class="stat-box">
         <span>Khối lượng</span>
         <b id="stat-kg">0 kg</b>
+      </div>
+    </div>
+
+    <div id="corridor-bar" style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12.5px;">
+      <i data-lucide="compass" style="width:18px;height:18px;color:var(--lime);flex-shrink:0;"></i>
+      <div>
+        <span style="color:var(--mut);font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.03em;display:block;">Hành lang hành chính đi qua:</span>
+        <b id="corridor-text" style="color:var(--text);font-weight:700">Tân Bình → Phú Nhuận → Quận 10 → Quận 1</b>
       </div>
     </div>
 
@@ -294,6 +303,21 @@
         document.getElementById("stat-done").textContent = doneStops;
         document.getElementById("stat-kg").textContent = totalKg + " kg";
 
+        const districts = [];
+        const knownDistricts = ["Tân Bình", "Phú Nhuận", "Quận 10", "Quận 3", "Quận 1", "Bình Thạnh", "Thủ Đức", "Gò Vấp", "Tân Phú", "Quận 7", "Quận 5", "Quận 8"];
+        currentStops.forEach(s => {
+          const addr = s.address || "";
+          for (const d of knownDistricts) {
+            if (addr.toLowerCase().includes(d.toLowerCase())) {
+              if (!districts.length || districts[districts.length - 1] !== d) {
+                districts.push(d);
+              }
+              break;
+            }
+          }
+        });
+        document.getElementById("corridor-text").textContent = districts.length ? districts.join(" → ") : "Tân Bình → Nội đô TP.HCM";
+
         container.innerHTML = "";
         currentStops.forEach((s, idx) => {
           const isDepot = s.kind === "depot";
@@ -312,12 +336,16 @@
             failed: "Thất bại"
           }[s.status || "pending"] || s.status;
 
+          const mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(s.lat + ',' + s.lng) + '&travelmode=driving&dir_action=navigate';
           const actionsHtml = isDepot
             ? '<div style="font-size:12px;color:var(--mut)">Điểm xuất phát trung tâm / Depot Tân Bình</div>'
-            : '<div class="stop-actions">' +
-                '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \'arrived\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
-                '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \'delivered\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
-                '<button class="btn-act btn-failed" onclick="onFailClick(' + s.id + ')"><i data-lucide="x-circle" style="width:13px;height:13px"></i>Báo hoãn</button>' +
+            : '<div style="display:flex;flex-direction:column;gap:6px">' +
+                '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" class="btn-act btn-navig" style="padding:9px;font-size:12px;font-weight:700"><i data-lucide="navigation" style="width:13px;height:13px"></i>Chỉ đường (Google Maps · Ô tô / Xe tải)</a>' +
+                '<div class="stop-actions">' +
+                  '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \'arrived\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
+                  '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \'delivered\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
+                  '<button class="btn-act btn-failed" onclick="onFailClick(' + s.id + ')"><i data-lucide="x-circle" style="width:13px;height:13px"></i>Báo hoãn</button>' +
+                '</div>' +
               '</div>';
 
           card.innerHTML =

@@ -1,4 +1,4 @@
-"""Demo auth gated by GREENLOGIX_DEMO=1 (D-19)."""
+"""Legacy demo auth gated by GREENLOGIX_DEMO=1 (D-19)."""
 
 from __future__ import annotations
 

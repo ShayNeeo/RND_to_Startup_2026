@@ -17,6 +17,7 @@ import urllib.request
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
+from greenlogix_api.geo.truck_profile import TruckProfile
 from greenlogix_api.solver.distance import HCMC_CIRCUITY, haversine_km
 
 LatLng = tuple[float, float]
@@ -200,6 +201,10 @@ class FallbackRoadBaseline:
             self.last_provider_id = _used_provider_id(self.fallback)
             return matrix
 
+    @property
+    def profile_hash(self) -> str:
+        return getattr(self.primary, "profile_hash", "")
+
 
 def parse_osrm_table(payload: dict[str, Any]) -> list[list[float]]:
     if payload.get("code") != "Ok":
@@ -265,14 +270,21 @@ def parse_valhalla_matrix(payload: dict[str, Any]) -> list[list[float]]:
     return validate_matrix_km(raw)
 
 
-def valhalla_matrix_body(points: Sequence[LatLng], costing: str = "auto") -> dict[str, Any]:
+def valhalla_matrix_body(
+    points: Sequence[LatLng],
+    costing: str = "auto",
+    truck_profile: TruckProfile | None = None,
+) -> dict[str, Any]:
     locs = [{"lat": lat, "lon": lng} for lat, lng in points]
     body: dict[str, Any] = {"sources": locs, "targets": locs, "costing": costing}
     if costing == "truck":
-        # xe_tai_nho envelope — light truck, not a motorcycle.
-        body["costing_options"] = {
-            "truck": {"height": 2.4, "width": 2.0, "length": 5.2, "weight": 3.5}
-        }
+        if truck_profile is not None:
+            body["costing_options"] = {"truck": truck_profile.to_valhalla_truck_options()}
+        else:
+            # xe_tai_nho envelope — light truck, not a motorcycle.
+            body["costing_options"] = {
+                "truck": {"height": 2.4, "width": 2.0, "length": 5.2, "weight": 3.5}
+            }
     return body
 
 
@@ -289,12 +301,18 @@ class ValhallaRoadBaseline:
         timeout_s: float = DEFAULT_TIMEOUT_S,
         transport: Transport | None = None,
         retries: int = DEFAULT_RETRIES,
+        truck_profile: TruckProfile | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.costing = costing
         self.timeout_s = timeout_s
         self.transport = transport
         self.retries = retries
+        self.truck_profile = truck_profile
+
+    @property
+    def profile_hash(self) -> str:
+        return self.truck_profile.profile_hash() if self.truck_profile else "default_truck"
 
     def _fetch(self, url: str, method: str, body: bytes | None) -> dict[str, Any]:
         return _call_transport(
@@ -307,7 +325,7 @@ class ValhallaRoadBaseline:
         payload = self._fetch(
             f"{self.base_url}/sources_to_targets",
             "POST",
-            json.dumps(valhalla_matrix_body(points, self.costing)).encode("utf-8"),
+            json.dumps(valhalla_matrix_body(points, self.costing, self.truck_profile)).encode("utf-8"),
         )
         return parse_valhalla_matrix(payload)
 
@@ -392,7 +410,12 @@ def materialize_matrix(
     """Build a cached matrix once per optimize; fall back to circuity on failure."""
     store = _MATRIX_CACHE if cache is None else cache
     clock = time.monotonic() if now is None else now
-    key = f"{provider.provider_id}|{_points_key(points)}"
+    profile_id = getattr(provider, "profile_hash", "") or (
+        provider.truck_profile.profile_hash()
+        if hasattr(provider, "truck_profile") and getattr(provider, "truck_profile", None)
+        else ""
+    )
+    key = f"{provider.provider_id}|{profile_id}|{_points_key(points)}"
     hit = store.get(key)
     if hit and clock - hit[0] < ttl_s:
         matrix, name = hit[1], hit[2]
