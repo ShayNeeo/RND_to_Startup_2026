@@ -197,13 +197,17 @@
     }
     document.getElementById("btn-seed").onclick = async () => {
       try {
+        setStatus("Đang nạp 80 đơn hàng & tối ưu tuyến trên local engine...");
         const body = await api("/seed", { method: "POST" });
-        setStatus("seeded orders=" + body.orders + " vehicles=" + body.vehicles);
-        await refreshTables();
+        const opt = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
+        setTotals(opt.totals);
+        await Promise.all([refreshRoutes(), refreshReport(), refreshTables()]);
+        setStatus("Đã nạp & tối ưu thành công " + (body.orders || 80) + " đơn trên " + (opt.routes || []).length + " tuyến xe tải!");
       } catch (err) { setStatus(String(err)); }
     };
     document.getElementById("btn-optimize").onclick = async () => {
       try {
+        setStatus("Đang chạy thuật toán VRPTW 2-Opt...");
         const body = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
         setTotals(body.totals);
         await refreshRoutes();
@@ -326,7 +330,21 @@
       setStatus("imported=" + (body.imported || 0));
       await refreshTables();
     };
-    Promise.all([refreshTables(), refreshReport(), refreshRoutes()]).catch(() => {});
+    Promise.all([refreshTables(), refreshReport(), refreshRoutes()]).then(async () => {
+      try {
+        const routes = await api("/routes");
+        if (!routes || routes.length === 0) {
+          setStatus("Đang tự động khởi tạo 80 đơn hàng & tối ưu tuyến...");
+          await api("/seed", { method: "POST" });
+          const opt = await api("/optimize", { method: "POST", body: JSON.stringify({ cluster_radius_km: 3.0 }) });
+          setTotals(opt.totals);
+          await Promise.all([refreshRoutes(), refreshReport(), refreshTables()]);
+          setStatus("Hệ thống cục bộ sẵn sàng — 5 tuyến xe tải");
+        }
+      } catch (e) {
+        console.warn("Auto-seed error:", e);
+      }
+    }).catch(() => {});
   </script>
 </body>
 </html>
