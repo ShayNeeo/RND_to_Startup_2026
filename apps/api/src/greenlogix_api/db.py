@@ -33,6 +33,28 @@ def _ensure_stop_route_id(eng: Engine) -> None:
             conn.commit()
 
 
+def _ensure_vehicle_envelope(eng: Engine) -> None:
+    # T-02 C-02: additive nullable envelope columns for pre-migration DBs.
+    # create_all covers fresh DBs; ALTER covers existing greenlogix.db files.
+    with eng.connect() as conn:
+        rows = conn.exec_driver_sql("PRAGMA table_info(vehicles)").fetchall()
+        if not rows:
+            return
+        cols = {row[1] for row in rows}
+        for col in (
+            "height_m",
+            "width_m",
+            "length_m",
+            "gvw_kg",
+            "axle_load_t",
+            "frontal_area_m2",
+            "cd",
+        ):
+            if col not in cols:
+                conn.exec_driver_sql(f"ALTER TABLE vehicles ADD COLUMN {col} FLOAT")
+                conn.commit()
+
+
 def set_engine(url: str, *, recreate: bool = False) -> Engine:
     global engine
     engine = create_engine(url, connect_args={"check_same_thread": False})
@@ -42,6 +64,7 @@ def set_engine(url: str, *, recreate: bool = False) -> Engine:
         SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
     _ensure_stop_route_id(engine)
+    _ensure_vehicle_envelope(engine)
     return engine
 
 
@@ -55,6 +78,7 @@ def init_db(*, recreate: bool = False) -> None:
         SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
     _ensure_stop_route_id(engine)
+    _ensure_vehicle_envelope(engine)
 
 
 def get_session() -> Iterator[Session]:

@@ -45,3 +45,8 @@ apps/api/data/last_report.json
 apps/api/data/uploads/
 apps/mobile-driver/.dart_tool/
 apps/mobile-driver/build/
+
+# Transient sessions & state
+.opencode-state/
+omp-session-*.html
+slides/.comments/

@@ -20,6 +20,17 @@ class AuthContext:
     assigned_plate: str | None = None
 
     @property
+    def org_id(self) -> str:
+        """Additive alias for ``organization_id`` (T-LOOP-RBAC-HEALTH).
+
+        Single-org demo: every context defaults to ``"org_demo"``. No
+        membership tables exist yet (no DB migration); tenant isolation is
+        enforced in-memory by ``verify_org_access``. See BLOCKED note in
+        ``tests/test_tenant_isolation.py``.
+        """
+        return self.organization_id
+
+    @property
     def is_manager(self) -> bool:
         return self.role in (UserRole.MANAGER, UserRole.ADMIN)
 

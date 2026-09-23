@@ -21,10 +21,14 @@ FROZEN_METHODS = {
     "/vehicles/{id}": {"patch"},
     "/optimize": {"post"},
     "/routes": {"get"},
+    "/routes/{id}/admin-areas": {"get"},
     "/routes/publish": {"post"},
     "/report": {"get"},
     "/report.xlsx": {"get"},
     "/driver/route": {"get"},
+    "/driver/restriction-feedback": {"post"},
+    "/driver/restriction-feedback/pending": {"get"},
+    "/driver/restriction-feedback/{feedback_id}/verify": {"post"},
     "/stops/{id}/status": {"post"},
     "/stops/{id}/photo": {"post"},
 }
@@ -87,7 +91,7 @@ def test_schema_enums(model, field, expected):
 
 def test_startup_creates_tables():
     with TestClient(app) as client:
-        assert client.get("/health").json() == {"status": "ok"}
+        assert client.get("/health").json()["status"] == "ok"
         assert set(inspect(dbmod.engine).get_table_names()) == {
             "orders",
             "vehicles",

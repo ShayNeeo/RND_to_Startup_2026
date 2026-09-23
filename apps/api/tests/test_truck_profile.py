@@ -53,8 +53,9 @@ def test_matrix_cache_key_includes_truck_profile():
     provider_nho = ValhallaRoadBaseline(transport=fake_transport, truck_profile=XE_TAI_NHO_1T5)
     provider_nang = ValhallaRoadBaseline(transport=fake_transport, truck_profile=XE_TAI_NANG_8T)
 
-    materialize_matrix(provider_nho, points, cache=cache)
-    materialize_matrix(provider_nang, points, cache=cache)
+    _, _, q_nho = materialize_matrix(provider_nho, points, cache=cache)
+    _, _, q_nang = materialize_matrix(provider_nang, points, cache=cache)
+    assert q_nho == q_nang == "VERIFIED_GRAPH"
 
     # Both should be present in cache under distinct keys
     assert len(cache) == 2
@@ -71,3 +72,29 @@ def test_get_profile_for_vehicle_inference():
 
     p3 = get_profile_for_vehicle("Xe tải nặng 10T", capacity_kg=9000)
     assert p3.vehicle_class == "xe_tai_nang"
+
+
+def test_get_profile_for_vehicle_axle_aero_overrides():
+    # T-02 C-02: explicit axle/aero overrides wire into the profile.
+    p = get_profile_for_vehicle(
+        "xe_tai_nho", 1500, "diesel", 10.0,
+        height_m=2.6, width_m=2.0, length_m=6.0, gvw_kg=4500,
+        axle_load_t=2.0, frontal_area_m2=5.1, cd=0.60,
+    )
+    assert p.axle_load_t == 2.0
+    assert p.frontal_area_m2 == 5.1
+    assert p.cd == 0.60
+    assert p.to_valhalla_truck_options()["axle_load"] == 2.0
+
+
+def test_get_profile_for_vehicle_measured_envelope_derives_aero():
+    # Measured dims without explicit aero: area derived w*h, cd class preset.
+    p = get_profile_for_vehicle(
+        "xe_tai_nho", 1500, "diesel", 0.0,
+        height_m=2.6, width_m=2.0, length_m=6.0, gvw_kg=4500,
+    )
+    assert p.frontal_area_m2 == 5.2
+    assert p.cd == XE_TAI_NHO_1T5.cd
+    # Axle unset -> Valhalla fallback gvw/2, never silent wrong value.
+    assert p.axle_load_t is None
+    assert p.to_valhalla_truck_options()["axle_load"] == round(4.5 / 2.0, 2)

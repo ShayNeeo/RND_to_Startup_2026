@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from greenlogix_api.carbon import kg_co2, litres_used
+from greenlogix_api.geo.truck_profile import TruckProfile, profile_for_vehicle_model
 from greenlogix_api.models import Order, Vehicle
 from greenlogix_api.schemas import TotalsOut
 from greenlogix_api.solver.baseline import baseline_fill
@@ -18,10 +20,17 @@ from greenlogix_api.solver.eco import (
 )
 from greenlogix_api.solver.nn_two_opt import sequence_orders, tour_km
 from greenlogix_api.solver.road_baseline import (
+    ROUTING_QUALITY_DEGRADED,
+    ROUTING_QUALITY_UNAVAILABLE,
+    CircuityRoadBaseline,
     RoadBaseline,
+    evaluate_restriction_coverage,
     materialize_matrix,
+    quality_for_provider,
     resolve_road_baseline,
 )
+
+log = logging.getLogger("greenlogix")
 
 PairKm = Callable[[float, float, float, float], float]
 
@@ -73,7 +82,11 @@ class VrpResult:
     totals: TotalsOut
     baseline: TotalsOut
     distance_provider: str = "circuity"
+    routing_quality: str = ROUTING_QUALITY_DEGRADED
     eco_weight: float = 0.0
+    # T-LOOP-ROUTING (additive): which restriction overlay was enforced,
+    # e.g. "decision23-2018-v1:checked:clear".
+    restriction_coverage: str = "decision23-2018-v1:unchecked"
 
 
 def _depot_stop(seq: int, depot: tuple[float, float], name: str) -> PlannedStop:
@@ -250,6 +263,64 @@ def _build_route(
     )
 
 
+def profiles_for_vehicles(vehicles: list[Vehicle]) -> dict[int | str, TruckProfile]:
+    """Build one explicit TruckProfile per vehicle (T-LOOP-ROUTING).
+
+    Keyed by ``vehicle.id`` (falling back to ``plate``). Unknown types
+    resolve to the explicit logged default via
+    :func:`profile_for_vehicle_model` — never a silent fallback.
+    """
+    profiles: dict[int | str, TruckProfile] = {}
+    for vehicle in vehicles:
+        key: int | str = vehicle.id if vehicle.id is not None else vehicle.plate
+        profiles[key] = profile_for_vehicle_model(vehicle)
+    return profiles
+
+
+def _primary_profile(
+    vehicles: list[Vehicle],
+    profiles: dict[int | str, TruckProfile] | None = None,
+) -> TruckProfile | None:
+    """Profile driving the shared distance matrix: heaviest ready vehicle."""
+    ready = [v for v in vehicles if v.status == "ready"] or list(vehicles)
+    if not ready:
+        return None
+    profiles = profiles or profiles_for_vehicles(vehicles)
+    best = max(
+        ready,
+        key=lambda v: (
+            profiles.get(v.id if v.id is not None else v.plate) or profile_for_vehicle_model(v)
+        ).gross_vehicle_weight_t,
+    )
+    return profiles.get(best.id if best.id is not None else best.plate)
+
+
+def _inject_truck_profile(provider: RoadBaseline, profile: TruckProfile | None) -> RoadBaseline:
+    """Thread the per-fleet truck profile into a Valhalla-capable provider.
+
+    Sets ``truck_profile`` on providers that carry one (Valhalla directly,
+    or the primary/innermost leg of a Fallback chain); leaves circuity and
+    unknown providers untouched. Never raises.
+    """
+    if profile is None:
+        return provider
+    try:
+        current = getattr(provider, "truck_profile", None)
+        if current is None and hasattr(provider, "truck_profile"):
+            setattr(provider, "truck_profile", profile)
+            return provider
+        primary = getattr(provider, "primary", None)
+        if primary is not None:
+            _inject_truck_profile(primary, profile)
+            return provider
+        fallback = getattr(provider, "fallback", None)
+        if fallback is not None:
+            _inject_truck_profile(fallback, profile)
+    except Exception:
+        log.warning("truck profile injection skipped for provider=%r", getattr(provider, "provider_id", "?"))
+    return provider
+
+
 def run_vrp(
     orders: list[Order],
     vehicles: list[Vehicle],
@@ -261,13 +332,26 @@ def run_vrp(
     road_baseline: RoadBaseline | None = None,
 ) -> VrpResult:
     provider_name = "circuity"
+    routing_quality = ROUTING_QUALITY_DEGRADED
+    # T-LOOP-ROUTING: per-vehicle profiles + restriction overlay label.
+    vehicle_profiles = profiles_for_vehicles(vehicles)
+    primary_profile = _primary_profile(vehicles, vehicle_profiles)
+    primary_class = primary_profile.vehicle_class if primary_profile else "xe_tai_nho"
+    restriction_coverage = evaluate_restriction_coverage(orders, primary_class)
     if pair_km is None:
-        provider = road_baseline or resolve_road_baseline()
-        points = [depot, *[(order.lat, order.lng) for order in orders]]
-        cached, provider_name = materialize_matrix(provider, points)
-        pair_km = cached.pair_km
+        if not orders:
+            provider_name = "circuity"
+            routing_quality = ROUTING_QUALITY_UNAVAILABLE
+            pair_km = CircuityRoadBaseline().pair_km
+        else:
+            provider = road_baseline or resolve_road_baseline()
+            _inject_truck_profile(provider, primary_profile)
+            points = [depot, *[(order.lat, order.lng) for order in orders]]
+            cached, provider_name, routing_quality = materialize_matrix(provider, points)
+            pair_km = cached.pair_km
     elif road_baseline is not None:
         provider_name = getattr(road_baseline, "provider_id", "circuity")
+        routing_quality = quality_for_provider(provider_name)
     weight = eco_weight if eco_weight is not None else eco_weight_from_env()
     clusters = greedy_clusters(orders, radius_km=radius_km)
     assigned, unassigned_ids = assign_clusters(
@@ -316,5 +400,7 @@ def run_vrp(
         totals=_sum_totals(routes),
         baseline=_sum_totals(baseline_routes),
         distance_provider=provider_name,
+        routing_quality=routing_quality,
         eco_weight=weight,
+        restriction_coverage=restriction_coverage,
     )

@@ -285,3 +285,165 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Chrome DevTools console: 0 errors/exceptions.
 - App state verified: Status transitioned to `"Hệ thống sẵn sàng trên Cloudflare Edge 24/7"`, map rendered with 5 routes and 80 stops, KPIs loaded (`94.74 km`).
 - Worker version `b05ec4d6-33f3-4240-82d7-b6c9d9f7271a` deployed live to `greenlogix.w9.nu/*`.
+
+---
+
+## 2026-09-22 — Deep CR-01/04/06 batch + post-fix audit
+
+### What changed
+- `schemas.py`: `OptimizeOut` + `ReportOut` gain `routing_quality: str = "DEGRADED"` (additive, frozen path set unchanged).
+- `solver/road_baseline.py`: `quality_for_provider()` + `materialize_matrix` 3-tuple `(baseline, name, quality)`; `solver/__init__.py` `VrpResult.routing_quality` threading.
+- `solver/eco.py`: deprecation warning log when weight>0, behavior unchanged.
+- `main.py`: `_cors_origins()` — `GREENLOGIX_CORS_ORIGINS` allowlist, demo-only `*`.
+- `solver/flags.py` (NEW): `GREENLOGIX_OPTIMIZER` legacy|ecoalns + `GREENLOGIX_PUBLISH_REQUIRE_VERIFIED` fail-closed helper (unit-tested, unwired in publish).
+- `routers/driver.py`: migrated to `get_current_auth` + `verify_driver_plate_access` on all 3 endpoints; `auth/service.py` PIN pattern widened for real plates.
+- `geo/road_graph.py` (NEW) + `data/road_graph.json` (7 keys, dev placeholders) + `docs/adr/0002-road-graph-manifest.md`; `road_graph_audit_extra()` exported, unwired in persist/save.
+- PWA `driver/index.html:343`: copy `Chỉ đường (Google Maps · Ô tô)` + title footnote; `places/gofa.py` BLOCKED note; ADR 0001 amendment A1.
+- Tests: `test_routing_quality.py` (12), `test_driver_authz.py` (9), `test_road_graph.py` (8); `test_auth.py` manager-bypass fix.
+- New audit: `FRONTIER_GAP_AUDIT_2026-09-22.md` (0 PASS / 11 PARTIAL / 5 NOT STARTED). Prior 09-21 file untouched.
+
+### Decisions / tradeoffs
+- Additive-only schema (default DEGRADED) to preserve frozen OpenAPI contract.
+- Eco weight deprecated-not-removed (worker + test compat).
+- Seed xlsx regen side-effect reverted — not part of batch.
+- Strict PASS threshold: 0/16 fully pass; Deep batch = groundwork, not closure.
+
+### Verification
+- `cd apps/api && uv run pytest -q` → 325 passed (was 295).
+- `test_contract` frozen path set unchanged (only +routing_quality fields).
+
+## 2026-09-23 — Loop-until-done (4 iterations, 18 gaps closed as DONE/SCAFFOLD)
+
+### What changed
+- Publish guard (DONE): `routers/optimize.py:154-168` calls `publish_blocked_for_quality()`; 403 when `GREENLOGIX_PUBLISH_REQUIRE_VERIFIED=1` + quality != VERIFIED_GRAPH; single decision point `solver/flags.py:30-37`.
+- Manifest propagation (DONE): `routers/optimize.py:62-64` + `carbon.py:94-96` merge `road_graph_audit_extra()` (7 keys) into persist/report extra.
+- Auth hardening (DONE-code): `auth/service.py:53` PIN gate 401 unless DEMO=1; `legacy.py:17-21` PIN 0000 demo-only; `service.py:21-43` lockout stub (record-only, enforcement pending).
+- Tenant isolation (SCAFFOLD): `auth/dependencies.py:40-68` org + plate guards; `auth/models.py:23-29` in-memory scope, DB migration BLOCKED-note.
+- Truck e2e (DONE): `solver/__init__.py:266-310` per-vehicle profiles + primary selection + provider injection; Vehicle DB envelope fields still missing.
+- Energy trace (DONE): `energy/hdt_v1.py:20-25` P_AUX single-value 1500 W; spec trace rows E-05b/E-07 + drift-fix `energy_model_spec.md:100-109`; OBD calibration BLOCKED.
+- Pareto rerank (DONE): `routing/pareto.py:26-52` CandidateSource verified/illustrative, circuity always illustrative; verified path defined, unreachable until tiles.
+- ALNS (SCAFFOLD): `optimizer/eco_alns.py:131-279` 2 destroy + greedy/regret-2 repair + adaptive weights; hill-climb only (`:304`), no SA/budget/trace/ablation.
+- Harness (SCAFFOLD): `benchmark/harness.py:25,47` + `solvers_ref.py:17,39` deterministic NN-2opt + greedy; no PyVRP/OR-Tools deps.
+- GOFA provenance (SCAFFOLD): `models.py:24-26` nullable fields + `serialize.py:27` + `schemas.py:44` passthrough; `gofa.py:24-30` BLOCKED note kept, no invented schema.
+- Health versions (DONE): `main.py:113-131` /health returns manifest versions + probe (offline-safe 200); `schemas.py:23`.
+- Admin-areas (SCAFFOLD): `routers/optimize.py:181-201` 18th path (additive only) + `geo/admin_boundaries.py:53-93` centroid-fallback honesty note; no PostGIS polygons.
+- Evidence (SCAFFOLD): `carbon.py:18-28` C1-illustrative + not-certified note; `docs/research/evidence_ui.md`; no audit drawer / C0-C4 ladder.
+- Telemetry (SCAFFOLD): `telemetry/ingest.py:18-90` FuelObs validate/append/list/save/load + `calibration.py:8` mae_mape; no live GPS/OBD feed.
+- DRIVE stub: `solver/road_baseline.py:375-386` raises RoadBaselineNotConfigured (correct fail, no fake data).
+- Cache key (DONE): `road_baseline.py:435-513` 6 version tokens + coords, manifest-backed offline-safe fallbacks.
+- Restriction wiring (SCAFFOLD): `road_baseline.py:515-562` coverage labeling, fail-open `unchecked`, never raises.
+- New audit: `FRONTIER_GAP_AUDIT_2026-09-23.md` (loop-final, 0/16/0 at CR level — all former NOT STARTED now scaffolded). Priors 09-21/09-22 untouched.
+- Diff scope: 35 tracked files changed, +1391/-92; new untracked: `benchmark/`, `telemetry/`, `geo/road_graph.py`, `solver/flags.py`, 15+ `test_*.py` gates.
+
+### Decisions / tradeoffs
+- Additive-only OpenAPI: 17 -> 18 paths (`GET /routes/{id}/admin-areas` only addition); versions code-level unless schema-owned.
+- BLOCKED honesty over invention: GOFA contract, Valhalla tiles/Docker, PostGIS polygons, OBD trials recorded as BLOCKED/infra, never faked.
+- Strict PASS rule: 0/16 fully pass -> 16x PARTIAL; DONE = wired+tested, SCAFFOLD = honest stub with named remainder.
+
+### Verification
+- `cd apps/api && uv run pytest -q` -> 407 passed (was 325; path 325->333->360->375->390->407, 42 test files). No live tiles/GOFA/device/OBD.
+- Contract: openapi.json 18 paths verified via JSON key listing; banned-claims grep clean (no truck-safe guarantee, no ISO-certified wording).
+- Vetoes: `.opencode-state/betriebsrat/vetoes/` empty. Branch: so2026.
+
+## 2026-09-24 — CR-20260923-001 closures + audit refresh (C-06)
+
+### What changed
+- T-01 lockout DONE: `apps/api/src/greenlogix_api/auth/service.py:28-43,46-66,93,110-117` (MAX_PIN_ATTEMPTS=20, 300s window, in-memory; valid-PIN path never counted; Bearer DEMO bypasses); `auth/legacy.py:5` note. Tests: `test_pin_lockout_triggers_after_n_rapid_failures`, `test_pin_lockout_resets_after_window`, `test_pin_lockout_demo_ok_path_unaffected` in `tests/test_auth_hardening.py`.
+- T-02 envelope DONE: `models.py:43-57` additive nullable (`height_m/width_m/length_m/gvw_kg` + `axle_load_t/frontal_area_m2/cd`); `db.py:36-50,67,81` `_ensure_vehicle_envelope` pre-migration path; `geo/truck_profile.py:102-160` measured-envelope override. Rated-L via `l_per_100km`, powertrain via `fuel` (documented, no routing consumer for emission_standard).
+- T-03 feedback DONE: `routers/driver.py:132-160` POST /driver/restriction-feedback (201, plate-scoped, no auto-mutate); `geo/restrictions.py:128-186` queue + verify (pending_review/verified/rejected, ACTIVE_RULES untouched). New `tests/test_restriction_feedback.py` (6 tests). 19th OpenAPI path, `FROZEN_METHODS` +1 (`tests/test_contract.py:29`).
+- C-05 optimizer audit DONE: `carbon.py:104-119` additive `optimizer` + `pareto_source: illustrative` (caller-wins, never fails write). New `tests/test_optimizer_audit.py` (4 tests). No schema/OpenAPI change, no optimality claims.
+- C-04 CORS verify: `main.py:52-65` split + `.env.example:3-7` prod line already present — no edit needed. 3 cors tests green.
+- New audit: `FRONTIER_GAP_AUDIT_2026-09-24.md` (0/16/0 strict, priors untouched).
+
+### Decisions / tradeoffs
+- Additive-only everywhere: nullable Vehicle columns, setdefault audit labels, +1 OpenAPI path. No behavior change to demo-OK path (lockout counts failures only).
+- BLOCKED honesty kept: Redis/shared store, PostGIS tables, Valhalla tiles, JWT/Argon2id remain named remainders — no CR flips to PASS under strict rule.
+- No src behavior edits by C-06 worker beyond owned scope; .env.example untouched (prod line pre-existing).
+
+### Verification
+- `cd apps/api && uv run pytest -q` -> 425 passed (was 407; +18 lockout/feedback/optimizer-audit). 46 test files.
+- Contract: openapi.json 19 paths (only addition POST /driver/restriction-feedback); `test_frozen_openapi` green; banned-claims grep = negations/wording-contract only.
+- Cors subset: `test_cors_prod_split_allowlist` + `test_cors_allowlist_env` + `test_cors_allows_auth_headers_without_credentials` 3/3 green.
+- Targeted: `-k "lockout or feedback or optimizer_audit"` 13 selected green; `-k "cors or lockout or feedback or vehicle or truck or optimizer or publish"` 96 selected green.
+- Vetoes: `.opencode-state/betriebsrat/vetoes/` present, empty. Branch: so2026.
+
+## 2026-09-25 — Feedback admin review endpoints (loop iteration, CR-20260923-002 scope on so2026)
+
+### What changed
+- Admin review endpoints: `routers/driver.py` (+48) `GET /driver/restriction-feedback/pending` + `POST /driver/restriction-feedback/{feedback_id}/verify`, both `require_manager_role`; unknown id 404 `unknown_feedback_id`; never touches ACTIVE_RULES (calls `verify_feedback` only).
+- Schemas additive: `schemas.py` `FeedbackItemOut` (id/driver_id/plate/lat/lng/issue_type/notes/status) + `FeedbackVerifyIn` (approved bool). No existing model touched.
+- Contract: `openapi.json` regen 19 -> 21 paths (only additions); `tests/test_contract.py` FROZEN_METHODS +2.
+- Tests: `tests/test_restriction_feedback.py` +4 (admin list, verify-flow empties queue + ACTIVE_RULES identical, scoped-driver 403 both endpoints, unknown-id 404).
+
+### Decisions / tradeoffs
+- Manager-only (not driver) for review; scoped driver 403 via require_manager_role (plate guard unnecessary — managers see all plates).
+- Path-style verify `/{id}/verify` over body-id: explicit resource, 404 natural, matches stops-photo style.
+- Loop runs on so2026 (queue code lives here); fresh cr/002 worktree kept empty per user branch choice — CR-20260923-002 stays blocked until CR-001 lands, but code-closable gap closed on loop branch.
+- ponytail: stdlib only, no new deps, no DB migration (in-memory queue precedent kept).
+
+### Verification
+- `cd apps/api && uv run pytest tests/test_restriction_feedback.py tests/test_contract.py -q` -> green (targeted).
+- `cd apps/api && uv run pytest` -> 429 passed (was 425; +4 admin tests).
+- Contract: openapi.json 21 paths (only additions pending + verify); `test_frozen_openapi` green.
+- Banned-claims grep = negations/wording-contract only (carbon.py, optimize.py:176, flags.py:9, road_baseline.py:30).
+- Vetoes: `.opencode-state/betriebsrat/vetoes/` empty. Branch: so2026.
+
+## 2026-09-26 — EcoALNS v2 slice (SA acceptance + runtime budget + trace + 2 GreenLogix destroy ops)
+
+### What changed
+- Optimizer lib only (`optimizer/eco_alns.py`, +~170): `EcoSolution.convergence_trace` (iteration/fuel/unassigned/accepted/destroy_op/repair_op/temperature per iteration); opt-in `acceptance="sa"` (geometric cooling `sa_temp0*sa_cooling**it`, seeded-rng draws, unassigned-growth still rejected, uphill moves never earn adaptive reward); opt-in `time_budget_s` wall-clock guard returning best-so-far; `worst_fuel_removal_destroy` (marginal-fuel removal saving, payload-before-leg aware) + `uphill_payload_removal_destroy` (carried-payload × leg-km proxy for §11.5/Lai-2024 insight) registered in DESTROY_OPS + adaptive weights; legacy 3-arg destroy ops kept via TypeError fallback.
+- Tests (`tests/test_alns_operators.py`, +6): SA deterministic same-seed + cooling monotonic; SA no-worse-unassigned vs hill-climb + capacity respected; budget returns best-so-far with short trace + TRACE_KEYS on full trace; worst_fuel/uphill deterministic + feasible via solver; new ops registered + adaptive-selectable with 20-row trace.
+- No router/schema/openapi change (21 paths unchanged); no new deps (stdlib `time` only).
+
+### Decisions / tradeoffs
+- Hill-climb stays default: all pre-existing tests/benchmark fixtures byte-behavioral (existing 4 alns + harness green unmodified).
+- CustomerNode has no grade field, so uphill proxy uses leg-km × carried-payload (documents limitation; grade-aware scoring waits for elevation/leg features).
+- Trace rows deep-copy with best_solution; working copy reset per iteration so rows accumulate once (accepted rows carry candidate fuel, rejected rows carry best fuel).
+- SA reward uses `improved` (true global-best gain), not SA acceptance — uphill moves never inflate operator weights.
+- ponytail: stdlib only, no PyVRP/OR-Tools (still BLOCKED), no DB migration, no OpenAPI churn.
+
+### Verification
+- `cd apps/api && uv run pytest tests/test_alns_operators.py tests/test_eco_alns.py -q` -> 11 passed (targeted).
+- `cd apps/api && uv run pytest` -> 435 passed (was 429; +6 v2 tests).
+- Contract: openapi.json 21 paths unchanged; `test_frozen_openapi` green.
+- Banned-claims grep = negations/wording-contract only (carbon.py, optimize.py:176, flags.py:9, road_baseline.py:30).
+- Vetoes: `.opencode-state/betriebsrat/vetoes/` empty. Branch: so2026.
+
+## 2026-09-27 — Pareto epsilon-SLA selection + why-facts (CR-10 Stage-1 code slice)
+
+### What changed
+- SLA selection (`routing/pareto.py`, +~110): `EPSILON_PRESETS` FASTEST_LEGAL=0 / ECO_BALANCED=5 / ECO_MAX=10 + `custom_epsilon_pct` override; `select_policy_path` returns (fastest, selected) — SLA-safe by construction (filter within epsilon, then min fuel; deterministic tie-break fuel→time→policy; epsilon=0 admits fastest itself); `why_facts` builds 4-5 structured strings from candidate fields only (policy+epsilon, fuel delta+savings, time delta, source+confidence+not-certified note, selected-is-fastest flag) — no LLM, no invented reasons; verified rerank path untouched.
+- Tests (`tests/test_pareto_rerank.py`, +4): epsilon=0 within fastest tolerance; epsilon growth never shrinks feasible set (§15.2 metamorphic); min-fuel-within-budget + unknown-mode/empty/custom-0 ValueError paths; why-facts content + illustrative label + determinism.
+- No router/schema/openapi change (21 paths unchanged); no new deps.
+
+### Decisions / tradeoffs
+- Response wiring deferred: selector + facts are library-level (like `rerank_from_alternatives` verified path) — HTTP exposure waits until Valhalla alternatives exist; avoids additive contract churn for illustrative-only data.
+- Custom epsilon override supports §8.2 Custom SLA user-defined buffer without new preset names.
+- ponytail: stdlib only, ~110 lines lib + ~60 tests, no deps, no migration.
+
+### Verification
+- `cd apps/api && uv run pytest tests/test_pareto_rerank.py -q` -> 10 passed (was 6; +4 SLA tests).
+- `cd apps/api && uv run pytest` -> 439 passed (was 435; +4 SLA tests).
+- Contract: openapi.json 21 paths unchanged; `test_frozen_openapi` green.
+- Banned-claims grep = 5 hits negations/wording-contract only (carbon.py×2, optimize.py:176, flags.py:9, road_baseline.py:30).
+- Vetoes: `.opencode-state/betriebsrat/vetoes/` empty. Branch: so2026.
+
+## 2026-09-23 — ALNS ban-window conflict destroy op (CR-12/CR-13 code slice, CR-20260923-003)
+
+### What changed
+- Ban-window destroy op (`optimizer/eco_alns.py`, +~50): `ban_window_removal_destroy` scores each stop by Decision 23/2018 overlap via `geo.restrictions.check_truck_ban` (stop window x tour `profile.vehicle_class`); restricted-first binary ordering, seeded-rng exact-tie shuffle only, descending-index pop; registered in `DESTROY_OPS` + adaptive `destroy_weights`; docstring operator list updated. Library-level only, hill-climb default unchanged.
+- Tests (`tests/test_alns_operators.py`, +3): deterministic same-seed + restricted-first set assert (07:30-08:30 ban windows vs 10:00/11:00 clear under `xe_tai_nho`); feasible via solver (`destroy_op="ban_window"`, unassigned==0, capacity respected); registered + adaptive-selectable with 20-row trace.
+- CR file `changes/CR-20260923-003.md` (fence + closeout); no router/schema/openapi change (21 paths unchanged); no new deps.
+
+### Decisions / tradeoffs
+- Window-format failures degrade to unrestricted (try/except → False): destroy ordering is heuristic-only, never a safety decision — matches reviewer assessment (benign).
+- `xe_tai_trung` inherits `check_truck_ban` light-class normalization (pre-existing, out of scope).
+- Adaptive pool grows 4→5 ops: pre-existing adaptive trajectories may shift, properties hold by construction; suite run is the guard.
+- ponytail: stdlib only, ~50 lines lib + ~35 tests, no deps, no migration, no contract churn.
+
+### Verification
+- `cd apps/api && uv run pytest tests/test_alns_operators.py tests/test_eco_alns.py -q` -> 14 passed (was 11; +3 ban-window tests).
+- `cd apps/api && uv run pytest` -> 442 passed (was 439; +3 ban-window tests).
+- Contract: openapi.json 21 paths unchanged; `test_frozen_openapi` green (87 contract tests green).
+- Banned-claims grep = 5 hits negations/wording-contract only (carbon.py×2, optimize.py:176, flags.py:9, road_baseline.py:30).
+- Reviewer gate: BanWindowReviewer PASS (AC-01/02/03 all PASS; risks benign/pre-existing). Branch: so2026.

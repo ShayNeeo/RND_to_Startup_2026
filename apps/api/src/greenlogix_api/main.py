@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import math
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -48,6 +49,24 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
+def _cors_origins() -> list[str]:
+    """CORS allowlist (P-08). Demo-only `*` when GREENLOGIX_DEMO=1 and no
+    explicit GREENLOGIX_CORS_ORIGINS; otherwise parse the comma-separated
+    allowlist. Empty list = deny cross-origin (tests rely on same-origin).
+
+    PROD (T-LOOP-AUTH): never use `*` in production. Set
+    GREENLOGIX_CORS_ORIGINS=https://fleet.example.vn,https://ops.example.vn
+    and GREENLOGIX_DEMO=0 (or unset). Explicit allowlist always wins over
+    the demo wildcard. Evaluated once at import; restart after env change.
+    """
+    raw = (os.environ.get("GREENLOGIX_CORS_ORIGINS") or "").strip()
+    if raw:
+        return [o.strip() for o in raw.split(",") if o.strip()]
+    if os.environ.get("GREENLOGIX_DEMO") == "1":
+        return ["*"]
+    return []
+
+
 app = FastAPI(title="GreenLogix API", lifespan=lifespan, redirect_slashes=False)
 
 
@@ -78,7 +97,7 @@ async def validation_error(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins(),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -94,7 +113,21 @@ app.include_router(report.router)
 @app.get("/health", response_model=HealthOut)
 def health() -> HealthOut:
     log.info("path=/health")
-    return HealthOut(status="ok")
+    try:  # offline-safe: manifest unreadable -> bare ok, still 200
+        from greenlogix_api.geo import road_graph as _road_graph
+
+        extra = _road_graph.road_graph_audit_extra()
+        probe = _road_graph.health_check()  # no transport -> reachable False
+        return HealthOut(
+            status="ok",
+            road_graph_version=extra.get("road_graph_version"),
+            restriction_overlay_version=extra.get("restriction_overlay_version"),
+            cost_model_version=extra.get("cost_model_version"),
+            road_graph_reachable=bool(probe.get("reachable", False)),
+        )
+    except Exception:
+        log.warning("path=/health road_graph manifest unavailable", exc_info=True)
+        return HealthOut(status="ok")
 
 
 @app.get("/favicon.ico")

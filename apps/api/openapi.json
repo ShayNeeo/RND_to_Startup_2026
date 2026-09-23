@@ -629,6 +629,67 @@
         }
       }
     },
+    "/routes/{id}/admin-areas": {
+      "get": {
+        "tags": [
+          "optimize"
+        ],
+        "summary": "Route Admin Areas",
+        "description": "Versioned admin-area corridor for one route (T-LOOP-GEO, CR-08).\n\nCentroid fallback labeled ``nso-2024-v1-centroid-fallback``; never claims\npolygon intersection. Root-mounted prefix matches existing ``/routes``\nstyle (no ``/v1`` prefix anywhere in this API).",
+        "operationId": "route_admin_areas_routes__id__admin_areas_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Route Admin Areas Routes  Id  Admin Areas Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/driver/route": {
       "get": {
         "tags": [
@@ -813,6 +874,189 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StatusOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/driver/restriction-feedback": {
+      "post": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Restriction Feedback",
+        "description": "Queue a driver restriction report for admin review (T-03).\n\nFeedback NEVER auto-mutates ACTIVE_RULES; verified entries require a\nseparate admin promotion step (no auto-promotion path exists).",
+        "operationId": "restriction_feedback_driver_restriction_feedback_post",
+        "parameters": [
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/driver/restriction-feedback/pending": {
+      "get": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Restriction Feedback Pending",
+        "description": "List queued driver restriction reports awaiting review (admin only).\n\nRead-only over the in-memory queue. Never touches ACTIVE_RULES.",
+        "operationId": "restriction_feedback_pending_driver_restriction_feedback_pending_get",
+        "parameters": [
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeedbackItemOut"
+                  },
+                  "title": "Response Restriction Feedback Pending Driver Restriction Feedback Pending Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/driver/restriction-feedback/{feedback_id}/verify": {
+      "post": {
+        "tags": [
+          "driver"
+        ],
+        "summary": "Restriction Feedback Verify",
+        "description": "Verify or reject one queued report (admin only).\n\nCalls verify_feedback only; never touches ACTIVE_RULES \u2014 admin\npromotion to routing rules is a separate manual step (no path exists).\nUnknown id returns 404.",
+        "operationId": "restriction_feedback_verify_driver_restriction_feedback__feedback_id__verify_post",
+        "parameters": [
+          {
+            "name": "feedback_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Feedback Id"
+            }
+          },
+          {
+            "name": "X-Driver-Pin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Driver-Pin"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackVerifyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
                 }
               }
             }
@@ -1143,6 +1387,145 @@
         ],
         "title": "DriverRouteOut"
       },
+      "FeedbackIn": {
+        "properties": {
+          "plate": {
+            "type": "string",
+            "title": "Plate"
+          },
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lng"
+          },
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "road_closed",
+              "height_barrier",
+              "weight_limit",
+              "unexpected_ban"
+            ],
+            "title": "Issue Type"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "plate",
+          "lat",
+          "lng",
+          "issue_type"
+        ],
+        "title": "FeedbackIn"
+      },
+      "FeedbackItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "driver_id": {
+            "type": "string",
+            "title": "Driver Id"
+          },
+          "plate": {
+            "type": "string",
+            "title": "Plate"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "road_closed",
+              "height_barrier",
+              "weight_limit",
+              "unexpected_ban"
+            ],
+            "title": "Issue Type"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_review",
+              "verified",
+              "rejected"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "driver_id",
+          "plate",
+          "lat",
+          "lng",
+          "issue_type",
+          "notes",
+          "status"
+        ],
+        "title": "FeedbackItemOut",
+        "description": "One queued driver restriction report (admin review read model)."
+      },
+      "FeedbackOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_review",
+              "verified",
+              "rejected"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "title": "FeedbackOut"
+      },
+      "FeedbackVerifyIn": {
+        "properties": {
+          "approved": {
+            "type": "boolean",
+            "title": "Approved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "approved"
+        ],
+        "title": "FeedbackVerifyIn"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1162,6 +1545,50 @@
             "type": "string",
             "const": "ok",
             "title": "Status"
+          },
+          "road_graph_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road Graph Version"
+          },
+          "restriction_overlay_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restriction Overlay Version"
+          },
+          "cost_model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Model Version"
+          },
+          "road_graph_reachable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road Graph Reachable"
           }
         },
         "type": "object",
@@ -1252,6 +1679,11 @@
             "type": "string",
             "title": "Distance Provider",
             "default": "circuity"
+          },
+          "routing_quality": {
+            "type": "string",
+            "title": "Routing Quality",
+            "default": "DEGRADED"
           },
           "eco_weight": {
             "type": "number",
@@ -1347,6 +1779,50 @@
             "type": "boolean",
             "title": "Late Risk",
             "default": false
+          },
+          "place_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Id"
+          },
+          "place_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Provider"
+          },
+          "place_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Confidence"
+          },
+          "geocode_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geocode At"
           }
         },
         "type": "object",
@@ -1561,6 +2037,11 @@
             "type": "string",
             "title": "Distance Provider",
             "default": "circuity"
+          },
+          "routing_quality": {
+            "type": "string",
+            "title": "Routing Quality",
+            "default": "DEGRADED"
           },
           "eco_weight": {
             "type": "number",
@@ -1972,6 +2453,83 @@
               "maintenance"
             ],
             "title": "Status"
+          },
+          "height_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height M"
+          },
+          "width_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width M"
+          },
+          "length_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length M"
+          },
+          "gvw_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gvw Kg"
+          },
+          "axle_load_t": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axle Load T"
+          },
+          "frontal_area_m2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frontal Area M2"
+          },
+          "cd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cd"
           }
         },
         "type": "object",
@@ -2052,6 +2610,90 @@
               }
             ],
             "title": "Status"
+          },
+          "height_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height M"
+          },
+          "width_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width M"
+          },
+          "length_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Length M"
+          },
+          "gvw_kg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gvw Kg"
+          },
+          "axle_load_t": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axle Load T"
+          },
+          "frontal_area_m2": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frontal Area M2"
+          },
+          "cd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cd"
           }
         },
         "type": "object",

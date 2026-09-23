@@ -340,7 +340,8 @@
           const actionsHtml = isDepot
             ? '<div style="font-size:12px;color:var(--mut)">Điểm xuất phát trung tâm / Depot Tân Bình</div>'
             : '<div style="display:flex;flex-direction:column;gap:6px">' +
-                '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" class="btn-act btn-navig" style="padding:9px;font-size:12px;font-weight:700"><i data-lucide="navigation" style="width:13px;height:13px"></i>Chỉ đường (Google Maps · Ô tô / Xe tải)</a>' +
+                '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" title="Google sẽ tính lại tuyến khi mở — không phải tuyến xe tải đã duyệt" class="btn-act btn-navig" style="padding:9px;font-size:12px;font-weight:700"><i data-lucide="navigation" style="width:13px;height:13px"></i>Chỉ đường (Google Maps · Ô tô)</a>' +
+                '<div style="font-size:11px;color:var(--mut)">Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt.</div>' +
                 '<div class="stop-actions">' +
                   '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \'arrived\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
                   '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \'delivered\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +

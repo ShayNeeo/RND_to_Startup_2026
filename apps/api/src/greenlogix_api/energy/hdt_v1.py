@@ -17,7 +17,12 @@ DRIVELINE_EFFICIENCY = 0.88
 THERMAL_EFFICIENCY = 0.40
 DIESEL_HEATING_VALUE_J_KG = 43.2e6
 DIESEL_DENSITY_G_L = 840.0
-P_AUX_WATTS = 1200.0
+# P_AUX fixed at 1500 W (single source of truth, matches spec Section 2.2).
+# Measured engineering assumption for HCMC tropical ops (alternator + power
+# steering + AC/air compression, conservative upper bound). External bench
+# source: BLOCKED (pending OBD calibration) — do not cite a paper/DOI here.
+# See docs/research/energy_model_spec.md Section 5 trace row E-07.
+P_AUX_WATTS = 1500.0
 
 # GLEC 3.2 / ISO 14083 factors (kg CO2e per Litre)
 DIESEL_TTW_FACTOR = 2.68

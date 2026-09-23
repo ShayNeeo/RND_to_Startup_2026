@@ -35,6 +35,7 @@ def current_report() -> ReportOut:
         optimized=stored.optimized,
         delta=delta,
         distance_provider=stored.distance_provider,
+        routing_quality=stored.routing_quality,
         eco_weight=stored.eco_weight,
     )
 

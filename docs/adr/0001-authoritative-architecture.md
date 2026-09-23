@@ -45,3 +45,21 @@ Every optimization response must expose `routing_quality`:
 ## 3. Consequences
 - **Positive:** Single, testable codebase for all algorithms; verifiable model versioning; reproducible benchmarks.
 - **Negative:** Requires Python runtime deployment (container/serverless) rather than pure Cloudflare edge workers for optimization.
+
+---
+
+## Amendment A1 — CR-01 Ground-Truth Freeze (2026-09-21)
+
+- `routing_quality` (`VERIFIED_GRAPH` | `DEGRADED` | `UNAVAILABLE`) is exposed on
+  `OptimizeOut` / `ReportOut` / `VrpResult` with default `DEGRADED`.
+  `materialize_matrix` returns `(baseline, provider_name, routing_quality)`;
+  circuity always maps to `DEGRADED`, empty inputs to `UNAVAILABLE`.
+- `GREENLOGIX_ECO_WEIGHT` is **deprecated, not removed** (frozen OpenAPI compat);
+  `weight > 0` logs a warning and callers should prefer Pareto reporting.
+- CORS: `GREENLOGIX_CORS_ORIGINS` comma-separated allowlist; demo-only `*` when
+  `GREENLOGIX_DEMO=1`, otherwise explicit list or deny.
+- Optimizer selection: `GREENLOGIX_OPTIMIZER=legacy` (default NN+2-opt) |
+  `ecoalns` (experimental); fail-closed publish via
+  `GREENLOGIX_PUBLISH_REQUIRE_VERIFIED=1` (blocks DEGRADED/UNAVAILABLE publish).
+- Frozen fixtures: deterministic seed snapshot (`order_rows`/`truck_rows`
+  equality + `tests/fixtures/seed_snapshot.json` export).

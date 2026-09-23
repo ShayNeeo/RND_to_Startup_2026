@@ -204,8 +204,9 @@ def test_resolve_circuity_skips_http() -> None:
 
 
 def test_materialize_falls_back_when_matrix_fails() -> None:
-    cached, name = materialize_matrix(_BoomBaseline(), [(10.801, 106.661), (10.776, 106.700)])
+    cached, name, quality = materialize_matrix(_BoomBaseline(), [(10.801, 106.661), (10.776, 106.700)])
     assert name == "circuity"
+    assert quality == "DEGRADED"
     assert cached.pair_km(10.801, 106.661, 10.776, 106.700) == pytest.approx(
         road_km(10.801, 106.661, 10.776, 106.700)
     )
@@ -234,13 +235,14 @@ def test_materialize_ttl_cache_skips_second_http() -> None:
 
     store: dict = {}
     pts = [(10.801, 106.661), (10.776, 106.700)]
-    first, name1 = materialize_matrix(
+    first, name1, quality1 = materialize_matrix(
         OsrmRoadBaseline(transport=transport), pts, cache=store, now=10.0
     )
-    second, name2 = materialize_matrix(
+    second, name2, quality2 = materialize_matrix(
         OsrmRoadBaseline(transport=transport), pts, cache=store, now=20.0
     )
     assert name1 == name2 == "osrm"
+    assert quality1 == quality2 == "VERIFIED_GRAPH"
     assert first.pair_km(*pts[0], *pts[1]) == pytest.approx(5.0)
     assert second.pair_km(*pts[0], *pts[1]) == pytest.approx(5.0)
     assert calls["n"] == 1
@@ -267,11 +269,12 @@ def test_materialize_caches_osrm_matrix() -> None:
         calls["n"] += 1
         return {"code": "Ok", "distances": [[0, 8000], [8000, 0]]}
 
-    cached, name = materialize_matrix(
+    cached, name, quality = materialize_matrix(
         OsrmRoadBaseline(transport=transport),
         [(10.801, 106.661), (10.776, 106.700)],
     )
     assert name == "osrm"
+    assert quality == "VERIFIED_GRAPH"
     assert cached.pair_km(10.801, 106.661, 10.776, 106.700) == pytest.approx(8.0)
     assert cached.pair_km(10.776, 106.700, 10.801, 106.661) == pytest.approx(8.0)
     first_calls = calls["n"]

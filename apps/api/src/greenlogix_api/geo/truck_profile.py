@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import logging
 from typing import Any, Literal
+
+log = logging.getLogger("greenlogix")
 
 TruckClass = Literal["xe_tai_nho", "xe_tai_trung", "xe_tai_nang", "xe_van"]
 FuelType = Literal["diesel", "petrol", "electric"]
@@ -102,17 +105,73 @@ def get_profile_for_vehicle(
     capacity_kg: float = 0.0,
     fuel: str = "diesel",
     l_per_100km: float = 0.0,
+    *,
+    height_m: float | None = None,
+    width_m: float | None = None,
+    length_m: float | None = None,
+    gvw_kg: float | None = None,
+    axle_load_t: float | None = None,
+    frontal_area_m2: float | None = None,
+    cd: float | None = None,
 ) -> TruckProfile:
-    """Infer appropriate TruckProfile from vehicle metadata."""
-    v_norm = vehicle_type.lower().strip()
-    if "nang" in v_norm or capacity_kg > 5000:
-        base = XE_TAI_NANG_8T
-    elif "trung" in v_norm or capacity_kg > 2000:
-        base = XE_TAI_TRUNG_3T5
-    else:
-        base = XE_TAI_NHO_1T5
+    """Infer appropriate TruckProfile from vehicle metadata.
 
-    if l_per_100km > 0 or (fuel in ("diesel", "petrol", "electric") and fuel != base.fuel_type):
+    T-LOOP-ROUTING: never a silent fallback. An unknown/empty type with no
+    capacity logs a warning and returns the explicit
+    ``DEFAULT_TRUCK_PROFILE`` (xe_tai_nho envelope). Explicit physical
+    dimensions (from additive ``Vehicle`` fields) override the preset
+    envelope when all four are positive. Optional axle/aero overrides
+    (``axle_load_t``/``frontal_area_m2``/``cd``) apply when positive;
+    otherwise derived (axle gvw/2, area w*h, cd class preset).
+    """
+    v_norm = (vehicle_type or "").lower().strip()
+    known = bool(v_norm) or (capacity_kg or 0) > 0
+    if "nang" in v_norm or "heavy" in v_norm or (capacity_kg or 0) > 5000:
+        base = XE_TAI_NANG_8T
+    elif "trung" in v_norm or "medium" in v_norm or (capacity_kg or 0) > 2000:
+        base = XE_TAI_TRUNG_3T5
+    elif "van" in v_norm:
+        base = XE_TAI_NHO_1T5
+    elif "nho" in v_norm or "light" in v_norm or "small" in v_norm or known:
+        base = XE_TAI_NHO_1T5
+    else:
+        log.warning(
+            "get_profile_for_vehicle: unknown vehicle type=%r capacity_kg=%r; "
+            "using explicit DEFAULT_TRUCK_PROFILE=%s (never silent)",
+            vehicle_type,
+            capacity_kg,
+            DEFAULT_TRUCK_PROFILE.name,
+        )
+        return DEFAULT_TRUCK_PROFILE
+
+    dims = (height_m, width_m, length_m, gvw_kg)
+    if all(d is not None and d > 0 for d in dims):
+        assert height_m is not None and width_m is not None
+        assert length_m is not None and gvw_kg is not None
+        return TruckProfile(
+            name=f"{base.name} (measured envelope)",
+            vehicle_class=base.vehicle_class,
+            height_m=float(height_m),
+            width_m=float(width_m),
+            length_m=float(length_m),
+            gross_vehicle_weight_t=float(gvw_kg) / 1000.0,
+            empty_weight_kg=base.empty_weight_kg,
+            max_payload_kg=float(capacity_kg) if (capacity_kg or 0) > 0 else base.max_payload_kg,
+            fuel_type="petrol" if fuel == "petrol" else ("electric" if fuel == "electric" else "diesel"),
+            rated_l_per_100km=float(l_per_100km) if (l_per_100km or 0) > 0 else base.rated_l_per_100km,
+            axle_load_t=float(axle_load_t) if axle_load_t is not None and axle_load_t > 0 else None,
+            frontal_area_m2=float(frontal_area_m2)
+            if frontal_area_m2 is not None and frontal_area_m2 > 0
+            else round(float(width_m) * float(height_m), 2),
+            cd=float(cd) if cd is not None and cd > 0 else base.cd,
+        )
+
+    aero_override = (
+        (axle_load_t is not None and axle_load_t > 0)
+        or (frontal_area_m2 is not None and frontal_area_m2 > 0)
+        or (cd is not None and cd > 0)
+    )
+    if l_per_100km > 0 or (fuel in ("diesel", "petrol", "electric") and fuel != base.fuel_type) or aero_override:
         return TruckProfile(
             name=base.name,
             vehicle_class=base.vehicle_class,
@@ -124,7 +183,50 @@ def get_profile_for_vehicle(
             max_payload_kg=max(capacity_kg, base.max_payload_kg) if capacity_kg > 0 else base.max_payload_kg,
             fuel_type="petrol" if fuel == "petrol" else ("electric" if fuel == "electric" else "diesel"),
             rated_l_per_100km=l_per_100km if l_per_100km > 0 else base.rated_l_per_100km,
-            frontal_area_m2=base.frontal_area_m2,
-            cd=base.cd,
+            axle_load_t=float(axle_load_t)
+            if axle_load_t is not None and axle_load_t > 0
+            else base.axle_load_t,
+            frontal_area_m2=float(frontal_area_m2)
+            if frontal_area_m2 is not None and frontal_area_m2 > 0
+            else base.frontal_area_m2,
+            cd=float(cd) if cd is not None and cd > 0 else base.cd,
         )
     return base
+
+
+def profile_for_vehicle_model(vehicle: Any) -> TruckProfile:
+    """Build the per-vehicle TruckProfile for a ``Vehicle`` row/model.
+
+    Reads additive envelope fields (``height_m``/``width_m``/``length_m``/
+    ``gvw_kg``) when present and positive; otherwise infers from
+    ``type``/``capacity_kg`` via :func:`get_profile_for_vehicle`. Optional
+    additive axle/aero overrides (``axle_load_t``/``frontal_area_m2``/
+    ``cd``) pass through when positive; otherwise derived. Uses
+    ``getattr`` defaults so rows created before the additive migration
+    still resolve (with an explicit logged default, never silent).
+    """
+    vtype = getattr(vehicle, "type", "") or ""
+    capacity = getattr(vehicle, "capacity_kg", 0.0) or 0.0
+    fuel = getattr(vehicle, "fuel", "diesel") or "diesel"
+    l_per = getattr(vehicle, "l_per_100km", 0.0) or 0.0
+
+    def _pos(name: str) -> float | None:
+        try:
+            val = getattr(vehicle, name, None)
+        except Exception:
+            return None
+        return float(val) if val is not None and float(val) > 0 else None
+
+    return get_profile_for_vehicle(
+        vtype,
+        capacity,
+        fuel,
+        l_per,
+        height_m=_pos("height_m"),
+        width_m=_pos("width_m"),
+        length_m=_pos("length_m"),
+        gvw_kg=_pos("gvw_kg"),
+        axle_load_t=_pos("axle_load_t"),
+        frontal_area_m2=_pos("frontal_area_m2"),
+        cd=_pos("cd"),
+    )

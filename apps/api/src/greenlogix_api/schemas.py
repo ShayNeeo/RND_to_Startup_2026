@@ -17,6 +17,13 @@ LocalTime = Annotated[str, Field(pattern=r"^(?:[01][0-9]|2[0-3]):[0-5][0-9]$")]
 
 class HealthOut(BaseModel):
     status: Literal["ok"]
+    # T-LOOP-RBAC-HEALTH (additive, optional): road-graph audit versions wired
+    # from geo/road_graph manifest, offline-safe. ``None`` when the manifest
+    # is unreadable — /health still returns 200 with status ok.
+    road_graph_version: str | None = None
+    restriction_overlay_version: str | None = None
+    cost_model_version: str | None = None
+    road_graph_reachable: bool | None = None
 
 
 class OrderOut(BaseModel):
@@ -34,6 +41,12 @@ class OrderOut(BaseModel):
     excel_row: int | None
     status: Literal["pending", "assigned", "arrived", "delivered", "failed"]
     late_risk: bool = False
+    # T-LOOP-GOFA (additive, nullable): provenance passthrough from Order.
+    # Optional so existing clients/orders are unaffected.
+    place_id: str | None = None
+    place_provider: str | None = None
+    place_confidence: float | None = None
+    geocode_at: str | None = None
 
 
 class OrderPatch(BaseModel):
@@ -68,6 +81,15 @@ class VehicleOut(BaseModel):
     fuel: FuelType
     l_per_100km: float
     status: VehicleStatus
+    # T-02 C-02 (additive, optional): envelope passthrough from Vehicle.
+    # None = not recorded. Additive only; no path change.
+    height_m: float | None = None
+    width_m: float | None = None
+    length_m: float | None = None
+    gvw_kg: float | None = None
+    axle_load_t: float | None = None
+    frontal_area_m2: float | None = None
+    cd: float | None = None
 
 
 class VehiclePatch(BaseModel):
@@ -76,6 +98,14 @@ class VehiclePatch(BaseModel):
     fuel: FuelType | None = None
     l_per_100km: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     status: VehicleStatus | None = None
+    # T-02 C-02 (additive, optional): envelope overrides, positive only.
+    height_m: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    width_m: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    length_m: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    gvw_kg: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    axle_load_t: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    frontal_area_m2: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    cd: float | None = Field(default=None, gt=0, allow_inf_nan=False)
 
 
 class OptimizeIn(BaseModel):
@@ -125,6 +155,7 @@ class OptimizeOut(BaseModel):
     totals: TotalsOut
     baseline: TotalsOut
     distance_provider: str = "circuity"
+    routing_quality: str = "DEGRADED"
     eco_weight: float = 0.0
 
 
@@ -161,6 +192,40 @@ class StatusOut(BaseModel):
     reason: FailureReason | None
 
 
+FeedbackIssueType = Literal["road_closed", "height_barrier", "weight_limit", "unexpected_ban"]
+FeedbackStatus = Literal["pending_review", "verified", "rejected"]
+
+
+class FeedbackIn(BaseModel):
+    plate: str
+    lat: float = Field(ge=-90, le=90, allow_inf_nan=False)
+    lng: float = Field(ge=-180, le=180, allow_inf_nan=False)
+    issue_type: FeedbackIssueType
+    notes: str = ""
+
+
+class FeedbackOut(BaseModel):
+    id: str
+    status: FeedbackStatus
+
+
+class FeedbackItemOut(BaseModel):
+    """One queued driver restriction report (admin review read model)."""
+
+    id: str
+    driver_id: str
+    plate: str
+    lat: float
+    lng: float
+    issue_type: FeedbackIssueType
+    notes: str
+    status: FeedbackStatus
+
+
+class FeedbackVerifyIn(BaseModel):
+    approved: bool
+
+
 class ReportTotals(BaseModel):
     km: float
     litres: float
@@ -181,6 +246,7 @@ class ReportOut(BaseModel):
     optimized: ReportTotals
     delta: ReportDelta
     distance_provider: str = "circuity"
+    routing_quality: str = "DEGRADED"
     eco_weight: float = 0.0
 
 

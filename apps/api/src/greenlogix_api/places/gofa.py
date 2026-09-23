@@ -9,6 +9,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from typing import Any
 
 from greenlogix_api.places.base import GeoPoint, PlaceDetail, PlaceProvider, PlaceSuggestion
 from greenlogix_api.places.mock import MockPlaceProvider
@@ -21,7 +22,14 @@ DEFAULT_CACHE_TTL_SECONDS = 3600  # 1 hour
 
 class GofaPlaceProvider(PlaceProvider):
     """Adapter for GOFA Places AutoComplete and Place Detail API.
-    
+
+    BLOCKED (CR-01, 2026-09-21): no official GOFA API docs/endpoint contract
+    were available at implementation time. Base URL, auth scheme (Bearer),
+    query params, and response shapes below are ASSUMED from common patterns,
+    not verified against GOFA docs. Do not treat as ground truth; verify
+    against the real GOFA spec before production use. No schema change until
+    the contract is confirmed.
+
     Adheres strictly to the sponsored monthly quota (15k total calls:
     10k autocomplete + 5k detail). Falls back gracefully to MockPlaceProvider
     when running offline or when no API key is provided.

@@ -7,6 +7,8 @@ from greenlogix_api.auth.dependencies import (
     require_manager_role,
     require_driver_role,
     verify_driver_plate_access,
+    verify_org_access,
+    verify_tenant_plate_access,
 )
 from greenlogix_api.auth.legacy import (
     demo_enabled,
@@ -22,6 +24,8 @@ __all__ = [
     "require_manager_role",
     "require_driver_role",
     "verify_driver_plate_access",
+    "verify_org_access",
+    "verify_tenant_plate_access",
     "demo_enabled",
     "require_dispatcher",
     "require_driver",

@@ -126,3 +126,61 @@ class DriverRestrictionFeedback:
     issue_type: Literal["road_closed", "height_barrier", "weight_limit", "unexpected_ban"]
     notes: str = ""
     status: Literal["pending_review", "verified", "rejected"] = "pending_review"
+    id: str = ""
+
+
+# In-memory driver feedback queue (T-03, CR-20260923-001).
+#
+# Feedback NEVER auto-mutates ACTIVE_RULES. Verified entries require a
+# separate admin promotion step (not implemented — no auto-promotion path
+# exists on purpose). Production persistence is a future migration; the
+# in-memory list mirrors the telemetry precedent (no DB migration).
+_FEEDBACK_QUEUE: list[DriverRestrictionFeedback] = []
+
+
+def submit_feedback(
+    driver_id: str,
+    plate: str,
+    lat: float,
+    lng: float,
+    issue_type: Literal["road_closed", "height_barrier", "weight_limit", "unexpected_ban"],
+    notes: str = "",
+) -> DriverRestrictionFeedback:
+    """Queue one driver restriction report as pending_review."""
+    import uuid
+
+    entry = DriverRestrictionFeedback(
+        driver_id=driver_id,
+        plate=plate,
+        lat=lat,
+        lng=lng,
+        issue_type=issue_type,
+        notes=notes,
+        status="pending_review",
+        id=uuid.uuid4().hex[:12],
+    )
+    _FEEDBACK_QUEUE.append(entry)
+    return entry
+
+
+def list_pending() -> list[DriverRestrictionFeedback]:
+    """Return queued entries still awaiting review."""
+    return [f for f in _FEEDBACK_QUEUE if f.status == "pending_review"]
+
+
+def verify_feedback(feedback_id: str, approved: bool) -> DriverRestrictionFeedback:
+    """Transition a queued entry to verified (approved) or rejected.
+
+    Never touches ACTIVE_RULES — admin promotion is a separate manual step.
+    Raises ValueError when the id is unknown.
+    """
+    for entry in _FEEDBACK_QUEUE:
+        if entry.id == feedback_id:
+            entry.status = "verified" if approved else "rejected"
+            return entry
+    raise ValueError(f"unknown feedback id: {feedback_id}")
+
+
+def clear_feedback_queue() -> None:
+    """Test helper: empty the in-memory queue."""
+    _FEEDBACK_QUEUE.clear()

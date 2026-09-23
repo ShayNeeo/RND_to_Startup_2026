@@ -11,6 +11,29 @@ from greenlogix_api.schemas import ReportDelta, ReportOut, ReportTotals, TotalsO
 
 _cache: dict[str, Any] | None = None
 
+# T-LOOP-EVIDENCE (CR-15 PARTIAL): honest audit/confidence fields carried in
+# the report ``extra`` dict (code-level only, no schema/OpenAPI change).
+# Wording contract: every ISO/GLEC mention carries "not certified".
+EVIDENCE_MODEL_VERSION = "GLX-HDT-v1.0"
+EVIDENCE_CONFIDENCE = "C1-illustrative"
+EVIDENCE_ISO_NOTE = "TTW estimate per GLEC-aligned factors, not certified"
+
+
+def evidence_audit_extra() -> dict[str, object]:
+    """Additive evidence payload for the audit drawer (CR-15).
+
+    Keys: ``model_version`` (GLX-HDT-v1.0, matches
+    ``geo/road_graph.cost_model_version`` + ``energy/hdt_v1`` version_name),
+    ``confidence`` (current release ``C1-illustrative``; full C0-C4 ladder in
+    ``docs/research/evidence_ui.md``), ``iso_note`` (exact honest wording —
+    TTW estimate per GLEC-aligned factors, not certified).
+    """
+    return {
+        "model_version": EVIDENCE_MODEL_VERSION,
+        "confidence": EVIDENCE_CONFIDENCE,
+        "iso_note": EVIDENCE_ISO_NOTE,
+    }
+
 
 def load_factors(path: Path | None = None) -> dict[str, Any]:
     global _cache
@@ -64,6 +87,34 @@ def save_report(
     }
     if extra:
         payload.update(extra)
+    # T-LOOP-MANIFEST: persist 7 road-graph manifest keys additively so every
+    # report carries model/data versions. Caller values win (setdefault); a
+    # missing/unreadable manifest never fails the report write.
+    try:
+        from greenlogix_api.geo.road_graph import road_graph_audit_extra
+
+        for _k, _v in road_graph_audit_extra().items():
+            payload.setdefault(_k, _v)
+    except Exception:
+        pass
+    # T-LOOP-EVIDENCE: honest confidence/ISO wording, additively.
+    # Caller values win (setdefault); never fails the report write.
+    for _k, _v in evidence_audit_extra().items():
+        payload.setdefault(_k, _v)
+    # C-05: optimizer + pareto_source audit labels, additively.
+    # Caller values win (setdefault); never fails the report write.
+    # pareto_source stays "illustrative" (circuity/Valhalla-unwired); verified
+    # path lives library-level in routing/pareto.rerank_from_alternatives.
+    try:
+        from greenlogix_api.solver.flags import optimizer_name_for_audit
+
+        for _k, _v in {
+            "optimizer": optimizer_name_for_audit(),
+            "pareto_source": "illustrative",
+        }.items():
+            payload.setdefault(_k, _v)
+    except Exception:
+        payload.setdefault("pareto_source", "illustrative")
     target.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
@@ -79,6 +130,7 @@ def load_report(path: Path | None = None) -> ReportOut | None:
         optimized=optimized,
         delta=delta_from_totals(baseline, optimized),
         distance_provider=str(raw.get("distance_provider") or "circuity"),
+        routing_quality=str(raw.get("routing_quality") or "DEGRADED"),
         eco_weight=float(raw.get("eco_weight") or 0.0),
     )
 

@@ -9,6 +9,7 @@ same interface. Do not scrape Google. CI sets ROAD_BASELINE=circuity.
 from __future__ import annotations
 
 import json
+import logging
 import math
 import os
 import time
@@ -17,12 +18,34 @@ import urllib.request
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
-from greenlogix_api.geo.truck_profile import TruckProfile
+from greenlogix_api.geo.truck_profile import DEFAULT_TRUCK_PROFILE, TruckProfile
 from greenlogix_api.solver.distance import HCMC_CIRCUITY, haversine_km
+
+log = logging.getLogger("greenlogix")
 
 LatLng = tuple[float, float]
 Transport = Callable[[str, str, bytes | None], dict[str, Any]]
 MatrixCache = dict[str, tuple[float, list[list[float]], str]]
+
+# CR-01 routing-quality taxonomy (ADR 0001 §C). Circuity is never truck-safe.
+ROUTING_QUALITY_VERIFIED = "VERIFIED_GRAPH"
+ROUTING_QUALITY_DEGRADED = "DEGRADED"
+ROUTING_QUALITY_UNAVAILABLE = "UNAVAILABLE"
+
+# Providers whose matrix comes from a real road graph.
+_VERIFIED_PROVIDERS = frozenset({"valhalla", "osrm", "matrix_cache", "google_directions"})
+
+
+def quality_for_provider(provider_name: str) -> str:
+    """Map a distance-provider name to its routing-quality label.
+
+    VERIFIED_GRAPH: valhalla/osrm/matrix_cache hit (road-graph backed).
+    DEGRADED: circuity fallback or any unknown/custom provider.
+    UNAVAILABLE is only returned by materialize_matrix for empty inputs.
+    """
+    if (provider_name or "").strip().lower() in _VERIFIED_PROVIDERS:
+        return ROUTING_QUALITY_VERIFIED
+    return ROUTING_QUALITY_DEGRADED
 
 DEFAULT_OSRM_URL = "https://router.project-osrm.org"
 DEFAULT_VALHALLA_URL = "https://valhalla1.openstreetmap.de"
@@ -278,13 +301,18 @@ def valhalla_matrix_body(
     locs = [{"lat": lat, "lon": lng} for lat, lng in points]
     body: dict[str, Any] = {"sources": locs, "targets": locs, "costing": costing}
     if costing == "truck":
-        if truck_profile is not None:
-            body["costing_options"] = {"truck": truck_profile.to_valhalla_truck_options()}
-        else:
-            # xe_tai_nho envelope — light truck, not a motorcycle.
-            body["costing_options"] = {
-                "truck": {"height": 2.4, "width": 2.0, "length": 5.2, "weight": 3.5}
-            }
+        # T-LOOP-ROUTING: no silent 3.5t fallback. A missing profile logs a
+        # warning and uses the explicit DEFAULT_TRUCK_PROFILE envelope so the
+        # request body and the matrix cache key always agree on one profile.
+        profile = truck_profile
+        if profile is None:
+            log.warning(
+                "valhalla truck costing without explicit TruckProfile; "
+                "using explicit DEFAULT_TRUCK_PROFILE=%s (never silent)",
+                DEFAULT_TRUCK_PROFILE.name,
+            )
+            profile = DEFAULT_TRUCK_PROFILE
+        body["costing_options"] = {"truck": profile.to_valhalla_truck_options()}
     return body
 
 
@@ -312,7 +340,11 @@ class ValhallaRoadBaseline:
 
     @property
     def profile_hash(self) -> str:
-        return self.truck_profile.profile_hash() if self.truck_profile else "default_truck"
+        # T-LOOP-ROUTING: explicit default hash (never the opaque
+        # "default_truck") so cache keys stay comparable across providers.
+        if self.truck_profile is not None:
+            return self.truck_profile.profile_hash()
+        return DEFAULT_TRUCK_PROFILE.profile_hash()
 
     def _fetch(self, url: str, method: str, body: bytes | None) -> dict[str, Any]:
         return _call_transport(
@@ -399,6 +431,137 @@ def resolve_road_baseline(
     return _osm_chain(osrm=osrm, valhalla=valhalla, costing=costing_name, transport=transport)
 
 
+# --- T-LOOP-ROUTING: full 7-key matrix cache identity -----------------------
+# Cache key = profile_hash + road_graph_version + departure_bucket +
+# restriction_overlay_version + traffic_snapshot + cost_model_version +
+# coords (7 components). Versions resolve from the road-graph manifest
+# with offline-safe fallbacks; buckets/snapshots resolve from env so CI
+# stays deterministic while production can vary them per deploy.
+
+def road_graph_version_id() -> str:
+    """``osm_snapshot_id:tile_build_hash``; dev placeholder offline."""
+    try:
+        from greenlogix_api.geo.road_graph import get_road_graph_version
+
+        return get_road_graph_version()
+    except Exception:
+        return "unpinned-dev:unpinned-dev"
+
+
+def restriction_overlay_id() -> str:
+    """Restriction overlay version (HCMC Decision 23/2018)."""
+    try:
+        from greenlogix_api.geo.road_graph import get_restriction_overlay_version
+
+        return get_restriction_overlay_version()
+    except Exception:
+        return "decision23-2018-v1"
+
+
+def cost_model_id() -> str:
+    """Truck cost-model version."""
+    try:
+        from greenlogix_api.geo.road_graph import get_cost_model_version
+
+        return get_cost_model_version()
+    except Exception:
+        return "GLX-HDT-v1.0"
+
+
+def departure_bucket_id() -> str:
+    """Departure-time bucket for the matrix (env override, CI-stable)."""
+    return os.environ.get("ROUTING_DEPARTURE_BUCKET", "static").strip() or "static"
+
+
+def traffic_snapshot_id() -> str:
+    """Traffic snapshot id for the matrix (env override, CI-stable)."""
+    return os.environ.get("TRAFFIC_SNAPSHOT_VERSION", "free-flow").strip() or "free-flow"
+
+
+def build_matrix_cache_key(
+    provider_id: str,
+    profile_hash: str,
+    points: Sequence[LatLng],
+    *,
+    road_graph_version: str | None = None,
+    departure_bucket: str | None = None,
+    restriction_overlay_version: str | None = None,
+    traffic_snapshot: str | None = None,
+    cost_model_version: str | None = None,
+) -> str:
+    """Full 7-component cache key: 6 version tokens + coords.
+
+    Any single component change (truck envelope, tiles, departure bucket,
+    restriction overlay, traffic snapshot, cost model, geometry) yields a
+    distinct key — no stale cross-profile reuse.
+    """
+    return "|".join(
+        [
+            provider_id or "circuity",
+            profile_hash or DEFAULT_TRUCK_PROFILE.profile_hash(),
+            road_graph_version or road_graph_version_id(),
+            departure_bucket or departure_bucket_id(),
+            restriction_overlay_version or restriction_overlay_id(),
+            traffic_snapshot or traffic_snapshot_id(),
+            cost_model_version or cost_model_id(),
+            _points_key(points),
+        ]
+    )
+
+
+# --- T-LOOP-ROUTING: restriction wiring -------------------------------------
+# Every matrix evaluation labels which restriction overlay was enforced.
+
+def restriction_coverage_label(
+    checked: bool,
+    restricted: bool = False,
+    overlay_version: str | None = None,
+) -> str:
+    """``<overlay>:checked[:restricted|:clear]`` or ``<overlay>:unchecked``."""
+    overlay = overlay_version or restriction_overlay_id()
+    if not checked:
+        return f"{overlay}:unchecked"
+    suffix = ":restricted" if restricted else ":clear"
+    return f"{overlay}:checked{suffix}"
+
+
+def evaluate_restriction_coverage(
+    orders: Sequence[Any],
+    vehicle_class: str = "xe_tai_nho",
+    *,
+    in_inner_city: bool = True,
+    overlay_version: str | None = None,
+) -> str:
+    """Call ``geo.restrictions.check_truck_ban`` per order window.
+
+    Returns a ``restriction_coverage`` label; never raises (fail-open to
+    ``unchecked`` with a warning so routing still works offline).
+    """
+    from greenlogix_api.geo.restrictions import check_truck_ban
+
+    overlay = overlay_version or restriction_overlay_id()
+    try:
+        items = list(orders or [])
+    except TypeError:
+        return restriction_coverage_label(False, overlay_version=overlay)
+    if not items:
+        return restriction_coverage_label(False, overlay_version=overlay)
+    try:
+        for order in items:
+            result = check_truck_ban(
+                getattr(order, "window_start", "") or "",
+                getattr(order, "window_end", "") or "",
+                vehicle_class,
+                in_inner_city=in_inner_city,
+            )
+            if result.is_restricted:
+                return restriction_coverage_label(True, True, overlay)
+    except Exception:
+        log.warning("restriction overlay check failed; marking coverage unchecked")
+        return restriction_coverage_label(False, overlay_version=overlay)
+    return restriction_coverage_label(True, False, overlay)
+
+
 def materialize_matrix(
     provider: RoadBaseline,
     points: Sequence[LatLng],
@@ -406,26 +569,32 @@ def materialize_matrix(
     cache: MatrixCache | None = None,
     now: float | None = None,
     ttl_s: float = DEFAULT_CACHE_TTL_S,
-) -> tuple[RoadBaseline, str]:
-    """Build a cached matrix once per optimize; fall back to circuity on failure."""
+) -> tuple[RoadBaseline, str, str]:
+    """Build a cached matrix once per optimize; fall back to circuity on failure.
+
+    Returns (baseline, provider_name, routing_quality). All callers unpack 3.
+    """
     store = _MATRIX_CACHE if cache is None else cache
     clock = time.monotonic() if now is None else now
+    if not points:
+        return CircuityRoadBaseline(), "circuity", ROUTING_QUALITY_UNAVAILABLE
     profile_id = getattr(provider, "profile_hash", "") or (
         provider.truck_profile.profile_hash()
         if hasattr(provider, "truck_profile") and getattr(provider, "truck_profile", None)
-        else ""
+        else DEFAULT_TRUCK_PROFILE.profile_hash()
     )
-    key = f"{provider.provider_id}|{profile_id}|{_points_key(points)}"
+    key = build_matrix_cache_key(provider.provider_id, profile_id, points)
     hit = store.get(key)
     if hit and clock - hit[0] < ttl_s:
         matrix, name = hit[1], hit[2]
-        return CachedMatrixBaseline(points, matrix, CircuityRoadBaseline(), name), name
+        cached = CachedMatrixBaseline(points, matrix, CircuityRoadBaseline(), name)
+        return cached, name, quality_for_provider(name)
     try:
         matrix = validate_matrix_km(provider.matrix_km(points), size=len(points) or None)
         name = _used_provider_id(provider)
         cached = CachedMatrixBaseline(points, matrix, CircuityRoadBaseline(), name)
         if name != "circuity":
             store[key] = (clock, matrix, name)
-        return cached, name
+        return cached, name, quality_for_provider(name)
     except Exception:
-        return CircuityRoadBaseline(), "circuity"
+        return CircuityRoadBaseline(), "circuity", ROUTING_QUALITY_DEGRADED

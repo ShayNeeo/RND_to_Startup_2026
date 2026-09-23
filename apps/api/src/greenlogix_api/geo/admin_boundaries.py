@@ -77,6 +77,49 @@ def resolve_nearest_ward(lat: float, lng: float) -> WardBoundary:
     return best_ward
 
 
+# T-LOOP-GEO (CR-08 honest slice): versioned admin-area lookup.
+# Centroid fallback ONLY — never polygon intersection; no PostGIS in this
+# sqlite-only env. Version string pins the in-repo centroid snapshot so every
+# consumer (endpoint, report extra) labels the method honestly.
+ADMIN_BOUNDARY_VERSION = "nso-2024-v1-centroid-fallback"
+ADMIN_LOOKUP_METHOD = "centroid-fallback"
+
+
+def admin_boundary_audit_extra() -> dict[str, str]:
+    """Additive ``extra`` payload: pins the boundary dataset version."""
+    return {"admin_boundary_version": ADMIN_BOUNDARY_VERSION}
+
+
+def lookup_admin_areas_versioned(
+    stops: list[dict],
+    route_id: int | None = None,
+) -> dict:
+    """Versioned wrapper over :func:`compute_route_admin_traversal`.
+
+    Returns a JSON-serializable corridor labeled with the dataset version
+    and the ``centroid-fallback`` method. Never claims polygon intersection.
+    """
+    traversal = compute_route_admin_traversal(stops, route_id=route_id)
+    corridor = [
+        {
+            "code": a.code,
+            "ward_name": a.ward_name,
+            "district": a.district,
+            "province": a.province,
+            "distance_km": a.distance_km,
+            "stop_ids": list(a.stop_ids),
+        }
+        for a in traversal.areas
+    ]
+    return {
+        "route_id": route_id,
+        "admin_boundary_version": ADMIN_BOUNDARY_VERSION,
+        "method": ADMIN_LOOKUP_METHOD,
+        "corridor": corridor,
+        "district_breadcrumb": traversal.district_breadcrumb,
+    }
+
+
 def compute_route_admin_traversal(
     stops: list[dict],
     route_id: int | None = None,

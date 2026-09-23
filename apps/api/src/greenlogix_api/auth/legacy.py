@@ -1,4 +1,13 @@
-"""Legacy demo auth gated by GREENLOGIX_DEMO=1 (D-19)."""
+"""Legacy demo auth gated by GREENLOGIX_DEMO=1 (D-19).
+
+PROD GATE (T-LOOP-AUTH): ``require_dispatcher`` / ``require_driver`` return
+401 unless GREENLOGIX_DEMO=1. Global PIN ``0000`` never authenticates in
+prod. Rate-limit/lockout (C-01) is enforced in
+:mod:`greenlogix_api.auth.service` on the ``X-Driver-Pin`` failure path
+(per client IP + PIN, failures only, 429 when ``MAX_PIN_ATTEMPTS``
+exceeded within ``PIN_LOCKOUT_SECONDS``); this legacy module has no
+``Request`` object so it keeps no separate counter and stays fail-closed.
+"""
 
 from __future__ import annotations
 

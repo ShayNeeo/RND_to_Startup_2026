@@ -35,3 +35,35 @@ def verify_driver_plate_access(auth: AuthContext, target_plate: str) -> None:
                 status_code=403,
                 detail=f"forbidden: driver is not assigned to vehicle {target_plate}",
             )
+
+
+def verify_org_access(auth: AuthContext, target_org_id: str | None) -> None:
+    """Tenant guard, in-memory (T-LOOP-RBAC-HEALTH, additive).
+
+    ``target_org_id=None`` means "caller org scope unknown" (all current
+    Route/Vehicle rows carry no org column — no DB migration per brief) and
+    is a no-op so single-org demo behavior is preserved. Any concrete
+    mismatch raises 403; never 401 (identity is already established).
+    """
+    if target_org_id is None:
+        return
+    if auth.organization_id != target_org_id:
+        raise HTTPException(
+            status_code=403,
+            detail="forbidden: organization mismatch",
+        )
+
+
+def verify_tenant_plate_access(
+    auth: AuthContext,
+    target_plate: str,
+    target_org_id: str | None = None,
+) -> None:
+    """Org check first, then the unchanged plate-scoped check.
+
+    Same plate string in a different org -> 403 even before plate logic
+    runs. ``target_org_id=None`` preserves legacy plate-only behavior for
+    rows without an org column.
+    """
+    verify_org_access(auth, target_org_id)
+    verify_driver_plate_access(auth, target_plate)
