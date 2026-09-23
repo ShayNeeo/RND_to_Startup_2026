@@ -109,6 +109,7 @@ export const DRIVER_HTML = `<!DOCTYPE html>
     .btn-failed { background: #450a0a; color: #fca5a5; border: 1px solid #991b1b; }
     .btn-act:hover { filter: brightness(1.2); }
     .btn-act:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-navig { background: #0f2744; color: #60a5fa; border: 1px solid #1e40af; text-decoration: none; width: 100%; box-sizing: border-box; }
 
     /* Empty state */
     .empty-card {
@@ -282,12 +283,17 @@ export const DRIVER_HTML = `<!DOCTYPE html>
             failed: "Thất bại"
           }[s.status || "pending"] || s.status;
 
+          const mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(s.lat + ',' + s.lng) + '&travelmode=driving&dir_action=navigate';
           const actionsHtml = isDepot
             ? '<div style="font-size:12px;color:var(--mut)">Điểm xuất phát trung tâm / Depot Tân Bình</div>'
-            : '<div class="stop-actions">' +
-                '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \\'arrived\\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
-                '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \\'delivered\\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
-                '<button class="btn-act btn-failed" onclick="onFailClick(' + s.id + ')"><i data-lucide="x-circle" style="width:13px;height:13px"></i>Báo hoãn</button>' +
+            : '<div style="display:flex;flex-direction:column;gap:6px">' +
+                '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" title="Google sẽ tính lại tuyến khi mở — không phải tuyến xe tải đã duyệt" class="btn-act btn-navig" style="padding:9px;font-size:12px;font-weight:700"><i data-lucide="navigation" style="width:13px;height:13px"></i>Chỉ đường (Google Maps · Ô tô)</a>' +
+                '<div style="font-size:11px;color:var(--mut)">Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt.</div>' +
+                '<div class="stop-actions">' +
+                  '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \\'arrived\\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
+                  '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \\'delivered\\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
+                  '<button class="btn-act btn-failed" onclick="onFailClick(' + s.id + ')"><i data-lucide="x-circle" style="width:13px;height:13px"></i>Báo hoãn</button>' +
+                '</div>' +
               '</div>';
 
           card.innerHTML =

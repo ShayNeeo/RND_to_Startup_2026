@@ -470,3 +470,19 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Performed visual inspection on key technical slides (`page-02.png`, `page-03.png`, `page-05.png`, `page-06.png`, `page-07.png`, `page-08.png`).
 - Cross-verified codebase capabilities in `optimizer/eco_alns.py`, `energy/hdt_v1.py`, `routing/pareto.py`, and `geo/restrictions.py`.
 - Formatted and generated executive DOCX report: `BAO_CAO_AUDIT_TECH_SLIDE_ECOMILES.docx` (and `docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.docx`) via `scripts/create_audit_docx.py`.
+
+## 2026-09-23 — Driver PWA Navigation Button Edge Sync & Live Verification
+
+### What changed
+- `apps/worker/src/driverHtml.ts`: Added missing `.btn-navig` CSS style and Google Maps driving navigation button (`Chỉ đường (Google Maps · Ô tô)`) with disclaimer text to the serverless Edge Worker template, ensuring parity with `apps/landing/public/driver/index.html`.
+- `.gitignore`: Added `.~lock.*#` pattern to ignore temporary LibreOffice/Word lock files.
+- Re-deployed Edge Worker (`greenlogix-api`) via `pnpm --filter @greenlogix/worker run deploy` (Version ID: `d6dd1074-c04b-4252-9c03-e09314fc3dc5`).
+
+### Decisions / tradeoffs
+- Kept `apps/landing/functions/driver.ts` proxy pattern intact while ensuring `apps/worker/src/driverHtml.ts` is the single source of truth for edge-rendered driver HTML.
+- Explicit disclaimer maintained on each stop card: "Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt."
+
+### Verification
+- Tested with `pnpm --filter @greenlogix/worker test` (16/16 passed) and `pnpm --filter @greenlogix/worker run typecheck` (0 errors).
+- Re-loaded and inspected active Chrome browser on port 9222 via Chrome DevTools MCP (`select_page`, `navigate_page`, `take_screenshot`).
+- Visually verified presence of blue "Chỉ đường (Google Maps · Ô tô)" button and HCMC Decision 23/2018 truck ban badge on active driver stops.
