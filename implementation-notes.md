@@ -447,3 +447,25 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Contract: openapi.json 21 paths unchanged; `test_frozen_openapi` green (87 contract tests green).
 - Banned-claims grep = 5 hits negations/wording-contract only (carbon.py×2, optimize.py:176, flags.py:9, road_baseline.py:30).
 - Reviewer gate: BanWindowReviewer PASS (AC-01/02/03 all PASS; risks benign/pre-existing). Branch: so2026.
+
+## 2026-09-23 — Technical & Competitive Pitch Deck Audit (`Proposal _ ECOMILES.pdf`)
+
+### What changed
+- Audited 14 slides from `/home/shayneeo/Downloads/Trash/Proposal _ ECOMILES.pdf` via high-resolution image rendering (`pdftoppm` 150 DPI) and visual inspection across each slide.
+- Published deep audit report: `docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.md`.
+- Identified 5 critical discrepancies:
+  1. Generic "Smart VRP / OSRM" hides Eco-ALNS v2, GLX-HDT-v1 tractive physics, and Pareto $\epsilon$-SLA engine.
+  2. Slide 8 completely ignores real competitors (Abivin vRoute, SmartLog STM, AhaMove, Google Fleet Engine).
+  3. Unsubstantiated metrics ("-88.31% CO₂ TTW", "triệt tiêu 30% xe chạy rỗng") lack required data provenance labels (`[BENCHMARK MÔ PHỎNG]`, `[GIẢ ĐỊNH – CẦN PILOT]`).
+  4. Phantom feature: "Backhaul Matching" claimed as active in MVP when it is Phase 4 roadmap.
+  5. Cites ISO 14064 instead of transport logistics standard ISO 14083 / GLEC 3.2.
+- Provided actionable slide rewrite blueprints and a 5-way competitive matrix.
+
+### Decisions / tradeoffs
+- Kept report decoupled as a standalone reference document (`docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.md`) so the pitch team and slide designers can immediately copy-paste rewrites into Canva.
+- Evaluated both visual slide design and exact Vietnamese phrasing to ensure alignment with VSIC / RnD-to-Startup judging criteria.
+
+### Verification
+- Rendered 14/14 slide PNGs in `docs/qa-screenshots/proposal-slides/`.
+- Performed visual inspection on key technical slides (`page-02.png`, `page-03.png`, `page-05.png`, `page-06.png`, `page-07.png`, `page-08.png`).
+- Cross-verified codebase capabilities in `optimizer/eco_alns.py`, `energy/hdt_v1.py`, `routing/pareto.py`, and `geo/restrictions.py`.
