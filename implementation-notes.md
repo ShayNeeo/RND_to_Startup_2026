@@ -486,3 +486,4 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Tested with `pnpm --filter @greenlogix/worker test` (16/16 passed) and `pnpm --filter @greenlogix/worker run typecheck` (0 errors).
 - Re-loaded and inspected active Chrome browser on port 9222 via Chrome DevTools MCP (`select_page`, `navigate_page`, `take_screenshot`).
 - Visually verified presence of blue "Chỉ đường (Google Maps · Ô tô)" button and HCMC Decision 23/2018 truck ban badge on active driver stops.
+- Updated `BAO_CAO_AUDIT_TECH_SLIDE_ECOMILES.docx` and `docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.docx` with dedicated Section 7: "Driver Navigation Strategy: Google Maps vs. Proprietary Engine Deep Dive" including 3-tier engineering evolution and winning pitch Q&A script.

@@ -441,9 +441,63 @@ def main():
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
     # ---------------------------------------------------------
-    # SECTION 7: KỊCH BẢN THAY THẾ TỪNG CHỮ CHO SLIDE 6 & 8
+    # SECTION 7: BÀI TOÁN DẪN ĐƯỜNG TÀI XẾ: GOOGLE MAPS VS. THUẬT TOÁN PROPRIETARY
     # ---------------------------------------------------------
-    style_heading(doc.add_paragraph(), "7. KỊCH BẢN THAY THẾ NỘI DUNG COPY-PASTE CHO SLIDE 6 VÀ SLIDE 8", level=1)
+    style_heading(doc.add_paragraph(), "7. BÀI TOÁN DẪN ĐƯỜNG TÀI XẾ: GOOGLE MAPS VS. THUẬT TOÁN PROPRIETARY", level=1)
+
+    p_nav_intro = doc.add_paragraph(
+        "Đây là câu hỏi cốt tử về mặt kiến trúc công nghệ và trải nghiệm thực địa mà Ban Giám Khảo hoặc nhà đầu tư "
+        "chắc chắn sẽ chất vấn: 'Nếu bấm Dẫn đường mà nhảy sang Google Maps, thì Google Maps sẽ tự tính lại đường đi chặng đó. "
+        "Lỡ Google dẫn xe tải vào đường cấm thì thuật toán tối ưu của các bạn còn tác dụng gì? Làm sao để dẫn đường dùng chính thuật toán của EcoMiles?'"
+    )
+
+    style_heading(doc.add_paragraph(), "7.1. Phân định vai trò: Tối ưu vĩ mô (Macro) vs. Lái xe vi mô (Micro)", level=2)
+    add_callout(doc, [
+        ("KHẲNG ĐỊNH: LỘ TRÌNH TÀI XẾ NHẬN ĐÃ CÓ 100% THUẬT TOÁN ECOMILES\n", True, RGBColor(0x05, 0x96, 0x69), 10.5),
+        ("• Thuật toán Eco-ALNS v2 đã giải toàn bộ bài toán gom đơn, xếp xe và định đoạt trình tự ghé thăm tối ưu: Kho -> Điểm 1 -> Điểm 2 -> ... -> Điểm N.\n"
+         "• Trình tự này bảo đảm 3 điều kiện: (1) Tiết kiệm dầu nhất theo tải trọng động; (2) Tránh hoàn toàn khung giờ cấm tải QĐ 23/2018 (06h-09h & 16h-20h); (3) Thỏa mãn khung giờ nhận hàng của khách.\n"
+         "• Nếu không có EcoMiles, tài xế mở Google Maps lên sẽ hoàn toàn bất lực vì Google Maps KHÔNG THỂ phân bổ 80 đơn cho 10 xe và không biết sắp thứ tự giao.", False, None, 9.5)
+    ], bg_hex="F8FAFC", border_color="0284C7")
+
+    style_heading(doc.add_paragraph(), "7.2. Ba giải pháp công nghệ để dẫn đường thực sự tuân thủ thuật toán EcoMiles", level=2)
+
+    nav_solutions = [
+        ("Giải pháp 1: Ghim điểm nút hành lang an toàn (Waypoint Corridor Pinning) — Cầu nối tức thì (0 đ chi phí)",
+         "Google Maps không cho truyền file hình học (polyline), nhưng CHO PHÉP truyền các điểm trung gian (waypoints) qua URL. Thay vì chỉ truyền điểm đến, hệ thống EcoMiles tự động trích xuất 2-3 tọa độ nút giao an toàn trên trục đường vành đai đã duyệt (ví dụ: Võ Văn Kiệt, Mai Chí Thọ, QL1A) và chèn vào link: google.com/maps/dir/?api=1&destination=...&waypoints=lat1,lng1|lat2,lng2. Kết quả: Google Maps bị ép buộc phải vẽ đường qua các đại lộ cho phép xe tải, không thể tự tiện rẽ tắt vào các ngõ hẻm cấm xe tải."),
+
+        ("Giải pháp 2: Điều hướng nhúng độc quyền trong ứng dụng (Embedded In-App Navigation) — Giải pháp chuẩn Enterprise",
+         "Đây là cách các kỳ lân logistics thế giới (Grab, UPS ORION, Abivin) xử lý triệt để: KHÔNG DÙNG GOOGLE MAPS để dẫn đường bên ngoài. Thay vào đó, tích hợp bản đồ MapLibre / OpenStreetMap trực tiếp vào App tài xế (PWA/Flutter). Hệ thống Valhalla của EcoMiles bắn tọa độ polyline và danh sách khẩu lệnh rẽ (Maneuvers: 'Rẽ phải vào Lý Thường Kiệt sau 100m') kèm giọng nói tiếng Việt. Xe chạy theo đúng 100% từng mét đường đã duyệt. Không lo Google tính lại, không tốn 1 xu tiền bản quyền."),
+
+        ("Giải pháp 3: Mô hình vận hành kép thực tế (Dual-Mode) cho giai đoạn MVP",
+         "Giai đoạn hiện tại áp dụng mô hình kép: Lịch trình hiển thị rõ hành lang hành chính (Tân Bình -> Phú Nhuận -> Q10 -> Q1) và huy hiệu cảnh báo giờ cấm tải QĐ 23. Nút Google Maps chỉ đóng vai trò trợ lái vi mô trong 500m cuối để tài xế tìm số nhà cụ thể trong ngõ hẻm.")
+    ]
+
+    for s_title, s_desc in nav_solutions:
+        p_s = doc.add_paragraph()
+        p_s.paragraph_format.space_before = Pt(4)
+        p_s.paragraph_format.space_after = Pt(2)
+        r_st = p_s.add_run(f"• {s_title}\n")
+        r_st.bold = True
+        r_st.font.size = Pt(10)
+        r_st.font.color.rgb = RGBColor(0x0F, 0x17, 0x2A)
+        r_sd = p_s.add_run(s_desc)
+        r_sd.font.size = Pt(9.5)
+
+    style_heading(doc.add_paragraph(), "7.3. Kịch bản đối đáp sắc bén khi pitching trước Ban Giám Khảo (Winning Q&A)", level=2)
+    add_callout(doc, [
+        ("CÂU HỎI CỦA GIÁM KHẢO: ", True, RGBColor(0xDC, 0x26, 0x26), 10.5),
+        ("“Nếu tài xế bấm nút dẫn đường mà nhảy sang Google Maps, thì Google sẽ tự tính lại đường đi. Lỡ Google chỉ vào đường cấm thì thuật toán của các bạn còn ý nghĩa gì?”\n\n", False, RGBColor(0xDC, 0x26, 0x26), 10),
+        ("CÂU TRẢ LỜI MẪU CHIẾN THẮNG:\n", True, RGBColor(0x05, 0x96, 0x69), 10.5),
+        ("“Dạ thưa Ban Giám Khảo, đây chính là sự khác biệt giữa Tối ưu hóa điều phối vĩ mô (Macro-VRP) và Dẫn đường vi mô (Micro-Steering):\n"
+         "1. Thuật toán Eco-ALNS v2 của chúng em giải quyết bài toán lớn nhất mà Google Maps bất lực: phân bổ 80 đơn cho 10 xe và sắp xếp trình tự dừng đỗ tránh khung giờ cấm tải 06h-09h và 16h-20h của TP.HCM.\n"
+         "2. Ở giai đoạn MVP (Phase 1), để doanh nghiệp SME không phải tốn hàng trăm triệu mua thiết bị định vị GPS chuyên dụng, chúng em dùng cơ chế Ghim điểm nút hành lang (Waypoint Pinning) ép Google Maps phải đi qua trục đường lớn và hiển thị cảnh báo cấm tải trực quan.\n"
+         "3. Trong lộ trình Phase 2, EcoMiles sẽ tích hợp động cơ dẫn đường nhúng MapLibre/Valhalla chạy độc lập ngay trong ứng dụng, triệt tiêu hoàn toàn sự phụ thuộc vào Google Maps và bảo đảm xe tuân thủ 100% cung đường đã duyệt từ kho đến điểm giao.”", False, RGBColor(0x0F, 0x17, 0x2A), 9.5)
+    ], bg_hex="ECFDF5", border_color="059669")
+
+    # ---------------------------------------------------------
+    # SECTION 8: KỊCH BẢN THAY THẾ TỪNG CHỮ CHO SLIDE 6 & 8
+    # ---------------------------------------------------------
+    style_heading(doc.add_paragraph(), "8. KỊCH BẢN THAY THẾ NỘI DUNG COPY-PASTE CHO SLIDE 6 VÀ SLIDE 8", level=1)
 
     style_heading(doc.add_paragraph(), "Kịch bản Slide 6: Giải Pháp Đột Phá — Nền Tảng Điều Hành & Tối Ưu Phát Thải", level=2)
     add_callout(doc, [
