@@ -469,3 +469,4 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Rendered 14/14 slide PNGs in `docs/qa-screenshots/proposal-slides/`.
 - Performed visual inspection on key technical slides (`page-02.png`, `page-03.png`, `page-05.png`, `page-06.png`, `page-07.png`, `page-08.png`).
 - Cross-verified codebase capabilities in `optimizer/eco_alns.py`, `energy/hdt_v1.py`, `routing/pareto.py`, and `geo/restrictions.py`.
+- Formatted and generated executive DOCX report: `BAO_CAO_AUDIT_TECH_SLIDE_ECOMILES.docx` (and `docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.docx`) via `scripts/create_audit_docx.py`.
