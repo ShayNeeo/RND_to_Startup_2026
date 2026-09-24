@@ -487,3 +487,174 @@ Self-hosted extract: `VALHALLA_URL` or `OSRM_URL`. FastAPI without env uses `aut
 - Re-loaded and inspected active Chrome browser on port 9222 via Chrome DevTools MCP (`select_page`, `navigate_page`, `take_screenshot`).
 - Visually verified presence of blue "Chỉ đường (Google Maps · Ô tô)" button and HCMC Decision 23/2018 truck ban badge on active driver stops.
 - Updated `BAO_CAO_AUDIT_TECH_SLIDE_ECOMILES.docx` and `docs/audit/PROPOSAL_ECOMILES_TECH_AUDIT.docx` with dedicated Section 7: "Driver Navigation Strategy: Google Maps vs. Proprietary Engine Deep Dive" including 3-tier engineering evolution and winning pitch Q&A script.
+
+## 2026-09-24 — CR-20260924-001: Real GOFA Places client, REST endpoints, web surfaces autocomplete, driver navigation handoff & eco claims integrity
+
+### What changed
+
+1. **Backend GOFA Places Client & Configuration (`apps/api`)**:
+   - `src/greenlogix_api/places/gofa.py`: Implemented production-grade `GofaPlaceProvider` connecting to `https://places-api.gofa.vn` using `X-API-Key` authentication header (`GET /v5/Place/AutoComplete?input=` and `GET /v5/Place/Detail?place_id=`). Replaced `Bearer` auth fiction. Added query minimum length validation (3 chars). Implemented robust response parsing for `predictions[]` into `PlaceSuggestion` and `result.geometry.location` / `result.compound.{province,district,commune}` into `PlaceDetail` (canonical ward mapped from `compound.commune`). Enforced detail validation with `status == "OK"` gate, returning `None` on non-OK status. Added quota monitoring knobs (`GOFA_QUOTA_AUTOCOMPLETE`, `GOFA_QUOTA_DETAIL`) with warning logs on threshold breaches, in-memory TTL caching with `clear_cache()`, and clean mock fallback when no key is set.
+   - `src/greenlogix_api/routers/places.py`: Exposed `GET /places/autocomplete?q=` and `GET /places/detail/{place_id}` protected by `verify_dispatcher_access`. Utilized process-level singleton provider (`get_places_provider()`) with `reset_places_provider()` test hook to preserve cache across requests. Returns honest HTTP 503 (`places service unconfigured: GOFA_API_KEY missing`) when unconfigured, HTTP 422 on queries < 3 characters, HTTP 404 on missing/empty detail results, and HTTP 502 with error masking (`Upstream places provider error`) to prevent leakage of upstream API keys or internal stack traces.
+   - `src/greenlogix_api/main.py`: Wired `places.router` into the FastAPI application.
+   - `apps/api/openapi.json`: Additively registered `/places/autocomplete` and `/places/detail/{place_id}` plus associated schemas (`SuggestionOut`, `DetailOut`), expanding frozen paths from 21 to 23 with zero deletions.
+   - `apps/api/.env.example`: Documented `GOFA_API_KEY`, `GOFA_PLACES_BASE_URL`, and quota threshold placeholders.
+   - `apps/api/tests/conftest.py`: Added autouse fixture `block_live_gofa_network_calls` monkeypatching stdlib `_urllib_transport` to prevent any accidental live network calls during automated test suites, strictly guarding the 15,000 monthly quota.
+   - `apps/api/tests/test_places.py` & `apps/api/tests/test_places_provenance.py`: Updated and replaced obsolete 501 stubs with 18 comprehensive tests covering live-shape autocomplete, live-shape detail parsing with administrative compound hierarchy, dispatcher auth, min-length 422, unconfigured 503, error masking 502 without secret leaks, in-memory caching, and provenance propagation.
+   - `apps/api/tests/test_contract.py`: Updated `FROZEN_METHODS` with `"/places/autocomplete": {"get"}` and `"/places/detail/{place_id}": {"get"}` to enforce frozen contract integrity (87 contract tests passing).
+
+2. **Manager Web Autocomplete UI (`apps/landing/public/app/index.html`)**:
+   - Embedded full geocoding order creation panel with debounced (300ms) autocomplete dropdown bound to backend `GET /places/autocomplete?q=`. Gated on query length $\ge 3$ characters, with stale request cancellation via `AbortController`.
+   - Integrated place selection to query `GET /places/detail/{place_id}`, populating canonical `order-lat`, `order-lng`, administrative breadcrumb (`ward`, `district`, `province`), and data provenance badge (`provider: "gofa"`).
+   - Added interactive Leaflet map preview marker at resolved coordinates.
+   - Added real-time filtering on `#q` and `#late` in `renderStopsList()`.
+   - Replaced hour-only truck ban logic with minute-level interval overlap `Math.max(s, 360) < Math.min(e, 540)` and `Math.max(s, 960) < Math.min(e, 1200)`.
+
+3. **Local Dispatcher Autocomplete UI (`apps/api/templates/dispatcher.html`)**:
+   - Wrapped inline order editing address inputs (`data-f="address"`) in `.place-autocomplete-container` with debounced (300ms) autocomplete and `AbortController` cancellation.
+   - On selection, queries `GET /places/detail/{place_id}`, renders inline provenance badge (`📍 gofa: <place_id> (<lat>, <lng>)`), and updates `tr.dataset.lat`, `tr.dataset.lng`, `tr.dataset.placeId`, `tr.dataset.placeProvider`.
+   - Updated `.patch` click handler to inject `payload.lat = Number(tr.dataset.lat)` and `payload.lng = Number(tr.dataset.lng)`, ensuring coordinates are synchronized with address text in backend `PATCH /orders/{id}` calls.
+
+4. **Driver PWA Lifecycle & Navigation Handoff (`apps/landing/public/driver/index.html`)**:
+   - Replaced free-text `prompt()` in `onFailClick()` with structured `#failure-modal` dialog mapping directly to backend `FailureReason` literals (`khach_vang`, `sai_dia_chi`, `hang_hong`, `tu_choi`), eliminating HTTP 422 validation errors.
+   - Verified stop lifecycle status transitions (`arrived`, `delivered`, `failed`) persist to backend via `POST /api/stops/{id}/status`.
+   - Confirmed Google Maps external navigation handoff enforces driving mode (`travelmode=driving&dir_action=navigate`).
+   - Elevated re-routing disclaimer to a prominent high-contrast amber alert card with mandatory wording: *"Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt."*
+   - Upgraded `isHcmcTruckBan()` with minute-level interval overlap.
+   - Rendered traversed administrative corridors by extracting traversed wards/districts and querying authoritative route corridor breadcrumbs.
+
+5. **Marketing Landing Navigation & Eco Claims Integrity (`apps/landing/src` & root)**:
+   - `apps/landing/src/App.tsx`: Added client-side redirect for `/dispatcher` path (`window.location.replace('/dispatcher/' + window.location.search)`).
+   - `apps/landing/src/components/RolePortalModal.tsx`: Added third role card for "Điều phối viên trạm / Local Dispatcher" linking directly to `/dispatcher/`, complete with feature list and badge.
+   - `apps/landing/public/_redirects`: Added edge redirect rule `/dispatcher /dispatcher/ 301`.
+   - `apps/landing/src/components/PitchDeckVoiceoverPage.tsx`: Aligned all eco-routing, GLEC, and truck safety claims with C1-illustrative wording contract. Replaced uncertified ISO claims and speculative truck safety assurances with qualified estimates (`tham chiếu GLEC / ISO 14083, chưa chứng nhận`, `cảnh báo vi phạm khung giờ cấm tải theo QĐ 23/2018`).
+   - `package.json`: Updated description to `"EcoMiles — B2B Urban Logistics Optimization & GLEC-aligned Carbon Estimation Platform (not certified)"`.
+
+---
+
+### Decisions / tradeoffs
+
+1. **Quota discipline & mock fallback**:
+   - GOFA provides a hard tier of 15,000 requests monthly. To prevent quota exhaustion during rapid ReAct QC cycles:
+     - Implemented client-side query gating (minimum 3 characters) and 300ms debouncing.
+     - Implemented in-memory TTL caching for autocomplete predictions and detail queries.
+     - Detail lookups are triggered strictly upon explicit selection of a suggestion.
+     - Added an autouse fixture `block_live_gofa_network_calls` in `tests/conftest.py` that intercepts live transport calls, and wired `MockPlaceProvider` / fake transports into test suites to burn zero live quota during automated verification.
+2. **Server-side secret hygiene**:
+   - `GOFA_API_KEY` is loaded exclusively into server-side process environments via `apps/api/.env` (gitignored).
+   - Zero API keys are bundled into client HTML, JavaScript, or public templates.
+   - Web applications query backend proxy endpoints (`/places/autocomplete` and `/places/detail/{place_id}`) secured with session tokens (`Bearer DEMO` / dispatcher role).
+3. **Upstream error masking**:
+   - When upstream GOFA calls fail or time out, `routers/places.py` catches transport exceptions and returns HTTP 502 (`Upstream places provider error`) without exposing the upstream URL, raw response, or authentication headers in client error payloads.
+   - If `GOFA_API_KEY` is unconfigured, the endpoint returns an honest HTTP 503 instead of fabricating mock responses.
+4. **Structured failure modal resolving 422 validation errors**:
+   - Backend `POST /stops/{id}/status` requires `StatusIn.reason` to match `FailureReason = Literal["khach_vang", "sai_dia_chi", "hang_hong", "tu_choi"]`.
+   - Replaced browser `prompt()` with modal `#failure-modal` directly binding human-readable Vietnamese descriptions to exact enum literals, eliminating 422 Unprocessable Entity responses.
+5. **External navigation disclaimer alert**:
+   - External turn-by-turn navigation apps like Google Maps recalculate routes using passenger car baselines that ignore urban truck weight/height limits and time windows.
+   - Elevated the warning to an amber card on each stop: *"Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt."*
+6. **Continuous minute-of-day truck ban intervals**:
+   - Hour-only integer division (`parseInt(val.split(":")[0])`) previously caused delivery windows spanning across ban boundary hours (e.g., `06:00 - 06:30` and `16:00 - 16:30`) to evaluate falsely as unbanned.
+   - Implemented continuous interval overlap ($\max(s, \text{ban\_start}) < \min(e, \text{ban\_end})$) for 06:00–09:00 (360–540 min) and 16:00–20:00 (960–1200 min), eliminating edge-hour violations under HCMC QĐ 23/2018.
+7. **Non-certified GLEC/ISO wording contract**:
+   - To comply with investor due-diligence rules and regulatory standards, all references to ISO 14064/14083 and GLEC were strictly modified to state "tham chiếu (chưa chứng nhận)" or "not certified", and claims promising complete elimination of fines were corrected to automated restriction warnings.
+
+---
+
+### Verification
+
+1. **Targeted Places & Contract Suite (`apps/api`)**:
+   ```bash
+   cd apps/api && uv run pytest tests/test_places.py tests/test_places_provenance.py tests/test_contract.py -v
+   ```
+   *Result*: `105 passed in 1.82s` (0 failed, 100% green).
+
+2. **Targeted Places Unit & Provenance Suite (`apps/api`)**:
+   ```bash
+   cd apps/api && uv run pytest tests/test_places.py tests/test_places_provenance.py -v
+   ```
+   *Result*: `18 passed in 0.61s` (0 failed, 100% green).
+
+3. **Full Regression Pytest Suite (`apps/api`)**:
+   ```bash
+   cd apps/api && uv run pytest -q
+   ```
+   *Result*: `526 passed in 13.86s` (0 failures, 0 regressions across entire test suite).
+
+4. **Driver Stop Status & Failure Reason Validation**:
+   ```bash
+   cd apps/api && uv run python -c '
+   import tempfile
+   from pathlib import Path
+   from fastapi.testclient import TestClient
+   from greenlogix_api import db as dbmod
+   from greenlogix_api.main import app
+
+   with tempfile.TemporaryDirectory() as td:
+       dbmod.set_engine(f"sqlite:///{Path(td)}/test.db", recreate=True)
+       client = TestClient(app)
+       AUTH, PIN = {"Authorization": "Bearer DEMO"}, {"X-Driver-Pin": "0000"}
+       client.post("/seed", headers=AUTH)
+       client.post("/optimize", headers=AUTH, json={"cluster_radius_km": 3.0})
+       client.post("/routes/publish", headers=AUTH, json={"route_ids": []})
+       routes = client.get("/routes", headers=AUTH).json()
+       stop_id = next(s["id"] for r in routes for s in r["stops"] if s["kind"] == "stop")
+       
+       # Free text fails with 422
+       r_bad = client.post(f"/stops/{stop_id}/status", headers=PIN, json={"status": "failed", "reason": "invalid text"})
+       assert r_bad.status_code == 422
+       
+       # Strict enums succeed with 200
+       for enum_val in ["khach_vang", "sai_dia_chi", "hang_hong", "tu_choi"]:
+           r_ok = client.post(f"/stops/{stop_id}/status", headers=PIN, json={"status": "failed", "reason": enum_val})
+           assert r_ok.status_code == 200
+           assert r_ok.json()["reason"] == enum_val
+       print("Driver stop status validation verified successfully!")
+   '
+   ```
+   *Result*: `Driver stop status validation verified successfully!` (Free text rejected with 422, all 4 enums return 200).
+
+5. **Web Surfaces Static Integrity Checks**:
+   ```bash
+   node -e '
+   const fs = require("fs");
+   const appHtml = fs.readFileSync("apps/landing/public/app/index.html", "utf-8");
+   const dispHtml = fs.readFileSync("apps/api/templates/dispatcher.html", "utf-8");
+   const drvHtml = fs.readFileSync("apps/landing/public/driver/index.html", "utf-8");
+   console.assert(appHtml.includes("/places/autocomplete?q="), "app missing autocomplete url");
+   console.assert(dispHtml.includes("payload.lat = Number(tr.dataset.lat)"), "dispatcher missing lat patch");
+   console.assert(drvHtml.includes("failure-modal") && drvHtml.includes("khach_vang"), "driver missing failure-modal enum");
+   console.assert(drvHtml.includes("Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt."), "driver missing disclaimer text");
+   console.log("All static assertions passed!");
+   '
+   ```
+   *Result*: `All static assertions passed!`.
+
+6. **Marketing Landing Build Verification**:
+   ```bash
+   pnpm run build:landing
+   ```
+   *Result*:
+   ```
+   > @greenlogix/landing@0.0.0 build /home/shayneeo/Downloads/Documents/Coding/RND_to_Startup/apps/landing
+   > tsc -b && vite build
+
+   ✓ 2232 modules transformed.
+   dist/index.html                   1.06 kB │ gzip:   0.70 kB
+   dist/assets/index-7WnK3jVj.css   55.37 kB │ gzip:  10.52 kB
+   dist/assets/index-CR8oUTSv.js   520.76 kB │ gzip: 147.84 kB
+   ✓ built in 1.74s
+   ```
+   *Result*: Exit code 0, 0 TypeScript errors.
+
+7. **Secret Key Hygiene Verification**:
+   ```bash
+   git grep -n "3-Jhi""du" -- .
+   grep -rn "X-API-Key\|GOFA_API_KEY" apps/landing/public apps/api/templates
+   ```
+   *Result*: Both commands exit with status 1 (0 matches found across tracked repository and client templates).
+
+8. **Banned Claims Audit**:
+   ```bash
+   grep -rni "truck-safe\|ISO.*certified" apps/api/src apps/landing/src
+   ```
+   *Result*: 0 occurrences in `apps/landing/src`. Only compliant negation/contract strings in `apps/api/src` (`carbon.py:16`, `carbon.py:19`, `optimize.py:176`, `flags.py:9`, `road_baseline.py:30`).

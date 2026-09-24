@@ -20,7 +20,7 @@ from sqlmodel import Session
 
 from greenlogix_api.auth import require_dispatcher
 from greenlogix_api.db import DATA_DIR, get_session, init_db
-from greenlogix_api.routers import driver, optimize, orders, report, vehicles
+from greenlogix_api.routers import driver, optimize, orders, places, report, vehicles
 from greenlogix_api.schemas import HealthOut, SeedOut
 from greenlogix_api.seed import seed_database
 
@@ -108,6 +108,7 @@ app.include_router(vehicles.router)
 app.include_router(optimize.router)
 app.include_router(driver.router)
 app.include_router(report.router)
+app.include_router(places.router)
 
 
 @app.get("/health", response_model=HealthOut)

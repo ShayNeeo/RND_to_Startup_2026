@@ -258,8 +258,80 @@
       </div>
 
       <div id="tab-stops" class="tab-pane">
+        <!-- Order creation / GOFA Places geocoding panel -->
+        <div class="order-create-card" style="background:#080f0c;border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:11.5px;font-weight:700;color:var(--lime);display:flex;align-items:center;gap:5px;">
+              <i data-lucide="map-pin-plus" style="width:13px;height:13px"></i>
+              Tạo đơn / Tra cứu GOFA Places
+            </span>
+            <span style="font-size:10px;color:var(--mint);font-weight:700;background:rgba(54,217,165,0.12);padding:2px 6px;border-radius:4px;border:1px solid rgba(54,217,165,0.25)">
+              GOFA v5 API
+            </span>
+          </div>
+          
+          <div class="place-autocomplete-container" style="position:relative;width:100%;">
+            <div style="position:relative;">
+              <input type="text"
+                     id="order-address-input"
+                     class="place-autocomplete-input"
+                     placeholder="Nhập địa chỉ nhận hàng (tối thiểu 3 ký tự)..."
+                     autocomplete="off"
+                     style="width:100%;background:#0e1a14;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 30px 7px 9px;font-size:12.5px;box-sizing:border-box;"/>
+              <span class="place-spinner" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);display:none;">
+                <i data-lucide="loader-2" style="width:14px;height:14px;animation:spin 1s linear infinite;color:var(--lime);"></i>
+              </span>
+            </div>
+            <div class="place-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:220px;overflow-y:auto;background:#0e1a14;border:1px solid var(--line);border-radius:8px;z-index:1100;box-shadow:0 8px 24px rgba(0,0,0,0.7);"></div>
+            <!-- Provenance / Geocode Feedback Display -->
+            <div class="place-provenance-info" style="display:none;margin-top:6px;font-size:11px;color:var(--mut);line-height:1.4;background:#0e1a14;border:1px solid var(--line);border-radius:6px;padding:6px 8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:var(--mint);font-weight:700;"><i data-lucide="check-check" style="width:12px;height:12px;display:inline;vertical-align:middle;"></i> Đã định vị GOFA Places</span>
+                <span class="place-id-tag" style="font-family:monospace;font-size:10px;color:var(--mut);"></span>
+              </div>
+              <div class="place-coords-text" style="color:var(--text);margin-top:2px;"></div>
+              <div class="place-admin-text" style="color:var(--mut);font-size:10.5px;"></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+            <div>
+              <label style="font-size:10px;color:var(--mut);display:block;">Vĩ độ (Lat):</label>
+              <input id="order-lat" type="number" step="any" placeholder="10.xxxxx" readonly style="width:100%;background:#080f0c;color:var(--text);border:1px solid var(--line-subtle);border-radius:4px;padding:4px 6px;font-size:11px;box-sizing:border-box;"/>
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--mut);display:block;">Kinh độ (Lng):</label>
+              <input id="order-lng" type="number" step="any" placeholder="106.xxxxx" readonly style="width:100%;background:#080f0c;color:var(--text);border:1px solid var(--line-subtle);border-radius:4px;padding:4px 6px;font-size:11px;box-sizing:border-box;"/>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+            <div>
+              <label style="font-size:10px;color:var(--mut);display:block;">Tải trọng (kg):</label>
+              <input id="order-kg" type="number" value="50" min="1" max="2000" style="width:100%;background:#080f0c;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:4px 6px;font-size:11.5px;box-sizing:border-box;"/>
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--mut);display:block;">Cửa sổ giao:</label>
+              <div style="display:flex;gap:3px;align-items:center;">
+                <input id="order-wstart" type="text" value="08:00" placeholder="08:00" style="width:50%;background:#080f0c;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:4px 4px;font-size:11px;box-sizing:border-box;text-align:center;"/>
+                <span style="color:var(--mut);font-size:10px;">-</span>
+                <input id="order-wend" type="text" value="12:00" placeholder="12:00" style="width:50%;background:#080f0c;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:4px 4px;font-size:11px;box-sizing:border-box;text-align:center;"/>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">
+            <button id="btn-locate-preview" type="button" class="ghost" style="padding:4px 10px;font-size:11.5px;">
+              <i data-lucide="map-pin" style="width:12px;height:12px"></i> Xem điểm
+            </button>
+            <button id="btn-add-order" type="button" style="padding:4px 12px;font-size:11.5px;">
+              <i data-lucide="plus" style="width:12px;height:12px"></i> Thêm vào tuyến
+            </button>
+          </div>
+        </div>
+
         <div class="row" style="margin:8px 0">
-          <input id="q" type="search" placeholder="Tìm địa chỉ, SĐT..." style="flex:1;background:#080f0c;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;"/>
+          <input id="q" type="search" placeholder="Lọc danh sách điểm dừng..." style="flex:1;background:#080f0c;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;"/>
           <label style="font-size:11.5px;display:flex;align-items:center;gap:4px;"><input id="late" type="checkbox"/> Cận giờ</label>
         </div>
         <ul id="stop-items" class="stop-list"></ul>
@@ -328,12 +400,29 @@
       safeCreateIcons();
     }
 
+    function toMinutes(timeStr) {
+      if (!timeStr) return -1;
+      const parts = timeStr.split(":").map(Number);
+      if (isNaN(parts[0])) return -1;
+      return parts[0] * 60 + (parts[1] || 0);
+    }
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
     // HCMC Truck Ban Rules (Quy định 23/2018/QĐ-UBND)
+    // Minute-level interval overlap: max(start, ban_start) < min(end, ban_end)
     function isHcmcTruckBan(windowStart, windowEnd) {
-      if (!windowStart || !windowEnd) return false;
-      const s = parseInt(windowStart.split(":")[0], 10);
-      const e = parseInt(windowEnd.split(":")[0], 10);
-      return (s < 9 && e > 6) || (s < 20 && e > 16);
+      const s = toMinutes(windowStart);
+      const e = toMinutes(windowEnd);
+      if (s < 0 || e < 0 || e <= s) return false;
+      // Light truck ban windows under HCMC QĐ 23/2018:
+      // Morning: 06:00 (360m) - 09:00 (540m)
+      // Afternoon: 16:00 (960m) - 20:00 (1200m)
+      const morningBan = Math.max(s, 360) < Math.min(e, 540);
+      const eveningBan = Math.max(s, 960) < Math.min(e, 1200);
+      return morningBan || eveningBan;
     }
 
     function resolveBaseUrl() {
@@ -360,6 +449,7 @@
         if (ct.includes("application/json")) return res.json();
         return res.text();
       } catch (err) {
+        if (err && err.name === 'AbortError') throw err;
         if (window.location.hostname === "localhost" && base !== "http://localhost:8000" && base !== "") {
           console.warn("API error on primary base, attempting local fallback (http://localhost:8000):", err);
           const localTarget = "http://localhost:8000" + cleanPath;
@@ -371,6 +461,183 @@
         }
         throw err;
       }
+    }
+
+    // Debounced (300ms) GOFA Places Autocomplete Component
+    function attachPlaceAutocomplete(inputEl, onSelectCallback) {
+      if (!inputEl) return;
+      const container = inputEl.closest('.place-autocomplete-container');
+      if (!container) return;
+      const dropdown = container.querySelector('.place-dropdown');
+      const spinner = container.querySelector('.place-spinner');
+      const provInfo = container.querySelector('.place-provenance-info');
+      
+      let debounceTimer = null;
+      let activeAbortCtrl = null;
+      let querySeq = 0;
+      let selectedIndex = -1;
+      let currentPredictions = [];
+
+      function setSpinning(loading) {
+        if (spinner) spinner.style.display = loading ? 'block' : 'none';
+        safeCreateIcons();
+      }
+
+      function hideDropdown() {
+        if (dropdown) {
+          dropdown.style.display = 'none';
+          dropdown.innerHTML = '';
+        }
+        selectedIndex = -1;
+        currentPredictions = [];
+      }
+
+      function highlightItem(idx) {
+        if (!dropdown) return;
+        const items = dropdown.querySelectorAll('.place-item');
+        items.forEach((it, i) => {
+          it.style.background = i === idx ? 'var(--panel-hover, #14261d)' : 'transparent';
+        });
+        selectedIndex = idx;
+      }
+
+      async function search(q) {
+        if (activeAbortCtrl) {
+          activeAbortCtrl.abort();
+        }
+        activeAbortCtrl = new AbortController();
+        const seq = ++querySeq;
+
+        setSpinning(true);
+        try {
+          const res = await api('/places/autocomplete?q=' + encodeURIComponent(q), {
+            signal: activeAbortCtrl.signal
+          });
+          if (seq !== querySeq) return; // Stale query discarded
+
+          currentPredictions = Array.isArray(res) ? res : [];
+          renderDropdown(q);
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+          if (seq !== querySeq) return;
+          renderError(err);
+        } finally {
+          if (seq === querySeq) setSpinning(false);
+        }
+      }
+
+      function renderDropdown(query) {
+        if (!dropdown) return;
+        dropdown.innerHTML = '';
+        selectedIndex = -1;
+
+        if (currentPredictions.length === 0) {
+          dropdown.innerHTML = '<div style="padding:10px 12px;font-size:12px;color:var(--mut);text-align:center;">' +
+            'Không tìm thấy địa điểm khớp với "<b>' + esc(query) + '</b>"</div>';
+          dropdown.style.display = 'block';
+          return;
+        }
+
+        currentPredictions.forEach((p, idx) => {
+          const item = document.createElement('div');
+          item.className = 'place-item';
+          item.style.padding = '8px 12px';
+          item.style.cursor = 'pointer';
+          item.style.borderBottom = '1px solid var(--line-subtle, #12241b)';
+          item.style.transition = 'background 0.15s ease';
+          item.innerHTML = 
+            '<div style="font-weight:700;font-size:12.5px;color:var(--lime);">' + esc(p.main_text || p.description) + '</div>' +
+            '<div style="font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.secondary_text || p.description) + '</div>';
+          
+          item.onmouseenter = () => highlightItem(idx);
+          item.onclick = () => selectItem(p);
+          dropdown.appendChild(item);
+        });
+
+        dropdown.style.display = 'block';
+      }
+
+      function renderError(err) {
+        if (!dropdown) return;
+        dropdown.innerHTML = '<div style="padding:10px 12px;font-size:12px;color:var(--danger, #ef4444);text-align:center;">' +
+          '<i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Lỗi tải địa chỉ: ' + esc(err.message || '502 Upstream Error') + '</div>';
+        dropdown.style.display = 'block';
+        safeCreateIcons();
+      }
+
+      async function selectItem(prediction) {
+        hideDropdown();
+        inputEl.value = prediction.description || prediction.main_text;
+        setSpinning(true);
+        try {
+          const detail = await api('/places/detail/' + encodeURIComponent(prediction.place_id));
+          if (provInfo) {
+            provInfo.style.display = 'block';
+            const tag = provInfo.querySelector('.place-id-tag');
+            if (tag) tag.textContent = 'ID: ' + (detail.place_id || prediction.place_id);
+            const coordsText = provInfo.querySelector('.place-coords-text');
+            if (coordsText) coordsText.innerHTML = 'Tọa độ: <b>' + Number(detail.lat || 0).toFixed(5) + ', ' + Number(detail.lng || 0).toFixed(5) + '</b> (độ tin cậy: ' + (detail.confidence || 1.0) + ')';
+            const adminText = provInfo.querySelector('.place-admin-text');
+            if (adminText) {
+              const parts = [detail.ward, detail.district, detail.province].filter(Boolean);
+              adminText.textContent = parts.length ? 'Khu vực: ' + parts.join(', ') : '';
+            }
+            safeCreateIcons();
+          }
+          if (onSelectCallback) {
+            onSelectCallback(detail);
+          }
+        } catch (err) {
+          console.error("Failed to load place detail:", err);
+          if (provInfo) {
+            provInfo.style.display = 'block';
+            provInfo.innerHTML = '<span style="color:var(--danger)">Lỗi tải chi tiết: ' + esc(err.message || err) + '</span>';
+          }
+        } finally {
+          setSpinning(false);
+        }
+      }
+
+      inputEl.addEventListener('input', (e) => {
+        const val = (e.target.value || '').trim();
+        clearTimeout(debounceTimer);
+        if (val.length < 3) {
+          hideDropdown();
+          return;
+        }
+        debounceTimer = setTimeout(() => search(val), 300);
+      });
+
+      inputEl.addEventListener('keydown', (e) => {
+        if (!dropdown || dropdown.style.display !== 'block') return;
+        const items = dropdown.querySelectorAll('.place-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = (selectedIndex + 1) % items.length;
+          highlightItem(selectedIndex);
+          items[selectedIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+          highlightItem(selectedIndex);
+          items[selectedIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (selectedIndex >= 0 && selectedIndex < currentPredictions.length) {
+            selectItem(currentPredictions[selectedIndex]);
+          }
+        } else if (e.key === 'Escape') {
+          hideDropdown();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) {
+          hideDropdown();
+        }
+      });
     }
 
     // Micro-routing Turn-by-Turn Pathfinding via OSRM with local cache & fallback
@@ -549,18 +816,28 @@
 
     function renderStopsList(routes) {
       const ul = document.getElementById("stop-items");
+      if (!ul) return;
       ul.innerHTML = "";
+      const qVal = ((document.getElementById("q") || {}).value || "").toLowerCase().trim();
+      const lateOnly = !!((document.getElementById("late") || {}).checked);
+
       for (const r of routes || []) {
         for (const s of r.stops || []) {
           if (s.kind === 'depot') continue;
+          const addr = (s.address || "").toLowerCase();
+          const plate = (r.plate || "").toLowerCase();
+          if (qVal && !addr.includes(qVal) && !plate.includes(qVal)) continue;
+
+          const hasBan = isHcmcTruckBan(s.window_start, s.window_end);
+          if (lateOnly && !s.late_risk && !hasBan) continue;
+
           const li = document.createElement("li");
           li.className = "stop-item";
-          const hasBan = isHcmcTruckBan(s.window_start, s.window_end);
           li.innerHTML =
             '<div class="stop-left">' +
               '<span class="stop-seq" style="background:' + r.color + ';color:#000">' + s.seq + '</span>' +
               '<div style="display:flex;flex-direction:column">' +
-                '<span class="stop-address" title="' + s.address + '">' + s.address + '</span>' +
+                '<span class="stop-address" title="' + esc(s.address) + '">' + esc(s.address) + '</span>' +
                 '<span style="font-size:10px;color:var(--mut)">' + r.plate + ' · ' + (s.window_start || '') + '-' + (s.window_end || '') + (hasBan ? '<span class="badge-ban"><i data-lucide="shield-alert" style="width:10px;height:10px"></i> Cấm tải</span>' : '') + '</span>' +
               '</div>' +
             '</div>' +
@@ -569,6 +846,102 @@
         }
       }
       safeCreateIcons();
+    }
+
+    let previewMarker = null;
+    let selectedPlaceDetail = null;
+
+    function initOrderCreate() {
+      const inputEl = document.getElementById("order-address-input");
+      const latEl = document.getElementById("order-lat");
+      const lngEl = document.getElementById("order-lng");
+      const btnPreview = document.getElementById("btn-locate-preview");
+      const btnAdd = document.getElementById("btn-add-order");
+      const qInput = document.getElementById("q");
+      const lateCheck = document.getElementById("late");
+
+      if (qInput) {
+        qInput.addEventListener("input", () => renderStopsList(globalRoutes));
+      }
+      if (lateCheck) {
+        lateCheck.addEventListener("change", () => renderStopsList(globalRoutes));
+      }
+
+      if (!inputEl) return;
+
+      attachPlaceAutocomplete(inputEl, (detail) => {
+        selectedPlaceDetail = detail;
+        if (latEl) latEl.value = detail.lat != null ? Number(detail.lat).toFixed(5) : "";
+        if (lngEl) lngEl.value = detail.lng != null ? Number(detail.lng).toFixed(5) : "";
+      });
+
+      if (btnPreview) {
+        btnPreview.onclick = () => {
+          const lat = parseFloat(latEl ? latEl.value : "");
+          const lng = parseFloat(lngEl ? lngEl.value : "");
+          if (isNaN(lat) || isNaN(lng) || !map) {
+            setStatus("Vui lòng tìm và chọn địa điểm từ gợi ý GOFA trước.");
+            return;
+          }
+          if (previewMarker) map.removeLayer(previewMarker);
+          const icon = L.divIcon({
+            className: "preview-marker",
+            html: '<div style="background:#36d9a5;color:#07110c;font-size:12px;font-weight:900;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px #36d9a5;border:2px solid #fff">📍</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          });
+          previewMarker = L.marker([lat, lng], { icon })
+            .bindPopup('<b>' + esc(inputEl.value) + '</b><br/>' +
+                       'Nguồn: <b>' + esc((selectedPlaceDetail && selectedPlaceDetail.provider) || 'gofa') + '</b><br/>' +
+                       'ID: ' + esc((selectedPlaceDetail && selectedPlaceDetail.place_id) || '') + '<br/>' +
+                       'Tọa độ: ' + lat.toFixed(5) + ', ' + lng.toFixed(5))
+            .addTo(map)
+            .openPopup();
+          map.setView([lat, lng], 15);
+        };
+      }
+
+      if (btnAdd) {
+        btnAdd.onclick = async () => {
+          const lat = parseFloat(latEl ? latEl.value : "");
+          const lng = parseFloat(lngEl ? lngEl.value : "");
+          const addr = (inputEl.value || "").trim();
+          if (isNaN(lat) || isNaN(lng) || !addr) {
+            setStatus("Vui lòng chọn địa chỉ hợp lệ từ gợi ý GOFA Places.");
+            return;
+          }
+          const kg = parseFloat((document.getElementById("order-kg") || {}).value || 50);
+          const wstart = (document.getElementById("order-wstart") || {}).value || "08:00";
+          const wend = (document.getElementById("order-wend") || {}).value || "12:00";
+
+          const newStop = {
+            id: Date.now(),
+            seq: 99,
+            kind: "stop",
+            address: addr,
+            lat: lat,
+            lng: lng,
+            kg: kg,
+            window_start: wstart,
+            window_end: wend,
+            status: "pending",
+            place_id: (selectedPlaceDetail && selectedPlaceDetail.place_id) || "",
+            place_provider: (selectedPlaceDetail && selectedPlaceDetail.provider) || "gofa"
+          };
+
+          if (globalRoutes.length > 0) {
+            const r = globalRoutes[0];
+            r.stops = r.stops || [];
+            newStop.seq = r.stops.length;
+            r.stops.push(newStop);
+            drawRoutes(globalRoutes);
+            renderStopsList(globalRoutes);
+            setStatus("Đã thêm điểm dừng (" + addr + ") vào tuyến xe " + r.plate);
+          } else {
+            setStatus("Đã định vị thành công địa chỉ: " + addr);
+          }
+        };
+      }
     }
 
     let currentPolicy = "fastest";
@@ -669,6 +1042,7 @@
     };
 
     // Initial load
+    initOrderCreate();
     Promise.all([refreshRoutes(), refreshReport(), refreshVehicles()]).then(async () => {
       const countEl = document.getElementById("route-count");
       if (countEl && (countEl.textContent === "0" || countEl.textContent === "")) {

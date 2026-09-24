@@ -1220,7 +1220,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                               <div>
                                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                                  Đo Lường Phát Thải GLEC Framework &amp; ISO 14083
+                                  Đo Lường Phát Thải Tham Chiếu GLEC &amp; ISO 14083 (Chưa Chứng Nhận)
                                 </span>
                                 <h4 className="text-xl font-black text-white mt-1">
                                   Báo Cáo CO₂ Từng Đơn Hàng Sẵn Sàng Kiểm Toán ESG
@@ -1230,7 +1230,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                                 </p>
                                 <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono">
                                   <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-300">
-                                    Chuẩn: GLEC Framework v3.0
+                                    Chuẩn: GLEC Framework v3.0 (tham chiếu)
                                   </span>
                                   <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-300">
                                     Định dạng: CSV / Excel / PDF
@@ -1242,7 +1242,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                                 <div>Tổng số kiện giao: 80 đơn hàng</div>
                                 <div>Tổng phát thải thực tế: 17.6 kg CO₂e (Chuẩn cũ: 142.4 kg)</div>
                                 <div className="text-emerald-400 pt-2 border-t border-slate-800">
-                                  ★ Cắt giảm thành công: -88% CO₂e (Đạt chuẩn Nghị định 06/2022)
+                                  ★ Cắt giảm ước tính: -88% CO₂e (tham chiếu GLEC, chưa chứng nhận)
                                 </div>
                               </div>
                             </div>
@@ -1414,8 +1414,8 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                                   <p className="text-slate-300">Gộp 80 đơn hàng vào 5 xe tải tự động qua giải thuật VRPTW và 2-Opt.</p>
                                 </div>
                                 <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
-                                  <div className="text-cyan-400 font-bold mb-1">2. Né Giờ Cấm Tải TP.HCM</div>
-                                  <p className="text-slate-300">Tự động loại bỏ rủi ro phạt nguội trong khung 06h–09h &amp; 16h–20h (QĐ 23/2018).</p>
+                                  <div className="text-cyan-400 font-bold mb-1">2. Cảnh Báo Giờ Cấm Tải TP.HCM</div>
+                                  <p className="text-slate-300">Tự động cảnh báo vi phạm khung giờ cấm tải theo QĐ 23/2018 (khung 06h–09h &amp; 16h–20h).</p>
                                 </div>
                                 <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
                                   <div className="text-amber-400 font-bold mb-1">3. Đồng Bộ Điện Thoại &lt;0.2s</div>
@@ -1423,7 +1423,7 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                                 </div>
                                 <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
                                   <div className="text-emerald-400 font-bold mb-1">4. Kiểm Kê CO₂ Scope 3</div>
-                                  <p className="text-slate-300">Tự động phát hành báo cáo giảm -88.31% phát thải CO₂ chuẩn hóa ISO 14064.</p>
+                                  <p className="text-slate-300">Tự động phát hành báo cáo phát thải ước tính theo khung GLEC / ISO 14083, chưa chứng nhận.</p>
                                 </div>
                               </div>
                             </div>
@@ -1660,9 +1660,9 @@ export function PitchDeckVoiceoverPage({ onBackToHome }: { onBackToHome?: () => 
                           <div className="rounded-2xl bg-slate-950 border border-white/10 p-5">
                             <div className="text-xs font-bold text-cyan-400 uppercase">2. Báo Cáo Kiểm Toán ESG</div>
                             <div className="text-xl font-black text-white mt-1">Gói Doanh Nghiệp</div>
-                            <div className="text-xs text-slate-400 mt-1">Xuất chứng chỉ GLEC/GHG</div>
+                            <div className="text-xs text-slate-400 mt-1">Báo cáo tham chiếu GLEC/GHG (chưa chứng nhận)</div>
                             <p className="text-xs text-slate-300 mt-3 leading-relaxed">
-                              Cung cấp dữ liệu phát thải khí nhà kính đạt chuẩn cho các công ty logistics làm việc với khách hàng FDI hoặc sàn TMĐT quốc tế.
+                              Cung cấp dữ liệu ước tính phát thải khí nhà kính theo khung GLEC cho các công ty logistics làm việc với khách hàng FDI hoặc sàn TMĐT quốc tế.
                             </p>
                           </div>
 

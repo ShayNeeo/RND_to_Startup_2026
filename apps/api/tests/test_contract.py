@@ -31,6 +31,8 @@ FROZEN_METHODS = {
     "/driver/restriction-feedback/{feedback_id}/verify": {"post"},
     "/stops/{id}/status": {"post"},
     "/stops/{id}/photo": {"post"},
+    "/places/autocomplete": {"get"},
+    "/places/detail/{place_id}": {"get"},
 }
 
 

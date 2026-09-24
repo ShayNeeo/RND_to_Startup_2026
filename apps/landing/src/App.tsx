@@ -38,6 +38,10 @@ export function App() {
         window.location.replace('/driver/' + window.location.search);
         return;
       }
+      if (p === '/dispatcher') {
+        window.location.replace('/dispatcher/' + window.location.search);
+        return;
+      }
     }
 
     const handleLocationChange = () => {

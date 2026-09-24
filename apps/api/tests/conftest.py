@@ -48,3 +48,18 @@ def demo_client(monkeypatch):
 
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture(autouse=True)
+def block_live_gofa_network_calls(monkeypatch):
+    """Guarantees tests never consume the 15,000 sponsored GOFA call quota."""
+
+    def _forbidden_urllib(url: str, headers: dict[str, str], timeout: float):
+        raise RuntimeError(
+            f"FORBIDDEN: Unmocked live call to GOFA API ({url}) attempted during test suite! "
+            "All tests must use an explicit mock transport."
+        )
+
+    monkeypatch.setattr(
+        "greenlogix_api.places.gofa._urllib_transport", _forbidden_urllib
+    )

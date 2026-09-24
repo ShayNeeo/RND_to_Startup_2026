@@ -165,9 +165,10 @@
 
     <div id="corridor-bar" style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12.5px;">
       <i data-lucide="compass" style="width:18px;height:18px;color:var(--lime);flex-shrink:0;"></i>
-      <div>
+      <div style="flex:1;">
         <span style="color:var(--mut);font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.03em;display:block;">Hành lang hành chính đi qua:</span>
         <b id="corridor-text" style="color:var(--text);font-weight:700">Tân Bình → Phú Nhuận → Quận 10 → Quận 1</b>
+        <div id="corridor-detail" style="font-size:11px;color:var(--mint);margin-top:2px;"></div>
       </div>
     </div>
 
@@ -180,6 +181,38 @@
       </div>
     </div>
   </main>
+
+  <!-- Failure Reason Modal (mapping to strict FailureReason literals) -->
+  <div id="failure-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:400px;width:100%;padding:18px;box-shadow:0 12px 36px rgba(0,0,0,0.85);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;font-size:15px;color:var(--text);display:flex;align-items:center;gap:6px;">
+          <i data-lucide="alert-octagon" style="width:16px;height:16px;color:var(--danger)"></i>
+          Báo hoãn / Thất bại
+        </h3>
+        <button type="button" onclick="closeFailModal()" style="background:transparent;border:0;color:var(--mut);font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>
+      </div>
+      <p id="fail-modal-stop-info" style="font-size:12.5px;color:var(--mut);margin:0 0 12px;line-height:1.4;">
+        Chọn lý do giao hàng không thành công:
+      </p>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:11px;color:var(--mut);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Lý do thất bại (Chuẩn hệ thống):</label>
+        <select id="fail-reason-select" style="width:100%;background:#070d0a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;">
+          <option value="khach_vang">Khách vắng nhà / Không nghe máy (khach_vang)</option>
+          <option value="sai_dia_chi">Sai địa chỉ / Không tìm thấy số nhà (sai_dia_chi)</option>
+          <option value="hang_hong">Hàng hóa bị hư hỏng / Bể vỡ (hang_hong)</option>
+          <option value="tu_choi">Khách từ chối nhận hàng (tu_choi)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button type="button" onclick="closeFailModal()" class="btn-nav" style="padding:8px 14px;font-size:12.5px;">Hủy</button>
+        <button type="button" id="btn-confirm-fail" onclick="confirmFailStop()" class="btn-act btn-failed" style="padding:8px 16px;font-size:12.5px;">
+          <i data-lucide="check" style="width:14px;height:14px"></i>
+          Xác nhận báo hoãn
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div class="bottom-bar">
     <a href="/app" class="btn-nav">
@@ -241,39 +274,83 @@
       }
     }
 
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    function toMinutes(timeStr) {
+      if (!timeStr) return -1;
+      const parts = timeStr.split(":").map(Number);
+      if (isNaN(parts[0])) return -1;
+      return parts[0] * 60 + (parts[1] || 0);
+    }
+
     function safeCreateIcons() {
       if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
         try { lucide.createIcons(); } catch (e) { console.warn("lucide error:", e); }
       }
     }
 
+    // HCMC Truck Ban Rules (Quy định 23/2018/QĐ-UBND)
+    // Minute-level interval overlap: max(start, ban_start) < min(end, ban_end)
     function isHcmcTruckBan(start, end) {
-      if (!start || !end) return false;
-      const s = parseInt(start.split(":")[0], 10);
-      const e = parseInt(end.split(":")[0], 10);
-      return (s < 9 && e > 6) || (s < 20 && e > 16);
+      const s = toMinutes(start);
+      const e = toMinutes(end);
+      if (s < 0 || e < 0 || e <= s) return false;
+      // Light truck ban windows under HCMC QĐ 23/2018:
+      // Morning: 06:00 (360m) - 09:00 (540m)
+      // Afternoon: 16:00 (960m) - 20:00 (1200m)
+      const morningBan = Math.max(s, 360) < Math.min(e, 540);
+      const eveningBan = Math.max(s, 960) < Math.min(e, 1200);
+      return morningBan || eveningBan;
+    }
+
+    let pendingFailStopId = null;
+
+    function onFailClick(stopId) {
+      pendingFailStopId = stopId;
+      const modal = document.getElementById("failure-modal");
+      const info = document.getElementById("fail-modal-stop-info");
+      const stop = currentStops.find(s => s.id === stopId);
+      if (stop && info) {
+        info.innerHTML = "Điểm giao: <b>" + esc(stop.address) + "</b>";
+      }
+      if (modal) modal.style.display = "flex";
+      safeCreateIcons();
+    }
+
+    function closeFailModal() {
+      const modal = document.getElementById("failure-modal");
+      if (modal) modal.style.display = "none";
+      pendingFailStopId = null;
+    }
+
+    async function confirmFailStop() {
+      if (pendingFailStopId == null) return;
+      const select = document.getElementById("fail-reason-select");
+      const reason = select ? select.value : "khach_vang";
+      const stopId = pendingFailStopId;
+      closeFailModal();
+      await updateStop(stopId, "failed", reason);
     }
 
     async function updateStop(stopId, status, reason = null) {
       const msg = document.getElementById("status-msg");
-      msg.textContent = "Đang gửi cập nhật...";
+      if (msg) msg.textContent = "Đang gửi cập nhật...";
       try {
+        const payload = { status };
+        if (status === "failed") {
+          payload.reason = reason;
+        }
         const res = await apiFetch("/api/stops/" + stopId + "/status", {
           method: "POST",
           headers: Object.assign({ "Content-Type": "application/json" }, AUTH),
-          body: JSON.stringify({ status, reason })
+          body: JSON.stringify(payload)
         });
-        msg.textContent = "Đã cập nhật trạng thái điểm #" + stopId + " thành: " + status;
+        if (msg) msg.textContent = "Đã cập nhật trạng thái điểm #" + stopId + " thành: " + status;
         await loadDriverRoute();
       } catch (err) {
-        msg.textContent = String(err);
-      }
-    }
-
-    function onFailClick(stopId) {
-      const reason = prompt("Nhập lý do giao không thành công:", "Khách vắng nhà / Không nghe máy");
-      if (reason) {
-        updateStop(stopId, "failed", reason);
+        if (msg) msg.textContent = String(err);
       }
     }
 
@@ -286,7 +363,7 @@
         const route = (data.routes || [])[0] || null;
         
         if (!route || !route.stops || !route.stops.length) {
-          container.innerHTML = '<div class="empty-card"><i data-lucide="inbox" style="width:32px;height:32px;margin-bottom:8px"></i><div>Chưa có lộ trình được xuất bản cho xe <b>' + plate + '</b>.<br/>Vui lòng liên hệ điều hành viên hoặc vào Bàn điều hành bấm <b>Publish tài xế</b>.</div></div>';
+          container.innerHTML = '<div class="empty-card"><i data-lucide="inbox" style="width:32px;height:32px;margin-bottom:8px"></i><div>Chưa có lộ trình được xuất bản cho xe <b>' + esc(plate) + '</b>.<br/>Vui lòng liên hệ điều hành viên hoặc vào Bàn điều hành bấm <b>Publish tài xế</b>.</div></div>';
           document.getElementById("stat-total").textContent = "0";
           document.getElementById("stat-done").textContent = "0";
           document.getElementById("stat-kg").textContent = "0 kg";
@@ -303,7 +380,9 @@
         document.getElementById("stat-done").textContent = doneStops;
         document.getElementById("stat-kg").textContent = totalKg + " kg";
 
+        // Render Administrative Corridors (traversed wards/districts)
         const districts = [];
+        const wards = [];
         const knownDistricts = ["Tân Bình", "Phú Nhuận", "Quận 10", "Quận 3", "Quận 1", "Bình Thạnh", "Thủ Đức", "Gò Vấp", "Tân Phú", "Quận 7", "Quận 5", "Quận 8"];
         currentStops.forEach(s => {
           const addr = s.address || "";
@@ -315,8 +394,42 @@
               break;
             }
           }
+          const wardMatch = addr.match(/(?:Phường|P\.)\s*([0-9A-Za-zÀ-ỹ\s]+?)(?:,|$)/i);
+          if (wardMatch && wardMatch[1]) {
+            const wName = "P." + wardMatch[1].trim();
+            if (!wards.includes(wName)) wards.push(wName);
+          }
         });
-        document.getElementById("corridor-text").textContent = districts.length ? districts.join(" → ") : "Tân Bình → Nội đô TP.HCM";
+
+        const corridorTextEl = document.getElementById("corridor-text");
+        const corridorDetailEl = document.getElementById("corridor-detail");
+        if (corridorTextEl) {
+          corridorTextEl.textContent = districts.length ? districts.join(" → ") : "Tân Bình → Nội đô TP.HCM";
+        }
+        if (corridorDetailEl) {
+          corridorDetailEl.textContent = wards.length ? "Phường/Xã đi qua: " + wards.slice(0, 6).join(" → ") + (wards.length > 6 ? "..." : "") : "";
+        }
+
+        // Asynchronously check backend authoritative admin-areas if route published
+        apiFetch("/routes", { headers: AUTH }).then(async rRes => {
+          if (rRes.ok) {
+            const allRoutes = await rRes.json();
+            const matchedRoute = (allRoutes || []).find(r => r.plate === plate);
+            if (matchedRoute && matchedRoute.id) {
+              const adminRes = await apiFetch("/routes/" + matchedRoute.id + "/admin-areas", { headers: AUTH });
+              if (adminRes.ok) {
+                const adminData = await adminRes.json();
+                if (adminData.district_breadcrumb && corridorTextEl) {
+                  corridorTextEl.textContent = adminData.district_breadcrumb;
+                }
+                if (adminData.corridor && adminData.corridor.length && corridorDetailEl) {
+                  const wardNames = adminData.corridor.map(c => c.ward_name || c.district).filter(Boolean);
+                  corridorDetailEl.textContent = "Hành lang chi tiết: " + [...new Set(wardNames)].slice(0, 6).join(" → ");
+                }
+              }
+            }
+          }
+        }).catch(() => {});
 
         container.innerHTML = "";
         currentStops.forEach((s, idx) => {
@@ -339,9 +452,12 @@
           const mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(s.lat + ',' + s.lng) + '&travelmode=driving&dir_action=navigate';
           const actionsHtml = isDepot
             ? '<div style="font-size:12px;color:var(--mut)">Điểm xuất phát trung tâm / Depot Tân Bình</div>'
-            : '<div style="display:flex;flex-direction:column;gap:6px">' +
+            : '<div style="display:flex;flex-direction:column;gap:8px">' +
                 '<a href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" title="Google sẽ tính lại tuyến khi mở — không phải tuyến xe tải đã duyệt" class="btn-act btn-navig" style="padding:9px;font-size:12px;font-weight:700"><i data-lucide="navigation" style="width:13px;height:13px"></i>Chỉ đường (Google Maps · Ô tô)</a>' +
-                '<div style="font-size:11px;color:var(--mut)">Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt.</div>' +
+                '<div class="amber-disclaimer-card" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--amber);display:flex;align-items:flex-start;gap:6px;line-height:1.4;">' +
+                  '<i data-lucide="alert-triangle" style="width:15px;height:15px;flex-shrink:0;margin-top:1px;"></i>' +
+                  '<span><b>Cảnh báo điều hướng:</b> Google sẽ tính lại tuyến khi mở — đây là dẫn đường ô tô ngoài, không phải tuyến xe tải đã duyệt. Tài xế cần tuân thủ biển báo cấm tải trọng/chiều cao và giờ cấm QĐ 23/2018.</span>' +
+                '</div>' +
                 '<div class="stop-actions">' +
                   '<button class="btn-act btn-arrived" onclick="updateStop(' + s.id + ', \'arrived\')" ' + (s.status === "delivered" ? "disabled" : "") + '><i data-lucide="map-pin" style="width:13px;height:13px"></i>Đến nơi</button>' +
                   '<button class="btn-act btn-delivered" onclick="updateStop(' + s.id + ', \'delivered\')"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Đã giao</button>' +
@@ -357,11 +473,11 @@
               '</div>' +
               '<span class="status-tag tag-' + (s.status || "pending") + '">' + statusText + '</span>' +
             '</div>' +
-            '<div class="stop-address">' + s.address + '</div>' +
+            '<div class="stop-address">' + esc(s.address) + '</div>' +
             '<div class="stop-meta">' +
-              (s.phone ? '<span class="meta-item"><i data-lucide="phone" style="width:13px;height:13px"></i><a href="tel:' + s.phone + '">' + s.phone + '</a></span>' : '') +
-              (s.window_start ? '<span class="meta-item"><i data-lucide="clock" style="width:13px;height:13px"></i>' + s.window_start + ' - ' + s.window_end + '</span>' : '') +
-              (s.kg ? '<span class="meta-item"><i data-lucide="package" style="width:13px;height:13px"></i>' + s.kg + ' kg</span>' : '') +
+              (s.phone ? '<span class="meta-item"><i data-lucide="phone" style="width:13px;height:13px"></i><a href="tel:' + esc(s.phone) + '">' + esc(s.phone) + '</a></span>' : '') +
+              (s.window_start ? '<span class="meta-item"><i data-lucide="clock" style="width:13px;height:13px"></i>' + esc(s.window_start) + ' - ' + esc(s.window_end) + '</span>' : '') +
+              (s.kg ? '<span class="meta-item"><i data-lucide="package" style="width:13px;height:13px"></i>' + esc(s.kg) + ' kg</span>' : '') +
             '</div>' +
             banHtml +
             actionsHtml;
@@ -371,7 +487,7 @@
 
         safeCreateIcons();
       } catch (err) {
-        container.innerHTML = '<div class="empty-card" style="color:var(--danger)">' + String(err) + '</div>';
+        container.innerHTML = '<div class="empty-card" style="color:var(--danger)">' + esc(String(err)) + '</div>';
       }
     }
 

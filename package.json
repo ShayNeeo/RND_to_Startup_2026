@@ -2,7 +2,7 @@
   "name": "greenlogix-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "EcoMiles — B2B Urban Logistics Optimization & ISO 14083 Carbon Accounting Platform",
+  "description": "EcoMiles — B2B Urban Logistics Optimization & GLEC-aligned Carbon Estimation Platform (not certified)",
   "packageManager": "pnpm@10.5.2",
   "scripts": {
     "dev:landing": "pnpm --filter @greenlogix/landing dev",
